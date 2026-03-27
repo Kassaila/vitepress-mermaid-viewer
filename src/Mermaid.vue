@@ -119,10 +119,10 @@ const cloneMermaidSvg = (svgEl: SVGElement): SVGElement => {
   return clone;
 };
 
-const createBtn = (text: string, title: string, className?: string): HTMLButtonElement => {
+const createBtn = (text: string, title: string): HTMLButtonElement => {
   const btn = document.createElement('button');
 
-  btn.className = className || 'mermaid-zoom-btn';
+  btn.className = 'mermaid-zoom-btn';
   btn.textContent = text;
   btn.title = title;
 
@@ -165,22 +165,22 @@ const openZoom = (e: MouseEvent) => {
   const btnZoomOut = createBtn('\u2212', 'Zoom out');
   const btnReset = createBtn('\u21BB', 'Reset zoom');
 
-  const zoomGroup = document.createElement('div');
+  const scaleDisplay = document.createElement('output');
 
-  zoomGroup.className = 'mermaid-zoom-group';
-
-  zoomGroup.append(btnZoomIn, btnZoomOut, btnReset);
+  scaleDisplay.className = 'mermaid-zoom-scale';
+  scaleDisplay.textContent = `${Math.round(scale * 100)}%`;
 
   const controls = document.createElement('div');
 
   controls.className = 'mermaid-zoom-controls';
 
-  controls.append(btnClose, zoomGroup);
+  controls.append(scaleDisplay, btnClose, btnZoomIn, btnZoomOut, btnReset);
 
   dialog.append(controls, content);
 
   const applyTransform = () => {
     content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+    scaleDisplay.textContent = `${Math.round(scale * 100)}%`;
   };
 
   const getPointerDist = () => {
@@ -324,7 +324,12 @@ const openZoom = (e: MouseEvent) => {
   document.addEventListener('pointercancel', onPointerUp);
 
   document.body.appendChild(dialog);
+
+  dialog.inert = true;
+
   dialog.showModal();
+
+  dialog.inert = false;
 
   document.body.style.overflow = 'hidden';
 };

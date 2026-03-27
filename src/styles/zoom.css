@@ -44,37 +44,45 @@ dialog.mermaid-zoom-overlay::backdrop {
   position: fixed;
   top: 1rem;
   right: 1rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   z-index: 1000;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--vp-c-bg-soft) 80%, transparent);
+  border: 1px solid var(--vp-c-divider);
 }
 
-.mermaid-zoom-group {
-  display: flex;
-  gap: 0.5rem;
-}
-
+.mermaid-zoom-scale,
 .mermaid-zoom-btn {
-  width: 2.5rem;
   height: 2.5rem;
   border-radius: 0.5rem;
   border: 1px solid var(--vp-c-divider);
   background: var(--vp-c-bg-soft);
   color: var(--vp-c-text-1);
-  font-size: 1.25rem;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s ease;
 }
 
-.mermaid-zoom-group .mermaid-zoom-btn:last-child {
-  width: auto;
-  padding: 0 0.75rem;
+.mermaid-zoom-scale {
+  grid-column: 1 / 3;
   font-size: 0.875rem;
+  cursor: default;
+  user-select: none;
+}
+
+.mermaid-zoom-controls > .mermaid-zoom-btn:first-of-type {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.mermaid-zoom-btn {
+  min-width: 2.5rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .mermaid-zoom-btn:hover {
