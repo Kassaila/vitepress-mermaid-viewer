@@ -1,8 +1,13 @@
-# vitepress-mermaid-viewer
+# VitePress Mermaid Viewer
 
-Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.
+> _Diagrams that you can actually read._
 
-Drop-in replacement for `vitepress-plugin-mermaid` with built-in diagram viewer.
+[![npm version](https://img.shields.io/npm/v/vitepress-mermaid-viewer.svg)](https://www.npmjs.com/package/vitepress-mermaid-viewer)
+[![license](https://img.shields.io/npm/l/vitepress-mermaid-viewer.svg)](https://github.com/Kassaila/vitepress-mermaid-viewer/blob/main/LICENSE)
+
+**Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.**
+
+Drop-in replacement for `vitepress-plugin-mermaid` with a built-in diagram viewer.
 
 ## Features
 
@@ -14,13 +19,13 @@ Drop-in replacement for `vitepress-plugin-mermaid` with built-in diagram viewer.
 - Supports `mmd` alias for mermaid blocks
 - Per-page theme override via `mermaidTheme` frontmatter
 
-## Install
+## Installation
 
 ```bash
 npm install vitepress-mermaid-viewer mermaid
 ```
 
-## Usage
+## Quick Start
 
 ### Option 1: `withMermaid` wrapper (simple)
 
@@ -89,10 +94,10 @@ export default defineConfig({
 | Action      | Input                                         |
 | ----------- | --------------------------------------------- |
 | Open viewer | Click on diagram                              |
-| Zoom in/out | `+` / `−` buttons, mouse wheel, pinch gesture |
+| Zoom in/out | `+` / `-` buttons, mouse wheel, pinch gesture |
 | Pan         | Click and drag                                |
-| Reset       | `Reset` button                                |
-| Close       | `✕` button, `Escape` key                      |
+| Reset       | Reset button                                  |
+| Close       | Close button, `Escape` key                    |
 
 ## Frontmatter Options
 
@@ -123,6 +128,10 @@ Markdown-it plugin. Intercepts ` ```mermaid ` fences and renders them as `<Merma
 Vite plugin. Injects `<Mermaid>` component globally and serves mermaid config via virtual module.
 
 Accepts [mermaid configuration](https://mermaid.js.org/config/schema-docs/config.html) object.
+
+## Contributing
+
+Contributions are welcome! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines.
 
 ## License
 

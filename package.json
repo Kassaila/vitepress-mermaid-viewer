@@ -9,18 +9,22 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./src/*": "./src/*"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
   },
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "build": "tsup",
+    "build:dev": "NODE_ENV=development tsup",
     "dev": "tsup --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -30,7 +34,11 @@
     "check:types": "tsc --noEmit",
     "check:format": "npm run format:check",
     "check:all": "npm run check:format && npm run check:lint && npm run check:types && npm run build",
-    "prepare": "husky"
+    "release:check": "npm run check:all && npm pack --dry-run",
+    "release:publish": "npm run release:check && npm publish",
+    "release:publish:beta": "npm run release:check && npm publish --tag beta",
+    "prepare": "husky",
+    "prepublishOnly": "npm run check:types"
   },
   "lint-staged": {
     "*.{ts,js,vue}": "eslint --fix",
@@ -55,6 +63,9 @@
   "bugs": {
     "url": "https://github.com/Kassaila/vitepress-mermaid-viewer/issues"
   },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "homepage": "https://github.com/Kassaila/vitepress-mermaid-viewer#readme",
   "peerDependencies": {
     "mermaid": ">=10",
@@ -75,12 +86,15 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
     "eslint": "^10.1.0",
-    "eslint-plugin-kassaila": "^0.1.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import-x": "^4.16.2",
+    "eslint-plugin-kassaila": "^0.2.0",
     "eslint-plugin-vue": "^10.8.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2"
   }
 }
