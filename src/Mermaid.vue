@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, toRaw } from 'vue';
-import { useData } from 'vitepress';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import { render, init } from './mermaid';
 
@@ -29,11 +28,8 @@ const pluginSettings = ref({
   externalDiagrams: [],
 });
 
-const { page } = useData();
-const { frontmatter } = toRaw(page.value);
-const mermaidPageTheme = frontmatter.mermaidTheme || '';
-
 const svg = ref<string | null>(null);
+const mermaidPageTheme = ref('');
 let mut: MutationObserver | null = null;
 
 const renderChart = async () => {
@@ -42,8 +38,8 @@ const renderChart = async () => {
     ...pluginSettings.value,
   };
 
-  if (mermaidPageTheme) {
-    mermaidConfig.theme = mermaidPageTheme;
+  if (mermaidPageTheme.value) {
+    mermaidConfig.theme = mermaidPageTheme.value;
   }
 
   if (hasDarkClass) {
@@ -58,6 +54,11 @@ const renderChart = async () => {
 };
 
 onMounted(async () => {
+  const { useData } = await import('vitepress');
+  const { page } = useData();
+
+  mermaidPageTheme.value = page.value.frontmatter?.mermaidTheme || '';
+
   await init(pluginSettings.value.externalDiagrams);
 
   const settings = await import('virtual:mermaid-config');
