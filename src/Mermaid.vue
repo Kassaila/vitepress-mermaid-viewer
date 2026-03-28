@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import { useData } from 'vitepress';
 
 import { render, init } from './mermaid';
 
@@ -21,6 +22,8 @@ const props = defineProps({
     default: 'mermaid',
   },
 });
+
+const { page } = useData();
 
 const pluginSettings = ref({
   securityLevel: 'loose',
@@ -54,9 +57,6 @@ const renderChart = async () => {
 };
 
 onMounted(async () => {
-  const { useData } = await import('vitepress');
-  const { page } = useData();
-
   mermaidPageTheme.value = page.value.frontmatter?.mermaidTheme || '';
 
   await init(pluginSettings.value.externalDiagrams);

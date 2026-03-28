@@ -23,6 +23,7 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
         const className = pluginOptions?.class || 'mermaid';
 
         return `
+      <ClientOnly>
       <Suspense>
       <template #default>
       <Mermaid id="mermaid-${idx}" class="${className}" graph="${encodeURIComponent(token.content)}"></Mermaid>
@@ -30,7 +31,8 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
         <template #fallback>
           Loading...
         </template>
-      </Suspense>`;
+      </Suspense>
+      </ClientOnly>`;
       } catch (e) {
         return `<pre>${String(e)}</pre>`;
       }

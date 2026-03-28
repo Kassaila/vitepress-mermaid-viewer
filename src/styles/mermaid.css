@@ -1,5 +1,7 @@
 .vp-doc .mermaid {
   cursor: zoom-in;
+  display: flex;
+  justify-content: center;
   background: var(--vp-c-bg-soft);
   border-radius: 0.75rem;
   padding: 1rem;
