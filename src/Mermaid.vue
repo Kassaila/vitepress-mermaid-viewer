@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
-import { useData } from 'vitepress';
 
 import { render, init } from './mermaid';
 
@@ -23,6 +22,7 @@ const props = defineProps({
   },
 });
 
+const { useData } = await import('vitepress');
 const { page } = useData();
 
 const pluginSettings = ref({

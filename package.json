@@ -1,6 +1,6 @@
 {
   "name": "vitepress-mermaid-viewer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing",
   "type": "module",
   "sideEffects": [
