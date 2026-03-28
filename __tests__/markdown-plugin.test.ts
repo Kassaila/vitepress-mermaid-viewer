@@ -13,15 +13,18 @@ const applyPlugin = (pluginOptions?: { class?: string }) => {
 };
 
 describe('MermaidMarkdown', () => {
-  it('renders mermaid fence as Suspense-wrapped Mermaid component', () => {
+  it('renders mermaid fence as ClientOnly + Suspense-wrapped Mermaid component', () => {
     const { md } = applyPlugin();
     const tokens = [createToken('mermaid', 'graph TD; A-->B')];
     const result = md.renderer.rules.fence(tokens, 0, {}, {}, {});
 
+    expect(result).toContain('<ClientOnly>');
     expect(result).toContain('<Suspense>');
     expect(result).toContain('<Mermaid');
     expect(result).toContain('id="mermaid-0"');
     expect(result).toContain(`graph="${encodeURIComponent('graph TD; A-->B')}"`);
+    expect(result).toContain('</Suspense>');
+    expect(result).toContain('</ClientOnly>');
   });
 
   it('uses custom class from plugin options', () => {

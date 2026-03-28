@@ -15,6 +15,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Test suite with Vitest and happy-dom covering all modules: `mermaid.ts`, `markdown-plugin.ts`,
   `vite-plugin.ts`, `with-mermaid.ts`, and `Mermaid.vue`
 
+### Fixed
+
+- `useData()` called inside `onMounted` lost Vue inject context, causing
+  `"vitepress data not properly injected in app"` at runtime — moved back to synchronous `setup()`
+  and wrapped `<Mermaid>` in `<ClientOnly>` so the component only executes on the client
+- Mermaid diagrams aligned to left edge instead of centered — added flexbox centering to
+  `.vp-doc .mermaid`
+
+### Changed
+
+- MutationObserver only re-renders on actual dark/light class toggle, not on every attribute change
+- Mermaid library loaded via dynamic `import()` to reduce initial bundle and avoid SSR side-effects
+- `mermaid.initialize()` skipped when config is unchanged between renders
+
 ## [0.1.1] - 2026-03-28
 
 ### Fixed
