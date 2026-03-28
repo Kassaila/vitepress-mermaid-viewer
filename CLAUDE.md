@@ -51,8 +51,6 @@ Entry point: `src/index.ts` — exports `withMermaid`, `MermaidMarkdown`, `Merma
 
 ## Code Conventions
 
-- TypeScript with `strict: true`, target ES2022, bundler module resolution
-- Inline type imports enforced: `import { type Foo }` (not `import type { Foo }`)
 - CSS uses VitePress CSS custom properties (`--vp-c-*`)
 - tsdown bundles with `.vue` files loaded via `unplugin-vue` and `.css` loaded via `@tsdown/css`
 - No test framework currently configured
