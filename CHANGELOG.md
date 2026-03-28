@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-03-28
+
+### Added
+
+- VitePress documentation site published at
+  [kassaila.github.io/vitepress-mermaid-viewer](https://kassaila.github.io/vitepress-mermaid-viewer/)
+  with Usage guide and live diagram examples
+- Test suite with Vitest and happy-dom covering all modules: `mermaid.ts`, `markdown-plugin.ts`,
+  `vite-plugin.ts`, `with-mermaid.ts`, and `Mermaid.vue`
+
+## [0.1.1] - 2026-03-28
+
+### Fixed
+
+- SSR build failure caused by top-level `useData()` import — `useData` is now lazy-imported inside
+  `onMounted` so the VitePress client API is only accessed in the browser
+- GitHub Actions deploy workflow now builds the library before building the documentation site,
+  preventing stale or missing `dist/` artifacts during docs deployment
+
 ## [0.1.0] - 2026-03-27
 
 ### Added
