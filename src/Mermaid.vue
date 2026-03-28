@@ -67,9 +67,19 @@ onMounted(async () => {
     pluginSettings.value = settings.default;
   }
 
-  mut = new MutationObserver(async () => await renderChart());
+  let prevDark = document.documentElement.classList.contains('dark');
 
-  mut.observe(document.documentElement, { attributes: true });
+  mut = new MutationObserver(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+
+    if (isDark !== prevDark) {
+      prevDark = isDark;
+
+      void renderChart();
+    }
+  });
+
+  mut.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   await renderChart();
 
   const hasImages = (/<img([\w\W]+?)>/.exec(decodeURIComponent(props.graph))?.length ?? 0) > 0;
