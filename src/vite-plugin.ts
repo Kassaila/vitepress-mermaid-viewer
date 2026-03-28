@@ -21,7 +21,10 @@ export const MermaidPlugin = (inlineConfig?: MermaidConfig): Plugin => {
 
     transform(code: string, id: string) {
       if (id.includes('vitepress/dist/client/app/index.js')) {
-        code = `import Mermaid from 'vitepress-mermaid-viewer/src/Mermaid.vue';\n` + code;
+        code =
+          `import 'vitepress-mermaid-viewer/style.css';\n` +
+          `import Mermaid from 'vitepress-mermaid-viewer/Mermaid';\n` +
+          code;
 
         const lines = code.split('\n');
         const componentLineIdx = lines.findIndex((line) => line.includes('app.component'));

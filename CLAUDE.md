@@ -12,13 +12,16 @@ zoom/pan viewer. Drop-in replacement for `vitepress-plugin-mermaid`. Peer depend
 ## Commands
 
 ```bash
-npm run build          # Build with tsup (ESM + CJS + .d.ts)
+npm run build          # Build with tsdown (ESM + CJS + .d.ts)
 npm run dev            # Build in watch mode
 npm run lint           # ESLint check
 npm run lint:fix       # ESLint auto-fix
 npm run format         # Prettier write
 npm run check:all      # format + lint + typecheck + build (full CI check)
 npm run check:types    # tsc --noEmit
+npm run docs:dev       # VitePress dev server
+npm run docs:build     # Build documentation site
+npm run docs:preview   # Preview built docs
 ```
 
 Pre-commit hook runs `lint-staged` (eslint --fix + prettier on staged files). Commit messages are
@@ -51,5 +54,5 @@ Entry point: `src/index.ts` — exports `withMermaid`, `MermaidMarkdown`, `Merma
 - TypeScript with `strict: true`, target ES2022, bundler module resolution
 - Inline type imports enforced: `import { type Foo }` (not `import type { Foo }`)
 - CSS uses VitePress CSS custom properties (`--vp-c-*`)
-- tsup bundles with `.vue` files loaded as TypeScript and `.css` loaded as text strings
+- tsdown bundles with `.vue` files loaded via `unplugin-vue` and `.css` loaded via `@tsdown/css`
 - No test framework currently configured

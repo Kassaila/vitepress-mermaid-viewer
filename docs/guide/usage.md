@@ -1,24 +1,6 @@
-# VitePress Mermaid Viewer
+<img src="/og_image.png" alt="VitePress Mermaid Viewer — Interactive mermaid diagrams for VitePress" style="width: 100%; border-radius: 12px; margin-bottom: 24px;" />
 
-> _Diagrams that you can actually read._
-
-[![npm version](https://img.shields.io/npm/v/vitepress-mermaid-viewer.svg)](https://www.npmjs.com/package/vitepress-mermaid-viewer)
-[![docs](https://img.shields.io/badge/docs-VitePress-6366f1)](https://kassaila.github.io/vitepress-mermaid-viewer/)
-[![license](https://img.shields.io/npm/l/vitepress-mermaid-viewer.svg)](https://github.com/Kassaila/vitepress-mermaid-viewer/blob/main/LICENSE)
-
-**Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.**
-
-Drop-in replacement for `vitepress-plugin-mermaid` with a built-in diagram viewer.
-
-## Features
-
-- Renders ` ```mermaid ` code blocks as diagrams
-- Click any diagram to open fullscreen viewer
-- Zoom: buttons, mouse wheel (cursor-centered), pinch-to-zoom (touch)
-- Pan/drag with mouse or touch
-- Dark/light theme reactivity
-- Supports `mmd` alias for mermaid blocks
-- Per-page theme override via `mermaidTheme` frontmatter
+# Usage
 
 ## Installation
 
@@ -26,9 +8,10 @@ Drop-in replacement for `vitepress-plugin-mermaid` with a built-in diagram viewe
 npm install vitepress-mermaid-viewer mermaid
 ```
 
-## Quick Start
+## Simple setup with wrapper
 
-### Simple setup with wrapper
+Wrap your VitePress config — adds markdown plugin, Vite plugin, optimizeDeps, and module aliases
+automatically.
 
 ```ts
 // docs/.vitepress/config.ts
@@ -52,7 +35,9 @@ export default withMermaid(
 );
 ```
 
-### Manual setup
+## Manual setup
+
+Use individual exports for full control over the configuration.
 
 ```ts
 // docs/.vitepress/config.ts
@@ -129,11 +114,3 @@ Markdown-it plugin. Intercepts ` ```mermaid ` fences and renders them as `<Merma
 Vite plugin. Injects `<Mermaid>` component globally and serves mermaid config via virtual module.
 
 Accepts [mermaid configuration](https://mermaid.js.org/config/schema-docs/config.html) object.
-
-## Contributing
-
-Contributions are welcome! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines.
-
-## License
-
-MIT

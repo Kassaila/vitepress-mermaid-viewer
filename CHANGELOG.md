@@ -34,7 +34,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 #### Infrastructure
 
 - TypeScript with `strict: true`, target ES2022, bundler module resolution
-- tsup build producing ESM + CJS + `.d.ts`/`.d.cts`
+- tsdown build producing ESM + CJS + `.d.ts`/`.d.cts`
 - Conditional sourcemaps (dev only) and minification (prod only)
 - Tree-shaking enabled
 - ESLint with flat config and type-aware rules

@@ -1,3 +1,4 @@
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript';
 import { vueConfig } from 'eslint-plugin-kassaila/configs/vue';
 
 export default [
@@ -13,6 +14,9 @@ export default [
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    settings: {
+      'import-x/resolver-next': [createTypeScriptImportResolver()],
     },
   },
 

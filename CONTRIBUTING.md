@@ -25,4 +25,7 @@ npm run lint           # ESLint check
 npm run lint:fix       # ESLint auto-fix
 npm run format         # Format code with Prettier
 npm run check:all      # Full validation (format + lint + types + build)
+npm run docs:dev       # VitePress dev server
+npm run docs:build     # Build documentation site
+npm run docs:preview   # Preview built docs
 ```

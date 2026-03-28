@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,15 +19,21 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
-    }
+    },
+    "./Mermaid": {
+      "import": "./dist/Mermaid.js",
+      "require": "./dist/Mermaid.cjs"
+    },
+    "./style.css": "./dist/style.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsup",
-    "build:dev": "NODE_ENV=development tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "build:dev": "NODE_ENV=development tsdown",
+    "dev": "tsdown --watch",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
@@ -37,6 +45,9 @@
     "release:check": "npm run check:all && npm pack --dry-run",
     "release:publish": "npm run release:check && npm publish",
     "release:publish:beta": "npm run release:check && npm publish --tag beta",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
     "prepare": "husky",
     "prepublishOnly": "npm run check:types"
   },
@@ -66,7 +77,7 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "homepage": "https://github.com/Kassaila/vitepress-mermaid-viewer#readme",
+  "homepage": "https://kassaila.github.io/vitepress-mermaid-viewer/",
   "peerDependencies": {
     "mermaid": ">=10",
     "vite": ">=5.0.0",
@@ -83,18 +94,22 @@
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
+    "@tsdown/css": "^0.21.6",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.2",
     "eslint-plugin-kassaila": "^0.2.0",
     "eslint-plugin-vue": "^10.8.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.21.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.2"
+    "typescript-eslint": "^8.57.2",
+    "unplugin-vue": "^7.1.1",
+    "vue-tsc": "^3.2.6"
   }
 }

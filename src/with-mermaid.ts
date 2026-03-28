@@ -33,7 +33,8 @@ export const withMermaid = <T>(config: UserConfig<T>): UserConfig<T> => {
     config.vite.plugins = [];
   }
 
-  config.vite.plugins.push(MermaidPlugin(config.mermaid));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  config.vite.plugins.push(MermaidPlugin(config.mermaid) as any);
 
   if (!config.vite.optimizeDeps) {
     config.vite.optimizeDeps = {};
