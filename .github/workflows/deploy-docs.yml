@@ -29,6 +29,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Build library
+        run: npm run build
+
       - name: Build docs
         run: npx vitepress build docs
 
