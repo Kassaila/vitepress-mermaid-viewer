@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { defineConfig } from 'vitepress';
-import { withMermaid } from '../../src/index';
+import { withMermaid } from 'vitepress-mermaid-viewer';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json') as { version: string };
