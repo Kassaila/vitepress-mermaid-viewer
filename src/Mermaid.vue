@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, toRaw } from 'vue';
-import { useData } from 'vitepress';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 import { render, init } from './mermaid';
 
@@ -29,11 +28,8 @@ const pluginSettings = ref({
   externalDiagrams: [],
 });
 
-const { page } = useData();
-const { frontmatter } = toRaw(page.value);
-const mermaidPageTheme = frontmatter.mermaidTheme || '';
-
 const svg = ref<string | null>(null);
+const mermaidPageTheme = ref('');
 let mut: MutationObserver | null = null;
 
 const renderChart = async () => {
@@ -42,8 +38,8 @@ const renderChart = async () => {
     ...pluginSettings.value,
   };
 
-  if (mermaidPageTheme) {
-    mermaidConfig.theme = mermaidPageTheme;
+  if (mermaidPageTheme.value) {
+    mermaidConfig.theme = mermaidPageTheme.value;
   }
 
   if (hasDarkClass) {
@@ -58,6 +54,11 @@ const renderChart = async () => {
 };
 
 onMounted(async () => {
+  const { useData } = await import('vitepress');
+  const { page } = useData();
+
+  mermaidPageTheme.value = page.value.frontmatter?.mermaidTheme || '';
+
   await init(pluginSettings.value.externalDiagrams);
 
   const settings = await import('virtual:mermaid-config');
@@ -66,9 +67,19 @@ onMounted(async () => {
     pluginSettings.value = settings.default;
   }
 
-  mut = new MutationObserver(async () => await renderChart());
+  let prevDark = document.documentElement.classList.contains('dark');
 
-  mut.observe(document.documentElement, { attributes: true });
+  mut = new MutationObserver(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+
+    if (isDark !== prevDark) {
+      prevDark = isDark;
+
+      void renderChart();
+    }
+  });
+
+  mut.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   await renderChart();
 
   const hasImages = (/<img([\w\W]+?)>/.exec(decodeURIComponent(props.graph))?.length ?? 0) > 0;

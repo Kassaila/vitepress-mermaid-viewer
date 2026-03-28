@@ -17,8 +17,11 @@ npm run dev            # Build in watch mode
 npm run lint           # ESLint check
 npm run lint:fix       # ESLint auto-fix
 npm run format         # Prettier write
-npm run check:all      # format + lint + typecheck + build (full CI check)
+npm run check:all      # format + lint + typecheck + test + build (full CI check)
 npm run check:types    # tsc --noEmit
+npm run test           # Vitest watch mode
+npm run test:run       # Vitest single run
+npm run test:coverage  # Vitest with coverage report
 npm run docs:dev       # VitePress dev server
 npm run docs:build     # Build documentation site
 npm run docs:preview   # Preview built docs
@@ -51,8 +54,6 @@ Entry point: `src/index.ts` — exports `withMermaid`, `MermaidMarkdown`, `Merma
 
 ## Code Conventions
 
-- TypeScript with `strict: true`, target ES2022, bundler module resolution
-- Inline type imports enforced: `import { type Foo }` (not `import type { Foo }`)
 - CSS uses VitePress CSS custom properties (`--vp-c-*`)
 - tsdown bundles with `.vue` files loaded via `unplugin-vue` and `.css` loaded via `@tsdown/css`
-- No test framework currently configured
+- Tests use Vitest with happy-dom, located in `__tests__/`

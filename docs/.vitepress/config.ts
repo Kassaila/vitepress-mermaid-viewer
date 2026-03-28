@@ -12,6 +12,9 @@ const BASE = '/vitepress-mermaid-viewer/';
 export default withMermaid(
   defineConfig({
     vite: {
+      build: {
+        chunkSizeWarningLimit: 600,
+      },
       resolve: {
         alias: {
           'vitepress-mermaid-viewer/Mermaid': resolve(__dirname, '../../dist/Mermaid.js'),
