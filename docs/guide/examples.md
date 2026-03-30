@@ -1,3 +1,7 @@
+---
+description: Interactive mermaid diagram examples — flowcharts, sequence, class, state, gantt, pie, and git graphs.
+---
+
 # Examples
 
 Click any diagram below to open the interactive viewer. Use mouse wheel, pinch, or buttons to zoom.

@@ -5,9 +5,8 @@ repository.
 
 ## Project
 
-VitePress plugin that renders `mermaid` code blocks as interactive diagrams with a fullscreen
-zoom/pan viewer. Drop-in replacement for `vitepress-plugin-mermaid`. Peer dependencies:
-`mermaid >=10`, `vitepress >=1.0.0`.
+Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing. Peer
+dependencies: `mermaid >=10`, `vitepress >=1.0.0`.
 
 ## Commands
 
