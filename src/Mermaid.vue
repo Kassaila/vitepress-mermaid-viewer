@@ -22,6 +22,33 @@ const props = defineProps({
   },
 });
 
+const LABELS = {
+  trigger: 'Open diagram in fullscreen viewer',
+  diagram: 'Mermaid diagram',
+  dialog: 'Diagram viewer',
+  zoomLevel: 'Zoom level',
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out',
+  reset: 'Reset zoom',
+  close: 'Close',
+} as const;
+
+const ICONS = {
+  close: '\u2715',
+  zoomIn: '+',
+  zoomOut: '\u2212',
+  reset: '\u21BB',
+} as const;
+
+const CLASSES = {
+  overlay: 'mermaid-zoom-overlay',
+  content: 'mermaid-zoom-content',
+  controls: 'mermaid-zoom-controls',
+  scale: 'mermaid-zoom-scale',
+  btn: 'mermaid-zoom-btn',
+  dragging: 'is-dragging',
+} as const;
+
 const { useData } = await import('vitepress');
 const { page } = useData();
 
@@ -113,6 +140,14 @@ const cloneMermaidSvg = (svgEl: SVGElement): SVGElement => {
   const clone = svgEl.cloneNode(true) as SVGElement;
   const origId = svgEl.id;
 
+  if (!clone.hasAttribute('role')) {
+    clone.setAttribute('role', 'img');
+  }
+
+  if (!clone.hasAttribute('aria-label') && !clone.hasAttribute('aria-labelledby')) {
+    clone.setAttribute('aria-label', LABELS.diagram);
+  }
+
   if (!origId) {
     return clone;
   }
@@ -133,14 +168,25 @@ const cloneMermaidSvg = (svgEl: SVGElement): SVGElement => {
 const createBtn = (text: string, title: string): HTMLButtonElement => {
   const btn = document.createElement('button');
 
-  btn.className = 'mermaid-zoom-btn';
+  btn.className = CLASSES.btn;
   btn.textContent = text;
   btn.title = title;
+
+  btn.setAttribute('aria-label', title);
 
   return btn;
 };
 
-const openZoom = (e: MouseEvent) => {
+const onTriggerKeydown = (ev: KeyboardEvent) => {
+  if (ev.key !== 'Enter' && ev.key !== ' ') {
+    return;
+  }
+
+  ev.preventDefault();
+  openZoom(ev);
+};
+
+const openZoom = (e: Event) => {
   const target = e.currentTarget as HTMLElement;
   const svgEl = target.querySelector('svg');
 
@@ -161,29 +207,37 @@ const openZoom = (e: MouseEvent) => {
   let pinchStartDist = 0;
   let pinchStartScale = 1;
 
+  const previousActive =
+    document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
   const dialog = document.createElement('dialog');
 
-  dialog.className = 'mermaid-zoom-overlay';
+  dialog.className = CLASSES.overlay;
+
+  dialog.setAttribute('aria-label', LABELS.dialog);
 
   const content = document.createElement('div');
 
-  content.className = 'mermaid-zoom-content';
+  content.className = CLASSES.content;
 
   content.appendChild(cloneMermaidSvg(svgEl));
 
-  const btnClose = createBtn('\u2715', 'Close');
-  const btnZoomIn = createBtn('+', 'Zoom in');
-  const btnZoomOut = createBtn('\u2212', 'Zoom out');
-  const btnReset = createBtn('\u21BB', 'Reset zoom');
+  const btnClose = createBtn(ICONS.close, LABELS.close);
+  const btnZoomIn = createBtn(ICONS.zoomIn, LABELS.zoomIn);
+  const btnZoomOut = createBtn(ICONS.zoomOut, LABELS.zoomOut);
+  const btnReset = createBtn(ICONS.reset, LABELS.reset);
 
   const scaleDisplay = document.createElement('output');
 
-  scaleDisplay.className = 'mermaid-zoom-scale';
+  scaleDisplay.className = CLASSES.scale;
   scaleDisplay.textContent = `${Math.round(scale * 100)}%`;
+
+  scaleDisplay.setAttribute('aria-label', LABELS.zoomLevel);
+  scaleDisplay.setAttribute('aria-live', 'polite');
 
   const controls = document.createElement('div');
 
-  controls.className = 'mermaid-zoom-controls';
+  controls.className = CLASSES.controls;
 
   controls.append(scaleDisplay, btnClose, btnZoomIn, btnZoomOut, btnReset);
 
@@ -192,6 +246,33 @@ const openZoom = (e: MouseEvent) => {
   const applyTransform = () => {
     content.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
     scaleDisplay.textContent = `${Math.round(scale * 100)}%`;
+  };
+
+  const zoomIn = () => {
+    scale = Math.min(5, scale + 0.25);
+
+    applyTransform();
+  };
+
+  const zoomOut = () => {
+    scale = Math.max(0.25, scale - 0.25);
+
+    applyTransform();
+  };
+
+  const resetView = () => {
+    scale = 1;
+    panX = 0;
+    panY = 0;
+
+    applyTransform();
+  };
+
+  const panBy = (dx: number, dy: number) => {
+    panX += dx;
+    panY += dy;
+
+    applyTransform();
   };
 
   const getPointerDist = () => {
@@ -234,7 +315,7 @@ const openZoom = (e: MouseEvent) => {
 
     isDragging = false;
 
-    content.classList.remove('is-dragging');
+    content.classList.remove(CLASSES.dragging);
   };
 
   const cleanup = () => {
@@ -244,34 +325,25 @@ const openZoom = (e: MouseEvent) => {
     dialog.remove();
 
     document.body.style.overflow = '';
+
+    previousActive?.focus({ preventScroll: true });
   };
 
   dialog.addEventListener('close', cleanup);
 
   btnZoomIn.addEventListener('click', (ev) => {
     ev.stopPropagation();
-
-    scale = Math.min(5, scale + 0.25);
-
-    applyTransform();
+    zoomIn();
   });
 
   btnZoomOut.addEventListener('click', (ev) => {
     ev.stopPropagation();
-
-    scale = Math.max(0.25, scale - 0.25);
-
-    applyTransform();
+    zoomOut();
   });
 
   btnReset.addEventListener('click', (ev) => {
     ev.stopPropagation();
-
-    scale = 1;
-    panX = 0;
-    panY = 0;
-
-    applyTransform();
+    resetView();
   });
 
   btnClose.addEventListener('click', (ev) => {
@@ -290,7 +362,7 @@ const openZoom = (e: MouseEvent) => {
     if (pointers.size === 2) {
       isDragging = false;
 
-      content.classList.remove('is-dragging');
+      content.classList.remove(CLASSES.dragging);
 
       pinchStartDist = getPointerDist();
       pinchStartScale = scale;
@@ -304,8 +376,59 @@ const openZoom = (e: MouseEvent) => {
     startPanX = panX;
     startPanY = panY;
 
-    content.classList.add('is-dragging');
+    content.classList.add(CLASSES.dragging);
     ev.preventDefault();
+  });
+
+  dialog.addEventListener('keydown', (ev) => {
+    switch (ev.key) {
+      case '+':
+      case '=': {
+        ev.preventDefault();
+        zoomIn();
+
+        return;
+      }
+      case '-': {
+        ev.preventDefault();
+        zoomOut();
+
+        return;
+      }
+      case '0': {
+        ev.preventDefault();
+        resetView();
+
+        return;
+      }
+      case 'ArrowUp': {
+        ev.preventDefault();
+        panBy(0, 40);
+
+        return;
+      }
+      case 'ArrowDown': {
+        ev.preventDefault();
+        panBy(0, -40);
+
+        return;
+      }
+      case 'ArrowLeft': {
+        ev.preventDefault();
+        panBy(40, 0);
+
+        return;
+      }
+      case 'ArrowRight': {
+        ev.preventDefault();
+        panBy(-40, 0);
+
+        return;
+      }
+      default: {
+        return;
+      }
+    }
   });
 
   dialog.addEventListener(
@@ -336,17 +459,23 @@ const openZoom = (e: MouseEvent) => {
 
   document.body.appendChild(dialog);
 
-  dialog.inert = true;
-
   dialog.showModal();
-
-  dialog.inert = false;
+  btnClose.focus({ preventScroll: true });
 
   document.body.style.overflow = 'hidden';
 };
 </script>
 
 <template>
-  <!-- eslint-disable-next-line vue/no-v-html -- SVG output from mermaid renderer -->
-  <div :class="props.class" @click="openZoom" v-html="svg" />
+  <!-- eslint-disable vue/no-v-html -- SVG output from mermaid renderer -->
+  <div
+    :class="props.class"
+    role="button"
+    tabindex="0"
+    :aria-label="LABELS.trigger"
+    @click="openZoom"
+    @keydown="onTriggerKeydown"
+    v-html="svg"
+  />
+  <!-- eslint-enable vue/no-v-html -->
 </template>
