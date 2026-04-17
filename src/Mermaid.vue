@@ -22,6 +22,9 @@ const props = defineProps({
   },
 });
 
+const { useData } = await import('vitepress');
+const { page } = useData();
+
 const pluginSettings = ref({
   securityLevel: 'loose',
   startOnLoad: false,
@@ -54,9 +57,6 @@ const renderChart = async () => {
 };
 
 onMounted(async () => {
-  const { useData } = await import('vitepress');
-  const { page } = useData();
-
   mermaidPageTheme.value = page.value.frontmatter?.mermaidTheme || '';
 
   await init(pluginSettings.value.externalDiagrams);

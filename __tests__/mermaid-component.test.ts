@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { ref } from 'vue';
+import { defineComponent, h, ref, Suspense } from 'vue';
 import { flushPromises } from './helpers/setup';
 
 type ObserverCallback = (mutations: unknown[], observer: unknown) => void;
@@ -55,13 +55,22 @@ import Mermaid from '../src/Mermaid.vue';
 const GRAPH = encodeURIComponent('graph TD; A-->B');
 
 const mountMermaid = async (props?: Record<string, unknown>) => {
-  const wrapper = mount(Mermaid, {
-    props: {
-      graph: GRAPH,
-      id: 'test-1',
-      ...props,
+  const mermaidProps = {
+    graph: GRAPH,
+    id: 'test-1',
+    ...props,
+  };
+
+  const Wrapper = defineComponent({
+    setup() {
+      return () =>
+        h(Suspense, null, {
+          default: () => h(Mermaid, mermaidProps),
+        });
     },
   });
+
+  const wrapper = mount(Wrapper);
 
   await flushPromises();
 

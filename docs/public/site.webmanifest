@@ -1,6 +1,6 @@
 {
-  "name": "Vitepress mermaid viewer",
-  "short_name": "Vitepress mermaid viewer",
+  "name": "VitePress Mermaid Viewer",
+  "short_name": "VitePress Mermaid Viewer",
   "icons": [
     {
       "src": "/vitepress-mermaid-viewer/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
+  "theme_color": "#6366f1",
   "background_color": "#ffffff",
   "display": "standalone"
 }

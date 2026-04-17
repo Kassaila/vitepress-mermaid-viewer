@@ -1,13 +1,11 @@
 ---
 layout: home
-description:
-  VitePress plugin that renders mermaid code blocks as interactive diagrams with fullscreen zoom/pan
-  viewer.
+description: Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.
 
 hero:
   name: Mermaid Viewer
   text: Interactive mermaid diagrams for VitePress
-  tagline: Drop-in replacement for vitepress-plugin-mermaid with a built-in diagram viewer.
+  tagline: Zoom, pan, and fullscreen viewer for mermaid diagrams.
   image:
     src: /logo.svg
     alt: VitePress Mermaid Viewer
@@ -36,12 +34,8 @@ features:
       drag.
   - icon: "\U0001F319"
     title: Theme Reactivity
-    details:
-      Automatically switches between light and dark themes. Override per page via mermaidTheme
-      frontmatter.
+    details: Automatically switches between light and dark themes.
   - icon: "\U0001F4E6"
-    title: Drop-in Setup
-    details:
-      Single withMermaid() wrapper — no extra configuration. Or use granular MermaidMarkdown and
-      MermaidPlugin exports.
+    title: Easy Setup
+    details: Single wrapper — no extra configuration. Or use granular exports.
 ---

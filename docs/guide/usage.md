@@ -1,3 +1,7 @@
+---
+description: Install and configure vitepress-mermaid-viewer — setup guide, API reference, and viewer controls.
+---
+
 <img src="/og_image.png" alt="VitePress Mermaid Viewer — Interactive mermaid diagrams for VitePress" style="width: 100%; border-radius: 12px; margin-bottom: 24px;" />
 
 # Usage

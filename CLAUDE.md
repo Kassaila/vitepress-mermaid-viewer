@@ -5,14 +5,14 @@ repository.
 
 ## Project
 
-VitePress plugin that renders `mermaid` code blocks as interactive diagrams with a fullscreen
-zoom/pan viewer. Drop-in replacement for `vitepress-plugin-mermaid`. Peer dependencies:
-`mermaid >=10`, `vitepress >=1.0.0`.
+Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing. Peer
+dependencies: `mermaid >=10`, `vitepress >=1.0.0`.
 
 ## Commands
 
 ```bash
 npm run build          # Build with tsdown (ESM + CJS + .d.ts)
+npm run build:dev      # Build with NODE_ENV=development (sourcemaps)
 npm run dev            # Build in watch mode
 npm run lint           # ESLint check
 npm run lint:fix       # ESLint auto-fix
@@ -22,6 +22,7 @@ npm run check:types    # tsc --noEmit
 npm run test           # Vitest watch mode
 npm run test:run       # Vitest single run
 npm run test:coverage  # Vitest with coverage report
+npm run release:check  # check:all + npm pack --dry-run (pre-publish gate)
 npm run docs:dev       # VitePress dev server
 npm run docs:build     # Build documentation site
 npm run docs:preview   # Preview built docs
@@ -49,6 +50,9 @@ The plugin has three layers that work together:
 
 **`withMermaid`** (`src/with-mermaid.ts`) is a convenience wrapper that composes all three layers
 plus the required `optimizeDeps` and module aliases into a single VitePress config call.
+
+**`src/mermaid.ts`** exposes `init(externalDiagrams)` — dynamically imports mermaid and registers
+external diagram definitions. Used by the Vue component to keep mermaid out of the initial bundle.
 
 Entry point: `src/index.ts` — exports `withMermaid`, `MermaidMarkdown`, `MermaidPlugin`.
 

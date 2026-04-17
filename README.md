@@ -8,8 +8,6 @@
 
 **Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.**
 
-Drop-in replacement for `vitepress-plugin-mermaid` with a built-in diagram viewer.
-
 ## Features
 
 - Renders ` ```mermaid ` code blocks as diagrams
