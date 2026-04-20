@@ -81,13 +81,20 @@ export default defineConfig({
 
 ## Viewer Controls
 
-| Action      | Input                                         |
-| ----------- | --------------------------------------------- |
-| Open viewer | Click on diagram                              |
-| Zoom in/out | `+` / `-` buttons, mouse wheel, pinch gesture |
-| Pan         | Click and drag                                |
-| Reset       | `↻` button                                    |
-| Close       | `✕` button, `Escape` key                      |
+| Action      | Input                                                |
+| ----------- | ---------------------------------------------------- |
+| Open viewer | Click on diagram, `Enter` / `Space` when focused     |
+| Zoom in     | `+` button, mouse wheel up, pinch out, `+` / `=` key |
+| Zoom out    | `−` button, mouse wheel down, pinch in, `-` key      |
+| Pan         | Click and drag, arrow keys                           |
+| Reset       | `↻` button, `0` key                                  |
+| Close       | `✕` button, `Escape` key                             |
+
+### Accessibility
+
+- Diagrams are focusable (`role="button"`, `tabindex="0"`) and open with `Enter` or `Space`
+- Fullscreen `<dialog>` traps focus natively; focus returns to the triggering diagram on close
+- Controls expose `aria-label` and the zoom level announces changes via `aria-live="polite"`
 
 ## Frontmatter Options
 
