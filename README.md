@@ -14,6 +14,8 @@
 - Click any diagram to open fullscreen viewer
 - Zoom: buttons, mouse wheel (cursor-centered), pinch-to-zoom (touch)
 - Pan/drag with mouse or touch
+- Keyboard accessible — `Enter` / `Space` to open, `+` / `-` / `0` / arrows inside the viewer, ARIA
+  labels and focus management
 - Dark/light theme reactivity
 - Supports `mmd` alias for mermaid blocks
 - Per-page theme override via `mermaidTheme` frontmatter

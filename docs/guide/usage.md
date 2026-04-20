@@ -95,6 +95,7 @@ export default defineConfig({
 - Diagrams are focusable (`role="button"`, `tabindex="0"`) and open with `Enter` or `Space`
 - Fullscreen `<dialog>` traps focus natively; focus returns to the triggering diagram on close
 - Controls expose `aria-label` and the zoom level announces changes via `aria-live="polite"`
+- Visible focus rings on the trigger and zoom controls, themed with VitePress brand colors
 
 ## Frontmatter Options
 

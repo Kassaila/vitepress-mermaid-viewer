@@ -53,6 +53,17 @@
 - [x] Global component auto-registration via Vite plugin
 - [x] Diagram centered in `.vp-doc .mermaid` (flexbox)
 
+### Accessibility
+
+- [x] Keyboard-reachable diagram trigger — `role="button"`, `tabindex="0"`, opens on `Enter` /
+      `Space`
+- [x] In-dialog keyboard shortcuts — `+` / `=` zoom in, `-` zoom out, `0` reset, arrow keys pan
+- [x] `aria-label` on every control (`Zoom in`, `Zoom out`, `Reset zoom`, `Close`) and on the dialog
+- [x] `role="img"` on the rendered SVG; author-provided `aria-label` / `aria-labelledby` preserved
+- [x] `aria-live="polite"` on the zoom-level `<output>`
+- [x] Focus moves to the Close button on open; returns to the triggering diagram on close
+- [x] Visible `:focus-visible` rings (VitePress `--vp-c-brand-1`) on trigger and zoom controls
+
 ### NPM Scripts
 
 - [x] `build`, `build:dev`, `dev` (watch)
@@ -84,32 +95,7 @@
 
 ## TODO
 
-### Priority 1 — UX & Accessibility
-
-#### Fullscreen dialog a11y
-
-`<dialog>` viewer is keyboard-reachable but lacks proper focus management and ARIA labeling.
-
-**Implementation:**
-
-- Focus trap inside open dialog; restore focus to the triggering diagram on close
-- `aria-label` on each control button (`Zoom in`, `Zoom out`, `Reset`, `Close`)
-- `role="img"` + `aria-label` on the rendered diagram with author-provided alt text
-- Announce zoom changes via `aria-live="polite"` on the scale `<output>`
-- Visible focus rings (VitePress-themed) on all controls
-
-#### Keyboard zoom & pan
-
-Currently controls require mouse/touch. Add keyboard parity.
-
-- `+` / `−` to zoom (cursor-centered falls back to viewport center)
-- Arrow keys to pan
-- `0` to reset
-- Document shortcuts in `guide/usage.md`
-
----
-
-### Priority 2 — Features
+### Priority 1 — Features
 
 #### Copy & download
 
@@ -141,16 +127,14 @@ Let consumers override the controls panel without forking the component.
 
 ---
 
-### Priority 3 — Testing
+### Priority 2 — Testing
 
 #### Interaction tests
 
-Current tests cover rendering and theme observer. The `openZoom()` logic in `Mermaid.vue` (~200
-lines) is untested. Add coverage for:
+Rendering, theme observer, keyboard shortcuts, aria-live output, and focus restoration are covered.
+Pointer/wheel-path math still has no coverage:
 
-- Fullscreen open/close — click diagram → `<dialog>` appears; `Escape` / `✕` → cleanup removes
-  document-level `pointermove`/`pointerup` listeners and restores `document.body.style.overflow`
-- Zoom math — mouse wheel is cursor-centered; pinch clamps scale to `[0.25, 5]`
-- Pan drag — `panX` / `panY` update on `pointermove` while `isDragging`
-- Reset — `scale=1, panX=0, panY=0`
-- Theme switch re-render — MutationObserver fires `renderChart()` only on actual dark class toggle
+- Mouse wheel zoom — cursor-centered math (`panX` / `panY` offset by `cx * (factor - 1)`)
+- Pinch gesture — scale clamped to `[0.25, 5]` via two-pointer distance ratio
+- Pointer drag pan — `panX` / `panY` update on `pointermove` while `isDragging`, cleanup on
+  `pointerup` / `pointercancel`
