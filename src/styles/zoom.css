@@ -89,3 +89,13 @@ dialog.mermaid-zoom-overlay::backdrop {
   background: var(--vp-c-bg-alt);
   border-color: var(--vp-c-brand-3);
 }
+
+.mermaid-zoom-btn:focus {
+  outline: none;
+}
+
+.mermaid-zoom-btn:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+  border-color: var(--vp-c-brand-1);
+}

@@ -54,7 +54,10 @@ import Mermaid from '../src/Mermaid.vue';
 
 const GRAPH = encodeURIComponent('graph TD; A-->B');
 
-const mountMermaid = async (props?: Record<string, unknown>) => {
+const mountMermaid = async (
+  props?: Record<string, unknown>,
+  options?: { attachTo?: HTMLElement },
+) => {
   const mermaidProps = {
     graph: GRAPH,
     id: 'test-1',
@@ -70,7 +73,7 @@ const mountMermaid = async (props?: Record<string, unknown>) => {
     },
   });
 
-  const wrapper = mount(Wrapper);
+  const wrapper = mount(Wrapper, options);
 
   await flushPromises();
 
@@ -166,5 +169,118 @@ describe('Mermaid.vue', () => {
     expect(dialog).toBeTruthy();
 
     dialog?.remove();
+  });
+
+  it('opens zoom dialog on Enter key', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('keydown', { key: 'Enter' });
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay');
+
+    expect(dialog).toBeTruthy();
+
+    dialog?.remove();
+  });
+
+  it('opens zoom dialog on Space key', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('keydown', { key: ' ' });
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay');
+
+    expect(dialog).toBeTruthy();
+
+    dialog?.remove();
+  });
+
+  it('zooms in on "+" key and updates aria-live output', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('click');
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+    const output = dialog.querySelector('output.mermaid-zoom-scale') as HTMLElement;
+
+    expect(output.textContent).toBe('100%');
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '+' }));
+
+    expect(content.style.transform).toContain('scale(1.25)');
+    expect(output.textContent).toBe('125%');
+
+    dialog.remove();
+  });
+
+  it('zooms out on "-" key', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('click');
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '-' }));
+
+    expect(content.style.transform).toContain('scale(0.75)');
+
+    dialog.remove();
+  });
+
+  it('resets transform on "0" key', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('click');
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '+' }));
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '0' }));
+
+    expect(content.style.transform).toBe('translate(0px, 0px) scale(1)');
+
+    dialog.remove();
+  });
+
+  it('pans on arrow keys', async () => {
+    const wrapper = await mountMermaid();
+
+    await wrapper.find('div').trigger('click');
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+
+    expect(content.style.transform).toBe('translate(-40px, 0px) scale(1)');
+
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+
+    expect(content.style.transform).toBe('translate(-40px, -40px) scale(1)');
+
+    dialog.remove();
+  });
+
+  it('restores focus to trigger after dialog close', async () => {
+    const wrapper = await mountMermaid({}, { attachTo: document.body });
+    const trigger = wrapper.find('div').element as HTMLElement;
+
+    trigger.focus();
+
+    expect(document.activeElement).toBe(trigger);
+
+    await wrapper.find('div').trigger('click');
+
+    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+
+    dialog.close();
+
+    expect(document.activeElement).toBe(trigger);
+
+    wrapper.unmount();
   });
 });
