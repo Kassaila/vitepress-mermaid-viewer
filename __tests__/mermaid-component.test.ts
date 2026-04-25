@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
 import { defineComponent, h, ref, Suspense } from 'vue';
 import { flushPromises } from './helpers/setup';
+import mermaidConfig from './helpers/__mocks__/virtual-mermaid-config';
 
 type ObserverCallback = (mutations: unknown[], observer: unknown) => void;
 
@@ -282,5 +283,329 @@ describe('Mermaid.vue', () => {
     expect(document.activeElement).toBe(trigger);
 
     wrapper.unmount();
+  });
+
+  describe('Download functionality', () => {
+    let createObjectURLSpy: ReturnType<typeof vi.fn>;
+    let revokeObjectURLSpy: ReturnType<typeof vi.fn>;
+    let blobArgs: Array<{ parts: BlobPart[]; options?: BlobPropertyBag }>;
+    let clickSpy: ReturnType<typeof vi.fn<() => void>>;
+
+    beforeEach(() => {
+      blobArgs = [];
+      createObjectURLSpy = vi.fn().mockReturnValue('blob:mock-url');
+      revokeObjectURLSpy = vi.fn();
+
+      vi.stubGlobal('URL', {
+        ...URL,
+        createObjectURL: createObjectURLSpy,
+        revokeObjectURL: revokeObjectURLSpy,
+      });
+
+      const OriginalBlob = globalThis.Blob;
+
+      class MockBlob extends OriginalBlob {
+        constructor(parts: BlobPart[], options?: BlobPropertyBag) {
+          super(parts, options);
+          blobArgs.push({ parts, options });
+        }
+      }
+
+      vi.stubGlobal('Blob', MockBlob);
+
+      clickSpy = vi.fn<() => void>();
+
+      vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(clickSpy);
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+      vi.stubGlobal('MutationObserver', MockMutationObserver);
+    });
+
+    it('creates Blob with MIME type image/svg+xml on download', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector(
+        'button[aria-label="Download SVG"]',
+      ) as HTMLButtonElement;
+
+      expect(downloadBtn).toBeTruthy();
+
+      downloadBtn.click();
+
+      expect(blobArgs).toHaveLength(1);
+      expect(blobArgs[0].options).toEqual({ type: 'image/svg+xml' });
+
+      dialog.remove();
+    });
+
+    it('uses filename matching pattern mermaid-{id}.svg', async () => {
+      const capturedAnchors: HTMLAnchorElement[] = [];
+      const origCreateElement = document.createElement.bind(document);
+
+      vi.spyOn(document, 'createElement').mockImplementation(
+        (tag: string, options?: ElementCreationOptions) => {
+          const el = origCreateElement(tag, options);
+
+          if (tag === 'a') {
+            capturedAnchors.push(el as HTMLAnchorElement);
+          }
+
+          return el;
+        },
+      );
+
+      const wrapper = await mountMermaid({ id: 'my-diagram' });
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector(
+        'button[aria-label="Download SVG"]',
+      ) as HTMLButtonElement;
+
+      const anchorCountBefore = capturedAnchors.length;
+
+      downloadBtn.click();
+
+      const newAnchors = capturedAnchors.slice(anchorCountBefore);
+
+      expect(newAnchors).toHaveLength(1);
+      expect(newAnchors[0].download).toBe('mermaid-my-diagram.svg');
+
+      dialog.remove();
+    });
+
+    it('calls URL.revokeObjectURL() after download', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector(
+        'button[aria-label="Download SVG"]',
+      ) as HTMLButtonElement;
+
+      downloadBtn.click();
+
+      expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:mock-url');
+
+      dialog.remove();
+    });
+  });
+
+  describe('Copy functionality', () => {
+    let writeTextSpy: ReturnType<typeof vi.fn>;
+
+    const flushMicrotasks = async () => {
+      for (let i = 0; i < 10; i++) {
+        await Promise.resolve();
+      }
+    };
+
+    beforeEach(() => {
+      writeTextSpy = vi.fn().mockResolvedValue(undefined);
+
+      Object.defineProperty(navigator, 'clipboard', {
+        value: { writeText: writeTextSpy },
+        writable: true,
+        configurable: true,
+      });
+    });
+
+    it('calls navigator.clipboard.writeText() with SVG source', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
+
+      expect(copyBtn).toBeTruthy();
+
+      copyBtn.click();
+      await flushPromises();
+
+      expect(writeTextSpy).toHaveBeenCalledTimes(1);
+
+      const calledWith = writeTextSpy.mock.calls[0][0] as string;
+
+      expect(calledWith).toContain('<svg');
+      expect(calledWith).toContain('</svg>');
+
+      dialog.remove();
+    });
+
+    it('shows ✓ icon on success for 2 seconds then reverts to 📋', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
+
+      vi.useFakeTimers();
+
+      copyBtn.click();
+      await flushMicrotasks();
+
+      expect(copyBtn.textContent).toBe('\u2713');
+      expect(copyBtn.getAttribute('aria-label')).toBe('Copied');
+
+      vi.advanceTimersByTime(2000);
+
+      expect(copyBtn.textContent).toBe('\uD83D\uDCCB');
+      expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
+
+      vi.useRealTimers();
+      dialog.remove();
+    });
+
+    it('shows ✗ icon on error for 2 seconds then reverts to 📋', async () => {
+      writeTextSpy.mockRejectedValue(new Error('denied'));
+
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
+
+      vi.useFakeTimers();
+
+      copyBtn.click();
+      await flushMicrotasks();
+
+      expect(copyBtn.textContent).toBe('\u2717');
+      expect(copyBtn.getAttribute('aria-label')).toBe('Copy failed');
+
+      vi.advanceTimersByTime(2000);
+
+      expect(copyBtn.textContent).toBe('\uD83D\uDCCB');
+      expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
+
+      vi.useRealTimers();
+      dialog.remove();
+    });
+  });
+
+  describe('Controls panel and options', () => {
+    afterEach(() => {
+      /**
+       * Reset mock config to defaults
+       */
+      delete (mermaidConfig as Record<string, unknown>).download;
+      delete (mermaidConfig as Record<string, unknown>).copy;
+    });
+
+    it('both buttons appear in controls panel by default', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(downloadBtn).toBeTruthy();
+      expect(copyBtn).toBeTruthy();
+
+      dialog.remove();
+    });
+
+    it('Download button has aria-label="Download SVG"', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
+
+      expect(downloadBtn).toBeTruthy();
+      expect(downloadBtn!.getAttribute('aria-label')).toBe('Download SVG');
+
+      dialog.remove();
+    });
+
+    it('Copy button has aria-label="Copy SVG"', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(copyBtn).toBeTruthy();
+      expect(copyBtn!.getAttribute('aria-label')).toBe('Copy SVG');
+
+      dialog.remove();
+    });
+
+    it('buttons use CSS class mermaid-zoom-btn', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(downloadBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
+      expect(copyBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
+
+      dialog.remove();
+    });
+
+    it('download: false hides Download button', async () => {
+      (mermaidConfig as Record<string, unknown>).download = false;
+
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(downloadBtn).toBeNull();
+      expect(copyBtn).toBeTruthy();
+
+      dialog.remove();
+    });
+
+    it('copy: false hides Copy button', async () => {
+      (mermaidConfig as Record<string, unknown>).copy = false;
+
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(downloadBtn).toBeTruthy();
+      expect(copyBtn).toBeNull();
+
+      dialog.remove();
+    });
+
+    it('Copy button has aria-live="polite"', async () => {
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+
+      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+
+      expect(copyBtn!.getAttribute('aria-live')).toBe('polite');
+
+      dialog.remove();
+    });
   });
 });

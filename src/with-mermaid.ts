@@ -1,13 +1,13 @@
 import type { UserConfig } from 'vitepress';
-import type { MermaidConfig } from 'mermaid';
 
 import { MermaidPlugin } from './vite-plugin';
+import type { MermaidPluginOptions } from './vite-plugin';
 import { MermaidMarkdown } from './markdown-plugin';
 import type { MermaidPluginConfig } from './markdown-plugin';
 
 declare module 'vitepress' {
   interface UserConfig {
-    mermaid?: MermaidConfig;
+    mermaid?: MermaidPluginOptions;
     mermaidPlugin?: MermaidPluginConfig;
   }
 }

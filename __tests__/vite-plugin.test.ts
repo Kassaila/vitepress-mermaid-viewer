@@ -73,7 +73,12 @@ describe('MermaidPlugin', () => {
       const json = result!.replace('export default ', '').replace(';', '');
       const config = JSON.parse(json);
 
-      expect(config).toEqual({ securityLevel: 'loose', startOnLoad: false });
+      expect(config).toEqual({
+        securityLevel: 'loose',
+        startOnLoad: false,
+        download: true,
+        copy: true,
+      });
     });
 
     it('returns undefined for other ids', () => {

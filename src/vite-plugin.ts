@@ -1,15 +1,24 @@
 import type { Plugin } from 'vite';
 import type { MermaidConfig } from 'mermaid';
 
+export interface MermaidPluginOptions extends MermaidConfig {
+  download?: boolean;
+  copy?: boolean;
+}
+
 const DEFAULT_CONFIG: MermaidConfig = {
   securityLevel: 'loose',
   startOnLoad: false,
 };
 
-export const MermaidPlugin = (inlineConfig?: MermaidConfig): Plugin => {
-  const config: MermaidConfig = {
+export const MermaidPlugin = (inlineConfig?: MermaidPluginOptions): Plugin => {
+  const { download, copy, ...mermaidConfig } = inlineConfig ?? {};
+
+  const config = {
     ...DEFAULT_CONFIG,
-    ...inlineConfig,
+    ...mermaidConfig,
+    download: download ?? true,
+    copy: copy ?? true,
   };
 
   const virtualModuleId = 'virtual:mermaid-config';

@@ -31,6 +31,10 @@ const LABELS = {
   zoomOut: 'Zoom out',
   reset: 'Reset zoom',
   close: 'Close',
+  download: 'Download SVG',
+  copy: 'Copy SVG',
+  copied: 'Copied',
+  copyFailed: 'Copy failed',
 } as const;
 
 const ICONS = {
@@ -38,6 +42,10 @@ const ICONS = {
   zoomIn: '+',
   zoomOut: '\u2212',
   reset: '\u21BB',
+  download: '\u2B07',
+  copy: '\uD83D\uDCCB',
+  copyOk: '\u2713',
+  copyFail: '\u2717',
 } as const;
 
 const CLASSES = {
@@ -177,6 +185,44 @@ const createBtn = (text: string, title: string): HTMLButtonElement => {
   return btn;
 };
 
+const getSvgSource = (container: HTMLElement): string => {
+  const svgEl = container.querySelector(`.${CLASSES.content} svg`);
+
+  return svgEl ? svgEl.outerHTML : '';
+};
+
+const downloadSvg = (svgSource: string, id: string): void => {
+  const blob = new Blob([svgSource], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+
+  a.href = url;
+  a.download = `mermaid-${id}.svg`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
+const copySvg = async (svgSource: string, copyBtn: HTMLButtonElement): Promise<void> => {
+  try {
+    await navigator.clipboard.writeText(svgSource);
+    copyBtn.textContent = ICONS.copyOk;
+
+    copyBtn.setAttribute('aria-label', LABELS.copied);
+  } catch {
+    copyBtn.textContent = ICONS.copyFail;
+
+    copyBtn.setAttribute('aria-label', LABELS.copyFailed);
+  }
+
+  setTimeout(() => {
+    copyBtn.textContent = ICONS.copy;
+
+    copyBtn.setAttribute('aria-label', LABELS.copy);
+  }, 2000);
+};
+
 const onTriggerKeydown = (ev: KeyboardEvent) => {
   if (ev.key !== 'Enter' && ev.key !== ' ') {
     return;
@@ -235,11 +281,49 @@ const openZoom = (e: Event) => {
   scaleDisplay.setAttribute('aria-label', LABELS.zoomLevel);
   scaleDisplay.setAttribute('aria-live', 'polite');
 
+  const controlItems: Array<HTMLElement | HTMLOutputElement> = [scaleDisplay];
+
+  if (pluginSettings.value.download !== false) {
+    const btnDownload = createBtn(ICONS.download, LABELS.download);
+
+    btnDownload.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+
+      const source = getSvgSource(dialog);
+
+      if (source) {
+        downloadSvg(source, props.id);
+      }
+    });
+
+    controlItems.push(btnDownload);
+  }
+
+  if (pluginSettings.value.copy !== false) {
+    const btnCopy = createBtn(ICONS.copy, LABELS.copy);
+
+    btnCopy.setAttribute('aria-live', 'polite');
+
+    btnCopy.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+
+      const source = getSvgSource(dialog);
+
+      if (source) {
+        void copySvg(source, btnCopy);
+      }
+    });
+
+    controlItems.push(btnCopy);
+  }
+
+  controlItems.push(btnClose, btnZoomIn, btnZoomOut, btnReset);
+
   const controls = document.createElement('div');
 
   controls.className = CLASSES.controls;
 
-  controls.append(scaleDisplay, btnClose, btnZoomIn, btnZoomOut, btnReset);
+  controls.append(...controlItems);
 
   dialog.append(controls, content);
 
