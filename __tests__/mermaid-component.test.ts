@@ -459,7 +459,7 @@ describe('Mermaid.vue', () => {
 
       vi.advanceTimersByTime(2000);
 
-      expect(copyBtn.textContent).toBe('\uD83D\uDCCB');
+      expect(copyBtn.textContent).toBe('\u2398');
       expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
 
       vi.useRealTimers();
@@ -486,7 +486,7 @@ describe('Mermaid.vue', () => {
 
       vi.advanceTimersByTime(2000);
 
-      expect(copyBtn.textContent).toBe('\uD83D\uDCCB');
+      expect(copyBtn.textContent).toBe('\u2398');
       expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
 
       vi.useRealTimers();

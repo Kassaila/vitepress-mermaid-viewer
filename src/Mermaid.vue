@@ -42,8 +42,8 @@ const ICONS = {
   zoomIn: '+',
   zoomOut: '\u2212',
   reset: '\u21BB',
-  download: '\u2B07',
-  copy: '\uD83D\uDCCB',
+  download: '\u2193',
+  copy: '\u2398',
   copyOk: '\u2713',
   copyFail: '\u2717',
 } as const;
@@ -54,6 +54,8 @@ const CLASSES = {
   controls: 'mermaid-zoom-controls',
   scale: 'mermaid-zoom-scale',
   btn: 'mermaid-zoom-btn',
+  btnAction: 'mermaid-zoom-btn-action',
+  btnZoom: 'mermaid-zoom-btn-zoom',
   dragging: 'is-dragging',
 } as const;
 
@@ -273,6 +275,10 @@ const openZoom = (e: Event) => {
   const btnZoomOut = createBtn(ICONS.zoomOut, LABELS.zoomOut);
   const btnReset = createBtn(ICONS.reset, LABELS.reset);
 
+  btnZoomIn.classList.add(CLASSES.btnZoom);
+  btnZoomOut.classList.add(CLASSES.btnZoom);
+  btnReset.classList.add(CLASSES.btnZoom);
+
   const scaleDisplay = document.createElement('output');
 
   scaleDisplay.className = CLASSES.scale;
@@ -283,8 +289,12 @@ const openZoom = (e: Event) => {
 
   const controlItems: Array<HTMLElement | HTMLOutputElement> = [scaleDisplay];
 
+  controlItems.push(btnClose, btnZoomIn, btnZoomOut, btnReset);
+
   if (pluginSettings.value.download !== false) {
     const btnDownload = createBtn(ICONS.download, LABELS.download);
+
+    btnDownload.classList.add(CLASSES.btnAction);
 
     btnDownload.addEventListener('click', (ev) => {
       ev.stopPropagation();
@@ -302,6 +312,7 @@ const openZoom = (e: Event) => {
   if (pluginSettings.value.copy !== false) {
     const btnCopy = createBtn(ICONS.copy, LABELS.copy);
 
+    btnCopy.classList.add(CLASSES.btnAction);
     btnCopy.setAttribute('aria-live', 'polite');
 
     btnCopy.addEventListener('click', (ev) => {
@@ -316,8 +327,6 @@ const openZoom = (e: Event) => {
 
     controlItems.push(btnCopy);
   }
-
-  controlItems.push(btnClose, btnZoomIn, btnZoomOut, btnReset);
 
   const controls = document.createElement('div');
 

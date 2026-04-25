@@ -69,17 +69,23 @@ dialog.mermaid-zoom-overlay::backdrop {
 
 .mermaid-zoom-scale {
   grid-row: 1;
+  grid-column: 1 / 3;
   font-size: 0.875rem;
   cursor: default;
   user-select: none;
 }
 
-.mermaid-zoom-controls > .mermaid-zoom-btn:nth-last-child(-n + 3) {
+.mermaid-zoom-controls
+  > .mermaid-zoom-btn:not(.mermaid-zoom-btn-action):not(.mermaid-zoom-btn-zoom) {
+  grid-row: 1;
+}
+
+.mermaid-zoom-btn-zoom {
   grid-row: 2;
 }
 
-.mermaid-zoom-controls > .mermaid-zoom-btn:not(:nth-last-child(-n + 3)) {
-  grid-row: 1;
+.mermaid-zoom-btn-action {
+  grid-row: 3;
 }
 
 .mermaid-zoom-btn {
