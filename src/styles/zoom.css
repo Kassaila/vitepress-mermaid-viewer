@@ -109,3 +109,9 @@ dialog.mermaid-zoom-overlay::backdrop {
   outline-offset: 2px;
   border-color: var(--vp-c-brand-1);
 }
+
+.mermaid-zoom-btn-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}

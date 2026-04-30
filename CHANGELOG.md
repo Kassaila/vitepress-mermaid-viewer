@@ -9,6 +9,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Download SVG button in the fullscreen viewer — downloads the rendered diagram as
+  `mermaid-<id>.svg`
+- Download PNG button in the fullscreen viewer — renders the diagram to a 2x HiDPI canvas (capped at
+  4096 px on the longest side) and downloads `mermaid-<id>.png`
+- `download` option on `MermaidPlugin` — show/hide the Download SVG button (default: `true`)
+- `downloadPng` option on `MermaidPlugin` — show/hide the Download PNG button (default: `true`)
 - Keyboard navigation for the fullscreen viewer:
   - `Enter` / `Space` on a focused diagram opens the viewer
   - `+` / `=` zoom in, `-` zoom out, `0` resets, arrow keys pan 40px

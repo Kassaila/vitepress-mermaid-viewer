@@ -404,106 +404,13 @@ describe('Mermaid.vue', () => {
         'button[aria-label="Download SVG"]',
       ) as HTMLButtonElement;
 
+      vi.useFakeTimers();
+
       downloadBtn.click();
 
+      vi.advanceTimersByTime(10_000);
+
       expect(revokeObjectURLSpy).toHaveBeenCalledWith('blob:mock-url');
-
-      wrapper.unmount();
-    });
-  });
-
-  describe('Copy functionality', () => {
-    let writeTextSpy: ReturnType<typeof vi.fn>;
-
-    const flushMicrotasks = async () => {
-      for (let i = 0; i < 10; i++) {
-        await Promise.resolve();
-      }
-    };
-
-    beforeEach(() => {
-      writeTextSpy = vi.fn().mockResolvedValue(undefined);
-
-      Object.defineProperty(navigator, 'clipboard', {
-        value: { writeText: writeTextSpy },
-        writable: true,
-        configurable: true,
-      });
-    });
-
-    it('calls navigator.clipboard.writeText() with SVG source', async () => {
-      const wrapper = await mountMermaid();
-
-      await wrapper.find('div').trigger('click');
-      await flushPromises();
-
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
-
-      expect(copyBtn).toBeTruthy();
-
-      copyBtn.click();
-      await flushPromises();
-
-      expect(writeTextSpy).toHaveBeenCalledTimes(1);
-
-      const calledWith = writeTextSpy.mock.calls[0][0] as string;
-
-      expect(calledWith).toContain('<svg');
-      expect(calledWith).toContain('</svg>');
-
-      wrapper.unmount();
-    });
-
-    it('shows ✓ icon on success for 2 seconds then reverts to 📋', async () => {
-      const wrapper = await mountMermaid();
-
-      await wrapper.find('div').trigger('click');
-      await flushPromises();
-
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
-
-      vi.useFakeTimers();
-
-      copyBtn.click();
-      await flushMicrotasks();
-
-      expect(copyBtn.textContent).toBe('\u2713');
-      expect(copyBtn.getAttribute('aria-label')).toBe('Copied');
-
-      vi.advanceTimersByTime(2000);
-
-      expect(copyBtn.textContent).toBe('\u2398');
-      expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
-
-      vi.useRealTimers();
-      wrapper.unmount();
-    });
-
-    it('shows ✗ icon on error for 2 seconds then reverts to 📋', async () => {
-      writeTextSpy.mockRejectedValue(new Error('denied'));
-
-      const wrapper = await mountMermaid();
-
-      await wrapper.find('div').trigger('click');
-      await flushPromises();
-
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]') as HTMLButtonElement;
-
-      vi.useFakeTimers();
-
-      copyBtn.click();
-      await flushMicrotasks();
-
-      expect(copyBtn.textContent).toBe('\u2717');
-      expect(copyBtn.getAttribute('aria-label')).toBe('Copy failed');
-
-      vi.advanceTimersByTime(2000);
-
-      expect(copyBtn.textContent).toBe('\u2398');
-      expect(copyBtn.getAttribute('aria-label')).toBe('Copy SVG');
 
       vi.useRealTimers();
       wrapper.unmount();
@@ -516,10 +423,10 @@ describe('Mermaid.vue', () => {
        * Reset mock config to defaults
        */
       delete (mermaidConfig as Record<string, unknown>).download;
-      delete (mermaidConfig as Record<string, unknown>).copy;
+      delete (mermaidConfig as Record<string, unknown>).downloadPng;
     });
 
-    it('both buttons appear in controls panel by default', async () => {
+    it('both action buttons appear in controls panel by default', async () => {
       const wrapper = await mountMermaid();
 
       await wrapper.find('div').trigger('click');
@@ -527,10 +434,10 @@ describe('Mermaid.vue', () => {
 
       const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+      const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
       expect(downloadBtn).toBeTruthy();
-      expect(copyBtn).toBeTruthy();
+      expect(downloadPngBtn).toBeTruthy();
 
       wrapper.unmount();
     });
@@ -550,22 +457,22 @@ describe('Mermaid.vue', () => {
       wrapper.unmount();
     });
 
-    it('Copy button has aria-label="Copy SVG"', async () => {
+    it('Download PNG button has aria-label="Download PNG"', async () => {
       const wrapper = await mountMermaid();
 
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+      const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
-      expect(copyBtn).toBeTruthy();
-      expect(copyBtn!.getAttribute('aria-label')).toBe('Copy SVG');
+      expect(downloadPngBtn).toBeTruthy();
+      expect(downloadPngBtn!.getAttribute('aria-label')).toBe('Download PNG');
 
       wrapper.unmount();
     });
 
-    it('buttons use CSS class mermaid-zoom-btn', async () => {
+    it('action buttons use CSS class mermaid-zoom-btn', async () => {
       const wrapper = await mountMermaid();
 
       await wrapper.find('div').trigger('click');
@@ -573,15 +480,15 @@ describe('Mermaid.vue', () => {
 
       const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+      const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
       expect(downloadBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
-      expect(copyBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
+      expect(downloadPngBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
 
       wrapper.unmount();
     });
 
-    it('download: false hides Download button', async () => {
+    it('download: false hides Download SVG button', async () => {
       (mermaidConfig as Record<string, unknown>).download = false;
 
       const wrapper = await mountMermaid();
@@ -591,16 +498,16 @@ describe('Mermaid.vue', () => {
 
       const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+      const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
       expect(downloadBtn).toBeNull();
-      expect(copyBtn).toBeTruthy();
+      expect(downloadPngBtn).toBeTruthy();
 
       wrapper.unmount();
     });
 
-    it('copy: false hides Copy button', async () => {
-      (mermaidConfig as Record<string, unknown>).copy = false;
+    it('downloadPng: false hides Download PNG button', async () => {
+      (mermaidConfig as Record<string, unknown>).downloadPng = false;
 
       const wrapper = await mountMermaid();
 
@@ -609,24 +516,10 @@ describe('Mermaid.vue', () => {
 
       const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
+      const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
       expect(downloadBtn).toBeTruthy();
-      expect(copyBtn).toBeNull();
-
-      wrapper.unmount();
-    });
-
-    it('Copy button has aria-live="polite"', async () => {
-      const wrapper = await mountMermaid();
-
-      await wrapper.find('div').trigger('click');
-      await flushPromises();
-
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-      const copyBtn = dialog.querySelector('button[aria-label="Copy SVG"]');
-
-      expect(copyBtn!.getAttribute('aria-live')).toBe('polite');
+      expect(downloadPngBtn).toBeNull();
 
       wrapper.unmount();
     });

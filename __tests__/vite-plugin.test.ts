@@ -77,7 +77,7 @@ describe('MermaidPlugin', () => {
         securityLevel: 'loose',
         startOnLoad: false,
         download: true,
-        copy: true,
+        downloadPng: true,
       });
     });
 

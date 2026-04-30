@@ -2,6 +2,8 @@
 import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 
 import { useZoomPan } from './useZoomPan';
+import { cloneMermaidSvg, getSvgSource } from './helpers/svg';
+import { downloadFileSvg, downloadFilePng } from './helpers/export';
 
 /**
  * Props & Emits
@@ -12,11 +14,11 @@ const props = withDefaults(
     svgHtml: string;
     diagramId: string;
     download?: boolean;
-    copy?: boolean;
+    downloadPng?: boolean;
   }>(),
   {
     download: true,
-    copy: true,
+    downloadPng: true,
   },
 );
 
@@ -25,7 +27,6 @@ const emit = defineEmits<{
 }>();
 
 const LABELS = {
-  diagram: 'Mermaid diagram',
   dialog: 'Diagram viewer',
   zoomLevel: 'Zoom level',
   zoomIn: 'Zoom in',
@@ -33,9 +34,7 @@ const LABELS = {
   reset: 'Reset zoom',
   close: 'Close',
   download: 'Download SVG',
-  copy: 'Copy SVG',
-  copied: 'Copied',
-  copyFailed: 'Copy failed',
+  downloadPng: 'Download PNG',
 } as const;
 
 const ICONS = {
@@ -43,10 +42,8 @@ const ICONS = {
   zoomIn: '+',
   zoomOut: '\u2212',
   reset: '\u21BB',
-  download: '\u2193',
-  copy: '\u2398',
-  copyOk: '\u2713',
-  copyFail: '\u2717',
+  download: 'SVG',
+  downloadPng: 'PNG',
 } as const;
 
 /**
@@ -56,7 +53,6 @@ const ICONS = {
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const contentRef = ref<HTMLElement | null>(null);
 const closeBtnRef = ref<HTMLButtonElement | null>(null);
-const copyBtnRef = ref<HTMLButtonElement | null>(null);
 
 const {
   zoomIn,
@@ -71,105 +67,34 @@ const {
 } = useZoomPan({ contentRef });
 
 /**
- * Helper functions
+ * Computed & handlers
  */
 
-const cloneMermaidSvg = (svgHtml: string, _diagramId: string): string => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(svgHtml, 'text/html');
-  const svgEl = doc.querySelector('svg');
-
-  if (!svgEl) {
-    return svgHtml;
-  }
-
-  const origId = svgEl.id;
-
-  if (!svgEl.hasAttribute('role')) {
-    svgEl.setAttribute('role', 'img');
-  }
-
-  if (!svgEl.hasAttribute('aria-label') && !svgEl.hasAttribute('aria-labelledby')) {
-    svgEl.setAttribute('aria-label', LABELS.diagram);
-  }
-
-  if (!origId) {
-    return svgEl.outerHTML;
-  }
-
-  const newId = origId + '-zoom';
-
-  svgEl.id = newId;
-
-  const style = svgEl.querySelector('style');
-
-  if (style?.textContent) {
-    style.textContent = style.textContent.replaceAll('#' + origId, '#' + newId);
-  }
-
-  return svgEl.outerHTML;
-};
-
-const clonedSvgHtml = computed(() => cloneMermaidSvg(props.svgHtml, props.diagramId));
-
-const getSvgSource = (): string => {
-  const el = contentRef.value;
-
-  if (!el) {
-    return '';
-  }
-
-  const svgEl = el.querySelector('svg');
-
-  return svgEl ? svgEl.outerHTML : '';
-};
-
-const downloadSvg = (svgSource: string, id: string): void => {
-  const blob = new Blob([svgSource], { type: 'image/svg+xml' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-
-  a.href = url;
-  a.download = `mermaid-${id}.svg`;
-
-  a.click();
-
-  URL.revokeObjectURL(url);
-};
-
-const copySvg = async (svgSource: string, copyBtn: HTMLButtonElement): Promise<void> => {
-  try {
-    await navigator.clipboard.writeText(svgSource);
-    copyBtn.textContent = ICONS.copyOk;
-
-    copyBtn.setAttribute('aria-label', LABELS.copied);
-  } catch {
-    copyBtn.textContent = ICONS.copyFail;
-
-    copyBtn.setAttribute('aria-label', LABELS.copyFailed);
-  }
-
-  setTimeout(() => {
-    copyBtn.textContent = ICONS.copy;
-
-    copyBtn.setAttribute('aria-label', LABELS.copy);
-  }, 2000);
-};
+const clonedSvgHtml = computed(() => cloneMermaidSvg(props.svgHtml));
 
 const onDownload = () => {
-  const source = getSvgSource();
+  const source = getSvgSource(contentRef.value);
 
   if (source) {
-    downloadSvg(source, props.diagramId);
+    downloadFileSvg(source, props.diagramId);
   }
 };
 
-const onCopy = () => {
-  const source = getSvgSource();
-  const btn = copyBtnRef.value;
+let pngExporting = false;
 
-  if (source && btn) {
-    void copySvg(source, btn);
+const onDownloadPng = () => {
+  if (pngExporting) {
+    return;
+  }
+
+  const source = getSvgSource(contentRef.value);
+
+  if (source) {
+    pngExporting = true;
+
+    downloadFilePng(source, props.diagramId, () => {
+      pngExporting = false;
+    });
   }
 };
 
@@ -258,7 +183,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           v-if="download"
-          class="mermaid-zoom-btn mermaid-zoom-btn-action"
+          class="mermaid-zoom-btn mermaid-zoom-btn-action mermaid-zoom-btn-text"
           :title="LABELS.download"
           :aria-label="LABELS.download"
           @click="onDownload"
@@ -266,15 +191,13 @@ onBeforeUnmount(() => {
           {{ ICONS.download }}
         </button>
         <button
-          v-if="copy"
-          ref="copyBtnRef"
-          class="mermaid-zoom-btn mermaid-zoom-btn-action"
-          :title="LABELS.copy"
-          :aria-label="LABELS.copy"
-          aria-live="polite"
-          @click="onCopy"
+          v-if="downloadPng"
+          class="mermaid-zoom-btn mermaid-zoom-btn-action mermaid-zoom-btn-text"
+          :title="LABELS.downloadPng"
+          :aria-label="LABELS.downloadPng"
+          @click="onDownloadPng"
         >
-          {{ ICONS.copy }}
+          {{ ICONS.downloadPng }}
         </button>
       </div>
       <div

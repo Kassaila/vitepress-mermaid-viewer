@@ -3,7 +3,7 @@ import type { MermaidConfig } from 'mermaid';
 
 export interface MermaidPluginOptions extends MermaidConfig {
   download?: boolean;
-  copy?: boolean;
+  downloadPng?: boolean;
 }
 
 const DEFAULT_CONFIG: MermaidConfig = {
@@ -12,13 +12,13 @@ const DEFAULT_CONFIG: MermaidConfig = {
 };
 
 export const MermaidPlugin = (inlineConfig?: MermaidPluginOptions): Plugin => {
-  const { download, copy, ...mermaidConfig } = inlineConfig ?? {};
+  const { download, downloadPng, ...mermaidConfig } = inlineConfig ?? {};
 
   const config = {
     ...DEFAULT_CONFIG,
     ...mermaidConfig,
     download: download ?? true,
-    copy: copy ?? true,
+    downloadPng: downloadPng ?? true,
   };
 
   const virtualModuleId = 'virtual:mermaid-config';

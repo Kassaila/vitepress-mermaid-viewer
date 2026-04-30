@@ -157,7 +157,7 @@ onUnmounted(() => mut?.disconnect());
     :svg-html="svg!"
     :diagram-id="props.id"
     :download="pluginSettings.download !== false"
-    :copy="pluginSettings.copy !== false"
+    :download-png="pluginSettings.downloadPng !== false"
     @close="closeViewer"
   />
   <!-- eslint-enable vue/no-v-html -->
