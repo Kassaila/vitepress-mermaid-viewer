@@ -1,4 +1,5 @@
 ---
+title: Examples
 description: Interactive mermaid diagram examples — flowcharts, sequence, class, state, gantt, pie, and git graphs.
 ---
 

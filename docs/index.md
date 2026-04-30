@@ -1,5 +1,7 @@
 ---
 layout: home
+title: VitePress Mermaid Viewer
+titleTemplate: false
 description: Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.
 
 hero:

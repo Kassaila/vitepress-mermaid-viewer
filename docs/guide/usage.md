@@ -1,4 +1,5 @@
 ---
+title: Usage
 description: Install and configure vitepress-mermaid-viewer — setup guide, API reference, and viewer controls.
 ---
 

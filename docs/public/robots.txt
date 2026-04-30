@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://kassaila.github.io/vitepress-mermaid-viewer/sitemap.xml
