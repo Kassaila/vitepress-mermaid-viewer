@@ -46,6 +46,7 @@ dialog.mermaid-zoom-overlay::backdrop {
   right: 1rem;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-auto-columns: auto;
   gap: 0.5rem;
   z-index: 1000;
   padding: 0.5rem;
@@ -67,15 +68,24 @@ dialog.mermaid-zoom-overlay::backdrop {
 }
 
 .mermaid-zoom-scale {
+  grid-row: 1;
   grid-column: 1 / 3;
   font-size: 0.875rem;
   cursor: default;
   user-select: none;
 }
 
-.mermaid-zoom-controls > .mermaid-zoom-btn:first-of-type {
-  grid-column: 3;
+.mermaid-zoom-controls
+  > .mermaid-zoom-btn:not(.mermaid-zoom-btn-action):not(.mermaid-zoom-btn-zoom) {
   grid-row: 1;
+}
+
+.mermaid-zoom-btn-zoom {
+  grid-row: 2;
+}
+
+.mermaid-zoom-btn-action {
+  grid-row: 3;
 }
 
 .mermaid-zoom-btn {
@@ -98,4 +108,10 @@ dialog.mermaid-zoom-overlay::backdrop {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
   border-color: var(--vp-c-brand-1);
+}
+
+.mermaid-zoom-btn-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
 }

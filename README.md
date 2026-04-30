@@ -92,14 +92,16 @@ export default defineConfig({
 
 ## Viewer Controls
 
-| Action      | Input                                                |
-| ----------- | ---------------------------------------------------- |
-| Open viewer | Click on diagram, `Enter` / `Space` when focused     |
-| Zoom in     | `+` button, mouse wheel up, pinch out, `+` / `=` key |
-| Zoom out    | `−` button, mouse wheel down, pinch in, `-` key      |
-| Pan         | Click and drag, arrow keys                           |
-| Reset       | `↻` button, `0` key                                  |
-| Close       | `✕` button, `Escape` key                             |
+| Action       | Input                                                |
+| ------------ | ---------------------------------------------------- |
+| Open viewer  | Click on diagram, `Enter` / `Space` when focused     |
+| Zoom in      | `+` button, mouse wheel up, pinch out, `+` / `=` key |
+| Zoom out     | `−` button, mouse wheel down, pinch in, `-` key      |
+| Pan          | Click and drag, arrow keys                           |
+| Reset        | `↻` button, `0` key                                  |
+| Download SVG | `SVG` button in viewer                               |
+| Download PNG | `PNG` button in viewer                               |
+| Close        | `✕` button, `Escape` key                             |
 
 ## Frontmatter Options
 
@@ -130,6 +132,11 @@ Markdown-it plugin. Intercepts ` ```mermaid ` fences and renders them as `<Merma
 Vite plugin. Injects `<Mermaid>` component globally and serves mermaid config via virtual module.
 
 Accepts [mermaid configuration](https://mermaid.js.org/config/schema-docs/config.html) object.
+
+**Additional options:**
+
+- `download` — show Download SVG button in viewer (default: `true`)
+- `downloadPng` — show Download PNG button in viewer (default: `true`)
 
 ## Contributing
 
