@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Download SVG button in the fullscreen viewer — downloads the rendered diagram as
+  `mermaid-<id>.svg`
+- Download PNG button in the fullscreen viewer — renders the diagram to a 2x HiDPI canvas (capped at
+  4096 px on the longest side) and downloads `mermaid-<id>.png`
+- `download` option on `MermaidPlugin` — show/hide the Download SVG button (default: `true`)
+- `downloadPng` option on `MermaidPlugin` — show/hide the Download PNG button (default: `true`)
+- Keyboard navigation for the fullscreen viewer:
+  - `Enter` / `Space` on a focused diagram opens the viewer
+  - `+` / `=` zoom in, `-` zoom out, `0` resets, arrow keys pan 40px
+- ARIA labeling:
+  - `role="button"` + `aria-label` on the diagram trigger
+  - `aria-label` on every control (`Zoom in`, `Zoom out`, `Reset zoom`, `Close`) and on the dialog
+  - `role="img"` on the rendered SVG with author-provided `aria-label`/`aria-labelledby` preserved
+  - `aria-live="polite"` on the zoom-level `<output>` so screen readers announce zoom changes
+- Focus management — focus moves to the Close button on open and returns to the triggering diagram
+  on close
+- VitePress-themed focus rings on the diagram trigger and all zoom controls
+- Keyboard interaction tests covering trigger open, zoom/pan handlers, aria-live updates, and focus
+  restoration
+
 ## [0.3.0] - 2026-03-28
 
 ### Added
