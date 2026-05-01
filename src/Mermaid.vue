@@ -3,6 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 
 import { render, init } from './mermaid';
 import MermaidViewer from './MermaidViewer.vue';
+import type { MermaidPluginOptions } from './vite-plugin';
 
 import './styles/mermaid.css';
 import './styles/zoom.css';
@@ -33,10 +34,14 @@ const LABELS = {
 const { useData } = await import('vitepress');
 const { page } = useData();
 
-const pluginSettings = ref({
+type PluginSettings = MermaidPluginOptions & { externalDiagrams?: unknown[] };
+
+const pluginSettings = ref<PluginSettings>({
   securityLevel: 'loose',
   startOnLoad: false,
   externalDiagrams: [],
+  download: true,
+  downloadPng: true,
 });
 
 const svg = ref<string | null>(null);
@@ -67,7 +72,10 @@ const openViewer = () => {
 
 const closeViewer = () => {
   isViewerOpen.value = false;
-  previousActive?.focus({ preventScroll: true });
+
+  if (previousActive?.isConnected) {
+    previousActive.focus({ preventScroll: true });
+  }
 };
 
 const onTriggerKeydown = (ev: KeyboardEvent) => {
@@ -94,12 +102,12 @@ const renderChart = async () => {
     ...pluginSettings.value,
   };
 
-  if (mermaidPageTheme.value) {
-    mermaidConfig.theme = mermaidPageTheme.value;
-  }
-
   if (hasDarkClass) {
     mermaidConfig.theme = 'dark';
+  }
+
+  if (mermaidPageTheme.value) {
+    mermaidConfig.theme = mermaidPageTheme.value;
   }
 
   if (svg.value && containerRef.value) {
@@ -116,6 +124,10 @@ const renderChart = async () => {
   } catch (e) {
     if (svg.value) {
       console.warn('[vitepress-mermaid-viewer] re-render failed, keeping previous diagram:', e);
+
+      if (isViewerOpen.value) {
+        closeViewer();
+      }
     } else {
       error.value = e instanceof Error ? e.message : String(e);
     }
@@ -154,8 +166,13 @@ onMounted(async () => {
 
   if (hasImages) {
     setTimeout(() => {
-      const imgElements = document.getElementsByTagName('img');
-      const imgs = Array.from(imgElements);
+      const container = containerRef.value;
+
+      if (!container) {
+        return;
+      }
+
+      const imgs = Array.from(container.querySelectorAll('img'));
 
       if (imgs.length) {
         void Promise.all(

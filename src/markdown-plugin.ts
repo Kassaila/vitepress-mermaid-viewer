@@ -20,7 +20,9 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
 
     if (info === 'mermaid') {
       try {
-        const className = pluginOptions?.class || 'mermaid';
+        const rawClass = pluginOptions?.class;
+        const className =
+          rawClass && /^[\w-]+(?:\s+[\w-]+)*$/.test(rawClass) ? rawClass : 'mermaid';
 
         return `
       <ClientOnly>

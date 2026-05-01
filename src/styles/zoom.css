@@ -117,3 +117,9 @@ dialog.mermaid-view-overlay::backdrop {
   font-weight: 600;
   letter-spacing: 0.025em;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .mermaid-view-btn {
+    transition: none;
+  }
+}

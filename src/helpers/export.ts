@@ -1,3 +1,9 @@
+/**
+ * @internal
+ * SVG/PNG download helpers for the bundled `<MermaidViewer>` component.
+ * Not part of the public API — import path may change between minor versions.
+ */
+
 const REVOKE_DELAY_MS = 10_000;
 const MAX_CANVAS_SIDE = 4096;
 const PNG_SCALE = 2;
@@ -91,8 +97,10 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
   const img = new Image();
 
   img.onload = () => {
+    let canvas: HTMLCanvasElement | null = null;
+
     try {
-      const canvas = document.createElement('canvas');
+      canvas = document.createElement('canvas');
 
       canvas.width = canvasW;
       canvas.height = canvasH;
@@ -117,7 +125,14 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
       a.download = `mermaid-${id}.png`;
 
       a.click();
+    } catch (e) {
+      console.warn('[vitepress-mermaid-viewer] PNG export failed:', e);
     } finally {
+      if (canvas) {
+        canvas.width = 0;
+        canvas.height = 0;
+      }
+
       onDone();
     }
   };

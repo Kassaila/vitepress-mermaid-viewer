@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue';
+import { onUnmounted, ref, type Ref } from 'vue';
 
 export interface UseZoomPanOptions {
   contentRef: Ref<HTMLElement | null>;
@@ -14,7 +14,7 @@ export interface UseZoomPanReturn {
   handleKeydown: (ev: KeyboardEvent) => void;
   scalePercent: Ref<string>;
   isDragging: Ref<boolean>;
-  cleanup: () => void;
+  transform: Ref<string>;
 }
 
 export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
@@ -34,24 +34,21 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
   const pointers = new Map<number, PointerEvent>();
   let pinchStartDist = 0;
   let pinchStartScale = 1;
+  let pointerListenersAttached = false;
 
   /**
    * Reactive state for template binding
    */
   const scalePercent = ref('100%');
   const isDragging = ref(false);
+  const transform = ref('translate(0px, 0px) scale(1)');
 
   /**
    * Zoom/pan control functions
    */
 
   const applyTransform = () => {
-    const el = contentRef.value;
-
-    if (el) {
-      el.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-    }
-
+    transform.value = `translate(${panX}px, ${panY}px) scale(${scale})`;
     scalePercent.value = `${Math.round(scale * 100)}%`;
   };
 
@@ -117,17 +114,59 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
     applyTransform();
   };
 
-  const onPointerUp = (ev: PointerEvent) => {
-    pointers.delete(ev.pointerId);
-
-    if (!_isDragging) {
+  const detachPointerListeners = () => {
+    if (!pointerListenersAttached) {
       return;
     }
 
-    _isDragging = false;
-    isDragging.value = false;
+    document.removeEventListener('pointermove', onPointerMove);
+    document.removeEventListener('pointerup', onPointerUp);
+    document.removeEventListener('pointercancel', onPointerUp);
 
-    contentRef.value?.classList.remove('is-dragging');
+    pointerListenersAttached = false;
+  };
+
+  const attachPointerListeners = () => {
+    if (pointerListenersAttached) {
+      return;
+    }
+
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerup', onPointerUp);
+    document.addEventListener('pointercancel', onPointerUp);
+
+    pointerListenersAttached = true;
+  };
+
+  const onPointerUp = (ev: PointerEvent) => {
+    pointers.delete(ev.pointerId);
+
+    /**
+     * Pinch → single-finger transition: re-baseline drag state
+     * from the remaining pointer so the next pointermove does not
+     * jump from a stale startX/startY.
+     */
+    if (pointers.size === 1) {
+      const remaining = [...pointers.values()][0];
+
+      _isDragging = true;
+      isDragging.value = true;
+      startX = remaining.clientX;
+      startY = remaining.clientY;
+      startPanX = panX;
+      startPanY = panY;
+
+      return;
+    }
+
+    if (pointers.size === 0) {
+      if (_isDragging) {
+        _isDragging = false;
+        isDragging.value = false;
+      }
+
+      detachPointerListeners();
+    }
   };
 
   const onPointerDown = (ev: PointerEvent) => {
@@ -138,11 +177,11 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
     pointers.set(ev.pointerId, ev);
     contentRef.value?.setPointerCapture(ev.pointerId);
 
+    attachPointerListeners();
+
     if (pointers.size === 2) {
       _isDragging = false;
       isDragging.value = false;
-
-      contentRef.value?.classList.remove('is-dragging');
 
       pinchStartDist = getPointerDist();
       pinchStartScale = scale;
@@ -157,7 +196,6 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
     startPanX = panX;
     startPanY = panY;
 
-    contentRef.value?.classList.add('is-dragging');
     ev.preventDefault();
   };
 
@@ -209,6 +247,11 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
 
         return;
       }
+      /**
+       * Arrow keys move the content opposite to the arrow direction
+       * (map convention: arrow points where the viewport "looks").
+       * ArrowRight reveals content on the right, so the diagram shifts left.
+       */
       case 'ArrowUp': {
         ev.preventDefault();
         panBy(0, 40);
@@ -240,17 +283,11 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
   };
 
   /**
-   * Global listeners — removed in cleanup()
+   * Defensive cleanup if the component unmounts mid-drag.
    */
-  document.addEventListener('pointermove', onPointerMove);
-  document.addEventListener('pointerup', onPointerUp);
-  document.addEventListener('pointercancel', onPointerUp);
-
-  const cleanup = () => {
-    document.removeEventListener('pointermove', onPointerMove);
-    document.removeEventListener('pointerup', onPointerUp);
-    document.removeEventListener('pointercancel', onPointerUp);
-  };
+  onUnmounted(() => {
+    detachPointerListeners();
+  });
 
   return {
     zoomIn,
@@ -262,6 +299,6 @@ export const useZoomPan = (options: UseZoomPanOptions): UseZoomPanReturn => {
     handleKeydown,
     scalePercent,
     isDragging,
-    cleanup,
+    transform,
   };
 };

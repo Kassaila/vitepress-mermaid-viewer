@@ -63,7 +63,7 @@ const {
   handleKeydown,
   scalePercent,
   isDragging,
-  cleanup,
+  transform,
 } = useZoomPan({ contentRef });
 
 /**
@@ -107,10 +107,6 @@ const close = () => {
 };
 
 const onDialogClose = () => {
-  cleanup();
-
-  document.body.style.overflow = '';
-
   emit('close');
 };
 
@@ -127,8 +123,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  cleanup();
-
   document.body.style.overflow = '';
 });
 </script>
@@ -142,7 +136,7 @@ onBeforeUnmount(() => {
       :aria-label="LABELS.dialog"
       @close="onDialogClose"
       @keydown="handleKeydown"
-      @wheel.prevent="onWheel"
+      @wheel="onWheel"
     >
       <aside class="mermaid-view-controls">
         <output class="mermaid-view-scale" :aria-label="LABELS.zoomLevel" aria-live="polite">
@@ -204,6 +198,7 @@ onBeforeUnmount(() => {
         ref="contentRef"
         class="mermaid-view-content"
         :class="{ 'is-dragging': isDragging }"
+        :style="{ transform }"
         @pointerdown="onPointerDown"
         v-html="clonedSvgHtml"
       />

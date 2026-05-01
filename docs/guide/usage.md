@@ -110,6 +110,34 @@ mermaidTheme: forest
 ---
 ```
 
+## CSS Customization
+
+### Diagram container
+
+The diagram container uses the class you pass via the `class` option (default `mermaid`). State
+variants are generated from that class name:
+
+| State   | Selector                    | Description                                                                        |
+| ------- | --------------------------- | ---------------------------------------------------------------------------------- |
+| Default | `.vp-doc .mermaid`          | Rendered diagram, clickable                                                        |
+| Loading | `.vp-doc .mermaid--loading` | Shimmer skeleton shown before first render and during re-renders                   |
+| Error   | `.vp-doc .mermaid--error`   | Shown when `mermaid.render()` fails; contains the error message and diagram source |
+
+### Fullscreen viewer
+
+The interactive viewer uses these classes (all prefixed `mermaid-view-`):
+
+| Selector                      | Element                             |
+| ----------------------------- | ----------------------------------- |
+| `dialog.mermaid-view-overlay` | The `<dialog>` backdrop             |
+| `.mermaid-view-content`       | Scrollable/pannable diagram canvas  |
+| `.mermaid-view-controls`      | Fixed controls panel (top-right)    |
+| `.mermaid-view-scale`         | Zoom percentage `<output>`          |
+| `.mermaid-view-btn`           | All control buttons                 |
+| `.mermaid-view-btn_zoom`      | Zoom in / Zoom out / Reset buttons  |
+| `.mermaid-view-btn_download`  | Download SVG / Download PNG buttons |
+| `.mermaid-view-btn_close`     | Close button                        |
+
 ## API
 
 ### `withMermaid(config: UserConfig): UserConfig`

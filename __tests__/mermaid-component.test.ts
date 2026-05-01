@@ -230,6 +230,7 @@ describe('Mermaid.vue', () => {
     const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true }));
+    await flushPromises();
 
     expect(content.style.transform).toContain('scale(0.75)');
 
@@ -248,6 +249,7 @@ describe('Mermaid.vue', () => {
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }));
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '0', bubbles: true }));
+    await flushPromises();
 
     expect(content.style.transform).toBe('translate(0px, 0px) scale(1)');
 
@@ -264,10 +266,12 @@ describe('Mermaid.vue', () => {
     const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    await flushPromises();
 
     expect(content.style.transform).toBe('translate(-40px, 0px) scale(1)');
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    await flushPromises();
 
     expect(content.style.transform).toBe('translate(-40px, -40px) scale(1)');
 
@@ -597,6 +601,57 @@ describe('Mermaid.vue', () => {
       expect(warnSpy).toHaveBeenCalled();
 
       warnSpy.mockRestore();
+      wrapper.unmount();
+    });
+
+    it('closes viewer when re-render fails while viewer is open', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      mockRender.mockResolvedValueOnce('<svg id="v1">v1</svg>');
+
+      const wrapper = await mountMermaid();
+
+      await wrapper.find('div').trigger('click');
+      await flushPromises();
+
+      expect(document.querySelector('dialog.mermaid-view-overlay')).toBeTruthy();
+
+      mockRender.mockRejectedValueOnce(new Error('flake'));
+      document.documentElement.classList.add('dark');
+      observerCallback([], {});
+      await flushPromises();
+
+      expect(wrapper.html()).toContain('<svg id="v1">v1</svg>');
+      expect(document.querySelector('dialog.mermaid-view-overlay')).toBeNull();
+      expect(warnSpy).toHaveBeenCalled();
+
+      warnSpy.mockRestore();
+      wrapper.unmount();
+    });
+
+    it('skips focus restoration when previousActive was removed from DOM', async () => {
+      const wrapper = await mountMermaid({}, { attachTo: document.body });
+
+      const tempBtn = document.createElement('button');
+
+      document.body.appendChild(tempBtn);
+      tempBtn.focus();
+
+      await wrapper.find('div').trigger('click');
+      await flushPromises();
+
+      const focusSpy = vi.spyOn(tempBtn, 'focus');
+
+      tempBtn.remove();
+
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
+
+      dialog.close();
+      await flushPromises();
+
+      expect(focusSpy).not.toHaveBeenCalled();
+
+      focusSpy.mockRestore();
       wrapper.unmount();
     });
 

@@ -71,4 +71,21 @@ describe('MermaidMarkdown', () => {
 
     expect(defaultFence).toHaveBeenCalledWith(tokens, 0, 'opts', 'env', 'self');
   });
+
+  it('falls back to "mermaid" when class contains attribute-breaking characters', () => {
+    const { md } = applyPlugin({ class: 'foo" onclick="alert(1)' });
+    const tokens = [createToken('mermaid', 'graph TD')];
+    const result = md.renderer.rules.fence(tokens, 0, {}, {}, {});
+
+    expect(result).toContain('class="mermaid"');
+    expect(result).not.toContain('onclick');
+  });
+
+  it('accepts multi-token class names with spaces and dashes', () => {
+    const { md } = applyPlugin({ class: 'my-diagram another-class' });
+    const tokens = [createToken('mermaid', 'graph TD')];
+    const result = md.renderer.rules.fence(tokens, 0, {}, {}, {});
+
+    expect(result).toContain('class="my-diagram another-class"');
+  });
 });

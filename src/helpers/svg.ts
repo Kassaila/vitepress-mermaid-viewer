@@ -1,3 +1,9 @@
+/**
+ * @internal
+ * SVG manipulation helpers for the bundled `<MermaidViewer>` component.
+ * Not part of the public API — import path may change between minor versions.
+ */
+
 const DIAGRAM_LABEL = 'Mermaid diagram';
 
 /**
@@ -9,7 +15,7 @@ export const cloneMermaidSvg = (svgHtml: string): string => {
   const svgEl = doc.querySelector('svg');
 
   if (!svgEl) {
-    return svgHtml;
+    return '';
   }
 
   const origId = svgEl.id;
