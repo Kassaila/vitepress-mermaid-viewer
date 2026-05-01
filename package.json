@@ -1,6 +1,6 @@
 {
   "name": "vitepress-mermaid-viewer",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing",
   "type": "module",
   "sideEffects": [
@@ -78,19 +78,13 @@
     "url": "https://github.com/Kassaila/vitepress-mermaid-viewer/issues"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "homepage": "https://kassaila.github.io/vitepress-mermaid-viewer/",
   "peerDependencies": {
     "mermaid": ">=10",
-    "vite": ">=5.0.0",
-    "vitepress": "^1.0.0",
+    "vitepress": ">=1.0.0",
     "vue": "^3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "vite": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
@@ -116,6 +110,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.2",
     "unplugin-vue": "^7.1.1",
+    "vitepress": "2.0.0-alpha.17",
     "vitest": "^4.1.2",
     "vue-tsc": "^3.2.6"
   }
