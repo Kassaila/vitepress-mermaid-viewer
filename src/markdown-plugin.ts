@@ -20,7 +20,9 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
 
     if (info === 'mermaid') {
       try {
-        const className = pluginOptions?.class || 'mermaid';
+        const rawClass = pluginOptions?.class;
+        const className =
+          rawClass && /^[\w-]+(?:\s+[\w-]+)*$/.test(rawClass) ? rawClass : 'mermaid';
 
         return `
       <ClientOnly>
@@ -29,7 +31,7 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
       <Mermaid id="mermaid-${idx}" class="${className}" graph="${encodeURIComponent(token.content)}"></Mermaid>
       </template>
         <template #fallback>
-          Loading...
+          <div class="${className} ${className}--loading" aria-busy="true" aria-label="Loading diagram"></div>
         </template>
       </Suspense>
       </ClientOnly>`;

@@ -1,4 +1,5 @@
 ---
+title: Usage
 description: Install and configure vitepress-mermaid-viewer — setup guide, API reference, and viewer controls.
 ---
 
@@ -81,13 +82,23 @@ export default defineConfig({
 
 ## Viewer Controls
 
-| Action      | Input                                         |
-| ----------- | --------------------------------------------- |
-| Open viewer | Click on diagram                              |
-| Zoom in/out | `+` / `-` buttons, mouse wheel, pinch gesture |
-| Pan         | Click and drag                                |
-| Reset       | `↻` button                                    |
-| Close       | `✕` button, `Escape` key                      |
+| Action       | Input                                                |
+| ------------ | ---------------------------------------------------- |
+| Open viewer  | Click on diagram, `Enter` / `Space` when focused     |
+| Zoom in      | `+` button, mouse wheel up, pinch out, `+` / `=` key |
+| Zoom out     | `−` button, mouse wheel down, pinch in, `-` key      |
+| Pan          | Click and drag, arrow keys                           |
+| Reset        | `↻` button, `0` key                                  |
+| Download SVG | `SVG` button in viewer                               |
+| Download PNG | `PNG` button in viewer                               |
+| Close        | `✕` button, `Escape` key                             |
+
+### Accessibility
+
+- Diagrams are focusable (`role="button"`, `tabindex="0"`) and open with `Enter` or `Space`
+- Fullscreen `<dialog>` traps focus natively; focus returns to the triggering diagram on close
+- Controls expose `aria-label` and the zoom level announces changes via `aria-live="polite"`
+- Visible focus rings on the trigger and zoom controls, themed with VitePress brand colors
 
 ## Frontmatter Options
 
@@ -98,6 +109,34 @@ Override mermaid theme per page:
 mermaidTheme: forest
 ---
 ```
+
+## CSS Customization
+
+### Diagram container
+
+The diagram container uses the class you pass via the `class` option (default `mermaid`). State
+variants are generated from that class name:
+
+| State   | Selector                    | Description                                                                        |
+| ------- | --------------------------- | ---------------------------------------------------------------------------------- |
+| Default | `.vp-doc .mermaid`          | Rendered diagram, clickable                                                        |
+| Loading | `.vp-doc .mermaid--loading` | Shimmer skeleton shown before first render and during re-renders                   |
+| Error   | `.vp-doc .mermaid--error`   | Shown when `mermaid.render()` fails; contains the error message and diagram source |
+
+### Fullscreen viewer
+
+The interactive viewer uses these classes (all prefixed `mermaid-view-`):
+
+| Selector                      | Element                             |
+| ----------------------------- | ----------------------------------- |
+| `dialog.mermaid-view-overlay` | The `<dialog>` backdrop             |
+| `.mermaid-view-content`       | Scrollable/pannable diagram canvas  |
+| `.mermaid-view-controls`      | Fixed controls panel (top-right)    |
+| `.mermaid-view-scale`         | Zoom percentage `<output>`          |
+| `.mermaid-view-btn`           | All control buttons                 |
+| `.mermaid-view-btn_zoom`      | Zoom in / Zoom out / Reset buttons  |
+| `.mermaid-view-btn_download`  | Download SVG / Download PNG buttons |
+| `.mermaid-view-btn_close`     | Close button                        |
 
 ## API
 
@@ -118,3 +157,8 @@ Markdown-it plugin. Intercepts ` ```mermaid ` fences and renders them as `<Merma
 Vite plugin. Injects `<Mermaid>` component globally and serves mermaid config via virtual module.
 
 Accepts [mermaid configuration](https://mermaid.js.org/config/schema-docs/config.html) object.
+
+**Additional options:**
+
+- `download` — show Download SVG button in viewer (default: `true`)
+- `downloadPng` — show Download PNG button in viewer (default: `true`)
