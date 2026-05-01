@@ -524,4 +524,109 @@ describe('Mermaid.vue', () => {
       wrapper.unmount();
     });
   });
+
+  describe('Loading and error states', () => {
+    it('shows skeleton with aria-busy while render is pending', async () => {
+      let resolveRender!: (svg: string) => void;
+
+      mockRender.mockImplementationOnce(() => new Promise<string>((res) => (resolveRender = res)));
+
+      const wrapper = await mountMermaid();
+
+      expect(wrapper.find('[aria-busy="true"]').exists()).toBe(true);
+      expect(wrapper.find('[role="button"]').exists()).toBe(false);
+      expect(wrapper.find('div').classes()).toContain('mermaid--loading');
+
+      resolveRender('<svg id="ok">ok</svg>');
+      await flushPromises();
+
+      expect(wrapper.find('[aria-busy="true"]').exists()).toBe(false);
+      expect(wrapper.find('[role="button"]').exists()).toBe(true);
+      expect(wrapper.html()).toContain('<svg id="ok">ok</svg>');
+
+      wrapper.unmount();
+    });
+
+    it('skeleton uses BEM modifier of provided class', async () => {
+      let resolveRender!: (svg: string) => void;
+
+      mockRender.mockImplementationOnce(() => new Promise<string>((res) => (resolveRender = res)));
+
+      const wrapper = await mountMermaid({ class: 'custom-diagram' });
+      const classes = wrapper.find('div').classes();
+
+      expect(classes).toContain('custom-diagram');
+      expect(classes).toContain('custom-diagram--loading');
+
+      resolveRender('<svg>ok</svg>');
+      await flushPromises();
+      wrapper.unmount();
+    });
+
+    it('shows alert with error message and source when initial render rejects', async () => {
+      mockRender.mockRejectedValueOnce(new Error('bad syntax'));
+
+      const wrapper = await mountMermaid();
+
+      const alert = wrapper.find('[role="alert"]');
+
+      expect(alert.exists()).toBe(true);
+      expect(alert.classes()).toContain('mermaid--error');
+      expect(wrapper.text()).toContain('bad syntax');
+      expect(wrapper.find('pre').text()).toBe('graph TD; A-->B');
+
+      wrapper.unmount();
+    });
+
+    it('keeps previous SVG and does not show alert when re-render fails', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      mockRender.mockResolvedValueOnce('<svg id="v1">v1</svg>');
+
+      const wrapper = await mountMermaid();
+
+      expect(wrapper.html()).toContain('<svg id="v1">v1</svg>');
+
+      mockRender.mockRejectedValueOnce(new Error('flake'));
+      document.documentElement.classList.add('dark');
+      observerCallback([], {});
+      await flushPromises();
+
+      expect(wrapper.html()).toContain('<svg id="v1">v1</svg>');
+      expect(wrapper.find('[role="alert"]').exists()).toBe(false);
+      expect(warnSpy).toHaveBeenCalled();
+
+      warnSpy.mockRestore();
+      wrapper.unmount();
+    });
+
+    it('shows skeleton on theme switch and applies new SVG on resolve', async () => {
+      mockRender.mockResolvedValueOnce('<svg id="light">light</svg>');
+
+      const wrapper = await mountMermaid();
+
+      expect(wrapper.html()).toContain('<svg id="light">light</svg>');
+
+      let resolveRerender!: (svg: string) => void;
+
+      mockRender.mockImplementationOnce(
+        () => new Promise<string>((res) => (resolveRerender = res)),
+      );
+
+      document.documentElement.classList.add('dark');
+      observerCallback([], {});
+      await flushPromises();
+
+      expect(wrapper.find('[aria-busy="true"]').exists()).toBe(true);
+      expect(wrapper.html()).not.toContain('<svg id="light">light</svg>');
+
+      resolveRerender('<svg id="dark">dark</svg>');
+      await flushPromises();
+
+      expect(wrapper.find('[aria-busy="true"]').exists()).toBe(false);
+      expect(wrapper.html()).toContain('<svg id="dark">dark</svg>');
+
+      wrapper.unmount();
+    });
+  });
 });

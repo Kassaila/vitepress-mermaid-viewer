@@ -7,6 +7,27 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Replace empty stylized "click-target" box visible between Suspense resolve and first
+  `mermaid.render()` with a shimmer skeleton placeholder — the loading container has no
+  `cursor: zoom-in` and no `role="button"`, so it no longer reads as a broken/clickable diagram.
+  Same skeleton is also used as the Suspense fallback.
+- Theme switch (dark/light) now shows the skeleton at the locked container height while the diagram
+  re-renders, instead of leaving the stale-themed SVG visible on the new background — this prevents
+  the brief color mismatch and the layout jump that happened when the new SVG was swapped in.
+
+### Added
+
+- Error state in `<Mermaid>` — when initial `mermaid.render()` rejects, the component shows a
+  `role="alert"` block with the error message and the diagram source (in `<details>`) instead of
+  leaving an empty container.
+- Re-render failure handling — if rendering fails after a successful first render (e.g. during
+  dark-mode theme switch), the previous SVG is restored and the error is logged via `console.warn`,
+  so a transient failure does not destroy a working diagram.
+- `prefers-reduced-motion` support — the skeleton shimmer is disabled when the user has
+  reduced-motion preference set.
+
 ### Added
 
 - Download SVG button in the fullscreen viewer — downloads the rendered diagram as

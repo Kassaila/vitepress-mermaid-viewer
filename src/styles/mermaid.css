@@ -26,3 +26,66 @@
   outline-offset: 2px;
   border-color: var(--vp-c-brand-1);
 }
+
+.vp-doc .mermaid--loading,
+.vp-doc .mermaid--error {
+  cursor: default;
+}
+
+.vp-doc .mermaid--loading:hover,
+.vp-doc .mermaid--error:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-color: var(--vp-c-divider);
+}
+
+.vp-doc .mermaid--loading {
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  align-items: center;
+}
+
+.vp-doc .mermaid--loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--vp-c-divider) 50%, transparent 100%);
+  animation: vpmv-shimmer 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes vpmv-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .mermaid--loading::before {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+.vp-doc .mermaid--error {
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  border-color: var(--vp-c-danger-1, var(--vp-c-divider));
+  color: var(--vp-c-text-1);
+}
+
+.vp-doc .mermaid--error p {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  color: var(--vp-c-danger-1, var(--vp-c-text-1));
+}
+
+.vp-doc .mermaid--error pre {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
