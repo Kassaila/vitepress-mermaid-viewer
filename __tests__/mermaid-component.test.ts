@@ -166,7 +166,7 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay');
+    const dialog = document.querySelector('dialog.mermaid-view-overlay');
 
     expect(dialog).toBeTruthy();
 
@@ -179,7 +179,7 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('keydown', { key: 'Enter' });
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay');
+    const dialog = document.querySelector('dialog.mermaid-view-overlay');
 
     expect(dialog).toBeTruthy();
 
@@ -192,7 +192,7 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('keydown', { key: ' ' });
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay');
+    const dialog = document.querySelector('dialog.mermaid-view-overlay');
 
     expect(dialog).toBeTruthy();
 
@@ -205,9 +205,9 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
-    const output = dialog.querySelector('output.mermaid-zoom-scale') as HTMLElement;
+    const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
+    const output = dialog.querySelector('output.mermaid-view-scale') as HTMLElement;
 
     expect(output.textContent?.trim()).toBe('100%');
 
@@ -226,8 +226,8 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+    const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true }));
 
@@ -242,8 +242,8 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+    const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }));
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
@@ -260,8 +260,8 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
-    const content = dialog.querySelector('.mermaid-zoom-content') as HTMLElement;
+    const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
+    const content = dialog.querySelector('.mermaid-view-content') as HTMLElement;
 
     dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
 
@@ -285,7 +285,7 @@ describe('Mermaid.vue', () => {
     await wrapper.find('div').trigger('click');
     await flushPromises();
 
-    const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+    const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
 
     dialog.close();
     await flushPromises();
@@ -340,7 +340,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector(
         'button[aria-label="Download SVG"]',
       ) as HTMLButtonElement;
@@ -361,7 +361,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector(
         'button[aria-label="Download SVG"]',
       ) as HTMLButtonElement;
@@ -399,7 +399,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector(
         'button[aria-label="Download SVG"]',
       ) as HTMLButtonElement;
@@ -432,7 +432,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
       const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
@@ -448,7 +448,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
 
       expect(downloadBtn).toBeTruthy();
@@ -463,7 +463,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
       expect(downloadPngBtn).toBeTruthy();
@@ -472,18 +472,18 @@ describe('Mermaid.vue', () => {
       wrapper.unmount();
     });
 
-    it('action buttons use CSS class mermaid-zoom-btn', async () => {
+    it('action buttons use CSS class mermaid-view-btn', async () => {
       const wrapper = await mountMermaid();
 
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
       const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
-      expect(downloadBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
-      expect(downloadPngBtn!.classList.contains('mermaid-zoom-btn')).toBe(true);
+      expect(downloadBtn!.classList.contains('mermaid-view-btn')).toBe(true);
+      expect(downloadPngBtn!.classList.contains('mermaid-view-btn')).toBe(true);
 
       wrapper.unmount();
     });
@@ -496,7 +496,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
       const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 
@@ -514,7 +514,7 @@ describe('Mermaid.vue', () => {
       await wrapper.find('div').trigger('click');
       await flushPromises();
 
-      const dialog = document.querySelector('dialog.mermaid-zoom-overlay') as HTMLDialogElement;
+      const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
       const downloadBtn = dialog.querySelector('button[aria-label="Download SVG"]');
       const downloadPngBtn = dialog.querySelector('button[aria-label="Download PNG"]');
 

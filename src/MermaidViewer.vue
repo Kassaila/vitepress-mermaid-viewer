@@ -138,19 +138,19 @@ onBeforeUnmount(() => {
   <Teleport to="body">
     <dialog
       ref="dialogRef"
-      class="mermaid-zoom-overlay"
+      class="mermaid-view-overlay"
       :aria-label="LABELS.dialog"
       @close="onDialogClose"
       @keydown="handleKeydown"
       @wheel.prevent="onWheel"
     >
-      <div class="mermaid-zoom-controls">
-        <output class="mermaid-zoom-scale" :aria-label="LABELS.zoomLevel" aria-live="polite">
+      <aside class="mermaid-view-controls">
+        <output class="mermaid-view-scale" :aria-label="LABELS.zoomLevel" aria-live="polite">
           {{ scalePercent }}
         </output>
         <button
           ref="closeBtnRef"
-          class="mermaid-zoom-btn"
+          class="mermaid-view-btn mermaid-view-btn_close"
           :title="LABELS.close"
           :aria-label="LABELS.close"
           @click="close"
@@ -158,7 +158,7 @@ onBeforeUnmount(() => {
           {{ ICONS.close }}
         </button>
         <button
-          class="mermaid-zoom-btn mermaid-zoom-btn-zoom"
+          class="mermaid-view-btn mermaid-view-btn_zoom"
           :title="LABELS.zoomIn"
           :aria-label="LABELS.zoomIn"
           @click="zoomIn"
@@ -166,7 +166,7 @@ onBeforeUnmount(() => {
           {{ ICONS.zoomIn }}
         </button>
         <button
-          class="mermaid-zoom-btn mermaid-zoom-btn-zoom"
+          class="mermaid-view-btn mermaid-view-btn_zoom"
           :title="LABELS.zoomOut"
           :aria-label="LABELS.zoomOut"
           @click="zoomOut"
@@ -174,7 +174,7 @@ onBeforeUnmount(() => {
           {{ ICONS.zoomOut }}
         </button>
         <button
-          class="mermaid-zoom-btn mermaid-zoom-btn-zoom"
+          class="mermaid-view-btn mermaid-view-btn_zoom"
           :title="LABELS.reset"
           :aria-label="LABELS.reset"
           @click="resetView"
@@ -183,7 +183,7 @@ onBeforeUnmount(() => {
         </button>
         <button
           v-if="download"
-          class="mermaid-zoom-btn mermaid-zoom-btn-action mermaid-zoom-btn-text"
+          class="mermaid-view-btn mermaid-view-btn_download mermaid-view-btn_text"
           :title="LABELS.download"
           :aria-label="LABELS.download"
           @click="onDownload"
@@ -192,17 +192,17 @@ onBeforeUnmount(() => {
         </button>
         <button
           v-if="downloadPng"
-          class="mermaid-zoom-btn mermaid-zoom-btn-action mermaid-zoom-btn-text"
+          class="mermaid-view-btn mermaid-view-btn_download mermaid-view-btn_text"
           :title="LABELS.downloadPng"
           :aria-label="LABELS.downloadPng"
           @click="onDownloadPng"
         >
           {{ ICONS.downloadPng }}
         </button>
-      </div>
+      </aside>
       <div
         ref="contentRef"
-        class="mermaid-zoom-content"
+        class="mermaid-view-content"
         :class="{ 'is-dragging': isDragging }"
         @pointerdown="onPointerDown"
         v-html="clonedSvgHtml"
