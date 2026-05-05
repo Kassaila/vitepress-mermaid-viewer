@@ -5,13 +5,13 @@ import './llm-hint.css';
 
 import { useData } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
+import type { DefaultTheme as VPDefaultTheme } from 'vitepress/theme';
 import { computed } from 'vue';
 
 const { Layout } = DefaultTheme;
-const { theme, page } = useData<{ siteUrl?: string }>();
+const { theme, page } = useData<VPDefaultTheme.Config & { siteUrl?: string }>();
 
-const siteUrl = theme.value.siteUrl ?? '';
-const mdUrl = computed(() => `${siteUrl}${page.value.relativePath}`);
+const mdUrl = computed(() => `${theme.value.siteUrl ?? ''}${page.value.relativePath}`);
 </script>
 
 <template>
