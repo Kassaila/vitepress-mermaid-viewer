@@ -11,3 +11,7 @@
     var(--vp-c-brand-soft) 50%
   );
 }
+
+.VPNavBarTitle .title {
+  font-size: 14px;
+}

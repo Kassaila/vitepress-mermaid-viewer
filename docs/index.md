@@ -1,8 +1,8 @@
 ---
 layout: home
-title: VitePress Mermaid Viewer
+title: VitePress Mermaid Viewer — Zoom, Pan & Fullscreen Diagrams
 titleTemplate: false
-description: Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.
+description: Render mermaid code blocks as interactive diagrams in VitePress. Zoom, pan, fullscreen viewer with light/dark theme reactivity.
 
 hero:
   name: Mermaid Viewer

@@ -1,6 +1,6 @@
 import type { DefaultTheme } from 'vitepress/theme';
 
-import { copyFile, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join, resolve } from 'node:path';
 
@@ -66,38 +66,9 @@ const copyMarkdownSources = async (siteConfig: SiteConfig): Promise<void> => {
   );
 };
 
-const FRONTMATTER_BLOCK = /^---\r?\n([\s\S]*?)\r?\n---/;
-const DESCRIPTION_LINE = /^description:\s*(.+?)\s*$/m;
+const pageDescriptions = new Map<string, string>();
 
-const extractDescription = (source: string): string => {
-  const block = FRONTMATTER_BLOCK.exec(source)?.[1];
-
-  if (!block) {
-    return '';
-  }
-
-  const raw = DESCRIPTION_LINE.exec(block)?.[1];
-
-  if (!raw) {
-    return '';
-  }
-
-  return raw.replace(/^['"]|['"]$/g, '');
-};
-
-const collectPageDescriptions = async (siteConfig: SiteConfig): Promise<Map<string, string>> => {
-  const entries = await Promise.all(
-    siteConfig.pages.map(async (pagePath) => {
-      const source = await readFile(join(siteConfig.srcDir, pagePath), 'utf8');
-
-      return [pagePath, extractDescription(source)] as const;
-    }),
-  );
-
-  return new Map(entries.filter(([, description]) => description.length > 0));
-};
-
-const renderLlmsTxt = (siteConfig: SiteConfig, descriptions: Map<string, string>): string => {
+const renderLlmsTxt = (siteConfig: SiteConfig): string => {
   const sidebar = (siteConfig.site.themeConfig.sidebar ?? []) as
     | DefaultTheme.SidebarItem[]
     | Record<string, DefaultTheme.SidebarItem[]>;
@@ -124,7 +95,7 @@ const renderLlmsTxt = (siteConfig: SiteConfig, descriptions: Map<string, string>
         continue;
       }
 
-      const description = descriptions.get(toRelativePath(item.link)) ?? '';
+      const description = pageDescriptions.get(toRelativePath(item.link)) ?? '';
       const suffix = description.length > 0 ? `: ${description}` : '';
 
       lines.push(`- [${item.text}](${toMarkdownUrl(item.link)})${suffix}`);
@@ -149,7 +120,7 @@ export default withMermaid(
         },
       },
     },
-    title: 'Mermaid Viewer',
+    title: 'VitePress Mermaid Viewer',
     description: MARKETING_DESCRIPTION,
     base: BASE,
     cleanUrls: true,
@@ -163,17 +134,24 @@ export default withMermaid(
 
     transformPageData(pageData) {
       const markdownUrl = `${SITE_URL}${pageData.relativePath}`;
-      const canonicalUrl =
-        markdownUrl
-          .replace(/index\.md$/, '')
-          .replace(/\.md$/, '')
-          .replace(/\/$/, '') + '/';
+      const canonicalUrl = markdownUrl.replace(/index\.md$/, '').replace(/\.md$/, '');
 
       const { description: frontmatterDescription } = pageData.frontmatter;
 
+      if (typeof frontmatterDescription === 'string' && frontmatterDescription.length > 0) {
+        pageDescriptions.set(
+          pageData.relativePath,
+          frontmatterDescription.replace(/[\r\n]+/g, ' ').trim(),
+        );
+      }
+
       const isHome = pageData.frontmatter.layout === 'home';
       const siteTitle = 'VitePress Mermaid Viewer';
-      const title = isHome || !pageData.title ? siteTitle : `${pageData.title} | ${siteTitle}`;
+      const title = !pageData.title
+        ? siteTitle
+        : isHome
+          ? pageData.title
+          : `${pageData.title} | ${siteTitle}`;
       const description =
         typeof frontmatterDescription === 'string' && frontmatterDescription.length > 0
           ? frontmatterDescription
@@ -200,17 +178,10 @@ export default withMermaid(
     },
 
     async buildEnd(siteConfig) {
-      const [, descriptions] = await Promise.all([
-        copyMarkdownSources(siteConfig),
-        collectPageDescriptions(siteConfig),
-      ]);
+      await copyMarkdownSources(siteConfig);
 
       await Promise.all([
-        writeFile(
-          join(siteConfig.outDir, 'llms.txt'),
-          renderLlmsTxt(siteConfig, descriptions),
-          'utf8',
-        ),
+        writeFile(join(siteConfig.outDir, 'llms.txt'), renderLlmsTxt(siteConfig), 'utf8'),
         writeFile(join(siteConfig.outDir, 'robots.txt'), ROBOTS_TXT, 'utf8'),
       ]);
     },
