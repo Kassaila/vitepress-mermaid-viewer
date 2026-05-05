@@ -52,6 +52,18 @@
 - [x] Close on `Escape` and `✕` button
 - [x] Global component auto-registration via Vite plugin
 - [x] Diagram centered in `.vp-doc .mermaid` (flexbox)
+- [x] Download SVG button — saves rendered diagram as `mermaid-<id>.svg`; toggleable via `download`
+      option on `MermaidPlugin` (default `true`)
+- [x] Download PNG button — renders to 2x HiDPI canvas (capped at 4096 px on the longest side);
+      toggleable via `downloadPng` option (default `true`)
+- [x] Loading skeleton — shimmer placeholder shown between Suspense resolve and first
+      `mermaid.render()`, and during dark/light re-render at the locked container height
+- [x] Error state — `role="alert"` block with the error message and the diagram source in
+      `<details>` when initial `mermaid.render()` rejects
+- [x] Re-render failure recovery — restores the previous SVG and logs `console.warn` if a
+      subsequent render fails (e.g. during theme switch); closes the fullscreen viewer if it was
+      open during the failure
+- [x] `prefers-reduced-motion` support — disables skeleton shimmer and viewer button transitions
 
 ### Accessibility
 
@@ -80,6 +92,14 @@
 - [x] Tests for `mermaid.ts`, `markdown-plugin.ts`, `vite-plugin.ts`, `with-mermaid.ts`, `Mermaid.vue`
 - [x] `__tests__/helpers/` shared test utilities
 - [x] `@vitest/coverage-v8` configured
+- [x] Keyboard interaction tests — trigger open, zoom/pan handlers, aria-live updates, focus
+      restoration
+
+### Internal
+
+- [x] `MermaidViewer` extracted as a separate component
+- [x] `useZoomPan` composable — owns pointer/wheel/pinch logic and listener lifecycle, returns a
+      reactive `transform` ref consumed via `:style`
 
 ### Documentation
 
@@ -90,33 +110,16 @@
 - [x] `CHANGELOG.md` — Keep a Changelog format, SemVer
 - [x] `CONTRIBUTING.md` — contributor guide
 - [x] `CLAUDE.md` — architecture notes for AI-assisted work
+- [x] LLM-friendly content delivery — `/llms.txt` index, `.md` route variants of every page,
+      `<link rel="alternate" type="text/markdown">`, hidden hint div
+- [x] CSS Customization section in usage guide — documents `mermaid-view-*` viewer selectors and
+      the `--loading` / `--error` state hooks on `<Mermaid>`
 
 ---
 
 ## TODO
 
 ### Priority 1 — Features
-
-#### Copy & download
-
-- Download button → save rendered SVG as `.svg`
-- Copy-to-clipboard button → copy SVG source
-- Optional `download` / `copy` flags in `MermaidPlugin` options to hide if unwanted
-
-#### External diagrams
-
-`init(externalDiagrams)` already accepts a list, but there's no public config path.
-
-- Expose `externalDiagrams` in `mermaid` config passed to `withMermaid` / `MermaidPlugin`
-- Example in docs (e.g. `@mermaid-js/mermaid-zenuml`)
-
-#### Error state UI
-
-When mermaid fails to parse, the component renders nothing. Render a fallback:
-
-- Show the raw source in a `<pre>` with a "Diagram failed to render" banner
-- Link to mermaid live editor with prefilled source
-- Dev-only: console error with diagram id
 
 #### Custom viewer slots
 
@@ -129,10 +132,9 @@ Let consumers override the controls panel without forking the component.
 
 ### Priority 2 — Testing
 
-#### Interaction tests
+#### `useZoomPan` interaction tests
 
-Rendering, theme observer, keyboard shortcuts, aria-live output, and focus restoration are covered.
-Pointer/wheel-path math still has no coverage:
+Pointer/wheel-path math has no coverage:
 
 - Mouse wheel zoom — cursor-centered math (`panX` / `panY` offset by `cx * (factor - 1)`)
 - Pinch gesture — scale clamped to `[0.25, 5]` via two-pointer distance ratio
