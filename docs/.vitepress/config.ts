@@ -264,6 +264,7 @@ export default withMermaid(
       nav: [
         { text: 'Guide', link: '/guide/usage' },
         { text: 'Examples', link: '/guide/examples' },
+        { text: 'Showcase', link: '/showcase' },
         { text: 'Changelog', link: CHANGELOG_URL },
         { text: 'Contributing', link: CONTRIBUTING_URL },
       ],
@@ -275,6 +276,10 @@ export default withMermaid(
             { text: 'Usage', link: '/guide/usage' },
             { text: 'Examples', link: '/guide/examples' },
           ],
+        },
+        {
+          text: 'Showcase',
+          items: [{ text: 'Projects', link: '/showcase' }],
         },
       ],
 
