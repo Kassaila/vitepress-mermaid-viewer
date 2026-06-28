@@ -8,6 +8,9 @@ description: Interactive mermaid diagram examples — flowcharts, sequence, clas
 Click any diagram below to open the interactive viewer. Use mouse wheel, pinch, or buttons to zoom.
 Drag to pan.
 
+New here? Start with the [Usage guide](/guide/usage) to install and configure
+`vitepress-mermaid-viewer` in your VitePress site.
+
 ## Flowchart
 
 ```mermaid
