@@ -46,7 +46,7 @@ export const cloneMermaidSvg = (svgHtml: string): string => {
 };
 
 /**
- * Get SVG outerHTML from a container element.
+ * Get SVG from a container element.
  */
 export const getSvgSource = (container: HTMLElement | null): string => {
   if (!container) {
@@ -55,5 +55,18 @@ export const getSvgSource = (container: HTMLElement | null): string => {
 
   const svgEl = container.querySelector('svg');
 
-  return svgEl ? svgEl.outerHTML : '';
+  if (!svgEl) {
+    return '';
+  }
+
+  /**
+   * Mermaid can render `\n` in node labels as an unclosed HTML `<br>` inside
+   * a <foreignObject>, which `outerHTML` would serialize as-is — invalid XML.
+   * `XMLSerializer.serializeToString` self-closes void elements, keeping the
+   * exported SVG spec-compliant.
+   */
+  const serializer = new XMLSerializer();
+  const cleanSvg = serializer.serializeToString(svgEl);
+
+  return cleanSvg;
 };

@@ -99,6 +99,7 @@ export default defineConfig({
 | Zoom out     | `−` button, mouse wheel down, pinch in, `-` key      |
 | Pan          | Click and drag, arrow keys                           |
 | Reset        | `↻` button, `0` key                                  |
+| Copy source  | `⎘` button in viewer                                 |
 | Download SVG | `SVG` button in viewer                               |
 | Download PNG | `PNG` button in viewer                               |
 | Close        | `✕` button, `Escape` key                             |
