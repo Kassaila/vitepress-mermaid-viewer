@@ -43,7 +43,10 @@ describe('init', () => {
 
     mock.default.registerExternalDiagrams = vi.fn().mockRejectedValue(error);
     await initFn([]);
-    expect(consoleSpy).toHaveBeenCalledWith(error);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      '[vitepress-mermaid-viewer] Failed to initialize external diagrams:',
+      error,
+    );
     consoleSpy.mockRestore();
   });
 });

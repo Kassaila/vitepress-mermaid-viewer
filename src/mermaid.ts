@@ -1,4 +1,5 @@
 import type { ExternalDiagramDefinition, MermaidConfig } from 'mermaid';
+import { logError } from './helpers/logger';
 
 const loadMermaid = async () => {
   const { default: mermaid } = await import('mermaid');
@@ -14,7 +15,7 @@ export const init = async (externalDiagrams: ExternalDiagramDefinition[]): Promi
       await mermaid.registerExternalDiagrams(externalDiagrams);
     }
   } catch (e) {
-    console.error(e);
+    logError('Failed to initialize external diagrams:', e);
   }
 };
 

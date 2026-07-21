@@ -4,6 +4,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { render, init } from './mermaid';
 import MermaidViewer from './MermaidViewer.vue';
 import type { MermaidPluginOptions } from './vite-plugin';
+import { logWarn } from './helpers/logger';
 
 import './styles/mermaid.css';
 import './styles/zoom.css';
@@ -123,7 +124,7 @@ const renderChart = async () => {
     error.value = null;
   } catch (e) {
     if (svg.value) {
-      console.warn('[vitepress-mermaid-viewer] re-render failed, keeping previous diagram:', e);
+      logWarn('re-render failed, keeping previous diagram:', e);
 
       if (isViewerOpen.value) {
         closeViewer();
@@ -211,7 +212,7 @@ onUnmounted(() => mut?.disconnect());
     :aria-label="LABELS.loading"
     :style="skeletonStyle"
   />
-  <div
+  <figure
     v-else
     ref="containerRef"
     :class="props.class"
@@ -226,6 +227,7 @@ onUnmounted(() => mut?.disconnect());
     v-if="isViewerOpen && svg"
     :svg-html="svg"
     :diagram-id="props.id"
+    :code="decodedGraph"
     :download="pluginSettings.download !== false"
     :download-png="pluginSettings.downloadPng !== false"
     @close="closeViewer"

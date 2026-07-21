@@ -96,13 +96,13 @@ describe('Mermaid.vue', () => {
   it('applies default class "mermaid"', async () => {
     const wrapper = await mountMermaid();
 
-    expect(wrapper.find('div').classes()).toContain('mermaid');
+    expect(wrapper.find('.mermaid').classes()).toContain('mermaid');
   });
 
   it('applies custom class prop', async () => {
     const wrapper = await mountMermaid({ class: 'custom' });
 
-    expect(wrapper.find('div').classes()).toContain('custom');
+    expect(wrapper.find('figure').classes()).toContain('custom');
   });
 
   it('calls init during mount', async () => {
@@ -163,7 +163,7 @@ describe('Mermaid.vue', () => {
   it('opens zoom dialog on click', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay');
@@ -176,7 +176,7 @@ describe('Mermaid.vue', () => {
   it('opens zoom dialog on Enter key', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('keydown', { key: 'Enter' });
+    await wrapper.find('.mermaid').trigger('keydown', { key: 'Enter' });
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay');
@@ -189,7 +189,7 @@ describe('Mermaid.vue', () => {
   it('opens zoom dialog on Space key', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('keydown', { key: ' ' });
+    await wrapper.find('.mermaid').trigger('keydown', { key: ' ' });
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay');
@@ -202,7 +202,7 @@ describe('Mermaid.vue', () => {
   it('zooms in on "+" key and updates aria-live output', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -223,7 +223,7 @@ describe('Mermaid.vue', () => {
   it('zooms out on "-" key', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -240,7 +240,7 @@ describe('Mermaid.vue', () => {
   it('resets transform on "0" key', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -259,7 +259,7 @@ describe('Mermaid.vue', () => {
   it('pans on arrow keys', async () => {
     const wrapper = await mountMermaid();
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -280,13 +280,13 @@ describe('Mermaid.vue', () => {
 
   it('restores focus to trigger after dialog close', async () => {
     const wrapper = await mountMermaid({}, { attachTo: document.body });
-    const trigger = wrapper.find('div').element as HTMLElement;
+    const trigger = wrapper.find('.mermaid').element as HTMLElement;
 
     trigger.focus();
 
     expect(document.activeElement).toBe(trigger);
 
-    await wrapper.find('div').trigger('click');
+    await wrapper.find('.mermaid').trigger('click');
     await flushPromises();
 
     const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -341,7 +341,7 @@ describe('Mermaid.vue', () => {
     it('creates Blob with MIME type image/svg+xml on download', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -362,7 +362,7 @@ describe('Mermaid.vue', () => {
     it('uses filename matching pattern mermaid-{id}.svg', async () => {
       const wrapper = await mountMermaid({ id: 'my-diagram' });
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -400,7 +400,7 @@ describe('Mermaid.vue', () => {
     it('calls URL.revokeObjectURL() after download', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -433,7 +433,7 @@ describe('Mermaid.vue', () => {
     it('both action buttons appear in controls panel by default', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -449,7 +449,7 @@ describe('Mermaid.vue', () => {
     it('Download button has aria-label="Download SVG"', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -464,7 +464,7 @@ describe('Mermaid.vue', () => {
     it('Download PNG button has aria-label="Download PNG"', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -479,7 +479,7 @@ describe('Mermaid.vue', () => {
     it('action buttons use CSS class mermaid-view-btn', async () => {
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -497,7 +497,7 @@ describe('Mermaid.vue', () => {
 
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -515,7 +515,7 @@ describe('Mermaid.vue', () => {
 
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const dialog = document.querySelector('dialog.mermaid-view-overlay') as HTMLDialogElement;
@@ -539,7 +539,7 @@ describe('Mermaid.vue', () => {
 
       expect(wrapper.find('[aria-busy="true"]').exists()).toBe(true);
       expect(wrapper.find('[role="button"]').exists()).toBe(false);
-      expect(wrapper.find('div').classes()).toContain('mermaid--loading');
+      expect(wrapper.find('.mermaid').classes()).toContain('mermaid--loading');
 
       resolveRender('<svg id="ok">ok</svg>');
       await flushPromises();
@@ -611,7 +611,7 @@ describe('Mermaid.vue', () => {
 
       const wrapper = await mountMermaid();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       expect(document.querySelector('dialog.mermaid-view-overlay')).toBeTruthy();
@@ -637,7 +637,7 @@ describe('Mermaid.vue', () => {
       document.body.appendChild(tempBtn);
       tempBtn.focus();
 
-      await wrapper.find('div').trigger('click');
+      await wrapper.find('.mermaid').trigger('click');
       await flushPromises();
 
       const focusSpy = vi.spyOn(tempBtn, 'focus');
