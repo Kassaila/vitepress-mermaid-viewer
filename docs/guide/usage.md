@@ -89,6 +89,7 @@ export default defineConfig({
 | Zoom out     | `−` button, mouse wheel down, pinch in, `-` key      |
 | Pan          | Click and drag, arrow keys                           |
 | Reset        | `↻` button, `0` key                                  |
+| Copy source  | `⎘` button in viewer                                 |
 | Download SVG | `SVG` button in viewer                               |
 | Download PNG | `PNG` button in viewer                               |
 | Close        | `✕` button, `Escape` key                             |
@@ -127,16 +128,18 @@ variants are generated from that class name:
 
 The interactive viewer uses these classes (all prefixed `mermaid-view-`):
 
-| Selector                      | Element                             |
-| ----------------------------- | ----------------------------------- |
-| `dialog.mermaid-view-overlay` | The `<dialog>` backdrop             |
-| `.mermaid-view-content`       | Scrollable/pannable diagram canvas  |
-| `.mermaid-view-controls`      | Fixed controls panel (top-right)    |
-| `.mermaid-view-scale`         | Zoom percentage `<output>`          |
-| `.mermaid-view-btn`           | All control buttons                 |
-| `.mermaid-view-btn_zoom`      | Zoom in / Zoom out / Reset buttons  |
-| `.mermaid-view-btn_download`  | Download SVG / Download PNG buttons |
-| `.mermaid-view-btn_close`     | Close button                        |
+| Selector                          | Element                                  |
+| --------------------------------- | ---------------------------------------- |
+| `dialog.mermaid-view-overlay`     | The `<dialog>` backdrop                  |
+| `.mermaid-view-content`           | Scrollable/pannable diagram canvas       |
+| `.mermaid-view-content--dragging` | Canvas dragging state                    |
+| `.mermaid-view-controls`          | Fixed controls panel (top-right)         |
+| `.mermaid-view-scale`             | Zoom percentage `<output>`               |
+| `.mermaid-view-btn`               | All control buttons                      |
+| `.mermaid-view-btn_zoom`          | Zoom in / Zoom out / Reset buttons       |
+| `.mermaid-view-btn_download`      | Copy source / Download SVG / PNG buttons |
+| `.mermaid-view-btn--copied`       | Copy button state when code is copied    |
+| `.mermaid-view-btn_close`         | Close button                             |
 
 ## API
 

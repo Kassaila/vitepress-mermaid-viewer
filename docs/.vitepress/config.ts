@@ -70,8 +70,7 @@ const pageDescriptions = new Map<string, string>();
 
 const renderLlmsTxt = (siteConfig: SiteConfig): string => {
   const sidebar = (siteConfig.site.themeConfig.sidebar ?? []) as
-    | DefaultTheme.SidebarItem[]
-    | Record<string, DefaultTheme.SidebarItem[]>;
+    DefaultTheme.SidebarItem[] | Record<string, DefaultTheme.SidebarItem[]>;
   const groups = Array.isArray(sidebar) ? sidebar : Object.values(sidebar).flat();
 
   const lines: string[] = [
