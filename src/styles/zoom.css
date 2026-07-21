@@ -29,7 +29,7 @@ dialog.mermaid-view-overlay::backdrop {
   border-radius: 0.5rem;
 }
 
-.mermaid-view-content.is-dragging {
+.mermaid-view-content--dragging {
   cursor: grabbing;
 }
 
@@ -94,12 +94,24 @@ dialog.mermaid-view-overlay::backdrop {
   cursor: pointer;
   transition:
     background 0.2s ease,
-    border 0.2s ease;
+    border 0.2s ease,
+    color 0.2s ease;
 }
 
 .mermaid-view-btn:hover {
   background: var(--vp-c-bg-alt);
   border-color: var(--vp-c-brand-1);
+}
+
+.mermaid-view-btn:active {
+  background: var(--vp-c-bg-mute);
+  border-color: var(--vp-c-brand-2);
+}
+
+.mermaid-view-btn--copied {
+  color: var(--vp-c-brand-1);
+  background: var(--vp-c-bg-mute);
+  border-color: var(--vp-c-brand-2);
 }
 
 .mermaid-view-btn:focus {

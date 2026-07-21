@@ -4,6 +4,7 @@ import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { useZoomPan } from './useZoomPan';
 import { cloneMermaidSvg, getSvgSource } from './helpers/svg';
 import { downloadFileSvg, downloadFilePng } from './helpers/export';
+import { logError } from './helpers/logger';
 
 /**
  * Props & Emits
@@ -13,10 +14,12 @@ const props = withDefaults(
   defineProps<{
     svgHtml: string;
     diagramId: string;
+    code?: string;
     download?: boolean;
     downloadPng?: boolean;
   }>(),
   {
+    code: '',
     download: true,
     downloadPng: true,
   },
@@ -35,6 +38,8 @@ const LABELS = {
   close: 'Close',
   download: 'Download SVG',
   downloadPng: 'Download PNG',
+  copyCode: 'Copy diagram source',
+  copied: 'Copied!',
 } as const;
 
 const ICONS = {
@@ -44,6 +49,8 @@ const ICONS = {
   reset: '\u21BB',
   download: 'SVG',
   downloadPng: 'PNG',
+  copyCode: '\u2398',
+  copied: '\u2713',
 } as const;
 
 /**
@@ -98,6 +105,31 @@ const onDownloadPng = () => {
   }
 };
 
+const isCopied = ref(false);
+let copyTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const onCopyCode = async () => {
+  if (!props.code) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(props.code);
+
+    isCopied.value = true;
+
+    if (copyTimeout) {
+      clearTimeout(copyTimeout);
+    }
+
+    copyTimeout = setTimeout(() => {
+      isCopied.value = false;
+    }, 2000);
+  } catch (e) {
+    logError('Failed to copy diagram source code:', e);
+  }
+};
+
 /**
  * Lifecycle
  */
@@ -123,6 +155,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  if (copyTimeout) {
+    clearTimeout(copyTimeout);
+  }
+
   document.body.style.overflow = '';
 });
 </script>
@@ -176,6 +212,16 @@ onBeforeUnmount(() => {
           {{ ICONS.reset }}
         </button>
         <button
+          v-if="code"
+          class="mermaid-view-btn mermaid-view-btn_download"
+          :class="{ 'mermaid-view-btn--copied': isCopied }"
+          :title="isCopied ? LABELS.copied : LABELS.copyCode"
+          :aria-label="isCopied ? LABELS.copied : LABELS.copyCode"
+          @click="onCopyCode"
+        >
+          {{ isCopied ? ICONS.copied : ICONS.copyCode }}
+        </button>
+        <button
           v-if="download"
           class="mermaid-view-btn mermaid-view-btn_download mermaid-view-btn_text"
           :title="LABELS.download"
@@ -194,10 +240,10 @@ onBeforeUnmount(() => {
           {{ ICONS.downloadPng }}
         </button>
       </aside>
-      <div
+      <figure
         ref="contentRef"
         class="mermaid-view-content"
-        :class="{ 'is-dragging': isDragging }"
+        :class="{ 'mermaid-view-content--dragging': isDragging }"
         :style="{ transform }"
         @pointerdown="onPointerDown"
         v-html="clonedSvgHtml"

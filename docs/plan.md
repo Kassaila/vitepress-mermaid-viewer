@@ -56,11 +56,15 @@
       option on `MermaidPlugin` (default `true`)
 - [x] Download PNG button — renders to 2x HiDPI canvas (capped at 4096 px on the longest side);
       toggleable via `downloadPng` option (default `true`)
+- [x] Diagram source code copy button — copies original Mermaid graph code to clipboard in viewer
+- [x] XMLSerializer SVG export — keeps void HTML tags like `<br>` self-closing (`<br/>`) in SVG
+- [x] Centralized logger — `logWarn` and `logError` with `[vitepress-mermaid-viewer]` prefix
+- [x] Semantic `<figure>` container elements in `<Mermaid>` and `<MermaidViewer>`
 - [x] Loading skeleton — shimmer placeholder shown between Suspense resolve and first
       `mermaid.render()`, and during dark/light re-render at the locked container height
 - [x] Error state — `role="alert"` block with the error message and the diagram source in
       `<details>` when initial `mermaid.render()` rejects
-- [x] Re-render failure recovery — restores the previous SVG and logs `console.warn` if a
+- [x] Re-render failure recovery — restores the previous SVG and logs warning if a
       subsequent render fails (e.g. during theme switch); closes the fullscreen viewer if it was
       open during the failure
 - [x] `prefers-reduced-motion` support — disables skeleton shimmer and viewer button transitions
@@ -89,7 +93,7 @@
 ### Testing
 
 - [x] Vitest + happy-dom
-- [x] Tests for `mermaid.ts`, `markdown-plugin.ts`, `vite-plugin.ts`, `with-mermaid.ts`, `Mermaid.vue`
+- [x] Tests for `mermaid.ts`, `markdown-plugin.ts`, `vite-plugin.ts`, `with-mermaid.ts`, `Mermaid.vue`, and `MermaidViewer.vue`
 - [x] `__tests__/helpers/` shared test utilities
 - [x] `@vitest/coverage-v8` configured
 - [x] Keyboard interaction tests — trigger open, zoom/pan handlers, aria-live updates, focus

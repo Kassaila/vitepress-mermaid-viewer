@@ -38,7 +38,10 @@ Tests are organized by module:
 - `markdown-plugin.test.ts` - Markdown-it fence renderer override
 - `vite-plugin.test.ts` - Vite plugin hooks (transform, resolveId, load)
 - `with-mermaid.test.ts` - VitePress config composition
-- `mermaid-component.test.ts` - Vue component (rendering, theme, zoom dialog)
+- `mermaid-component.test.ts` - Vue core component (`Mermaid.vue`: rendering, theme, skeleton, error
+  alert)
+- `mermaid-viewer.test.ts` - Fullscreen viewer component (`MermaidViewer.vue`: zoom/pan,
+  accessibility, downloads, copy source)
 
 ## Output Format
 

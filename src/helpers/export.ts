@@ -1,3 +1,5 @@
+import { logWarn } from './logger';
+
 /**
  * @internal
  * SVG/PNG download helpers for the bundled `<MermaidViewer>` component.
@@ -126,7 +128,7 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
 
       a.click();
     } catch (e) {
-      console.warn('[vitepress-mermaid-viewer] PNG export failed:', e);
+      logWarn('PNG export failed:', e);
     } finally {
       if (canvas) {
         canvas.width = 0;

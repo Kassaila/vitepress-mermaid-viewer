@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-21
+
+### Added
+
+#### Viewer
+
+- Diagram source code copy button in the fullscreen viewer — copies original Mermaid graph code to
+  clipboard with visual feedback (`✓` / `Copied!`)
+
+### Fixed
+
+#### Viewer
+
+- Exported SVG XML serialization — uses `XMLSerializer` to serialize exported SVG, ensuring void
+  HTML elements like `<br>` (from `\n` in node labels) are self-closing (`<br/>`) for spec-compliant
+  XML
+
+### Changed
+
+- Replaced `<div>` containers with semantic `<figure>` elements in `<Mermaid>` and `<MermaidViewer>`
+- CSS drag class renamed from `.mermaid-view-content.is-dragging` to
+  `.mermaid-view-content--dragging`
+
+### Internal
+
+- Centralized logger (`src/helpers/logger.ts`) with `logWarn` and `logError` providing uniform
+  `[vitepress-mermaid-viewer]` log prefixes
+- Refactored component unit tests — split component tests into `mermaid-component.test.ts`
+  (`Mermaid.vue`) and `mermaid-viewer.test.ts` (`MermaidViewer.vue`) for improved test isolation and
+  modularity
+- Repo structure and tooling updates — added `.ai/agents/` definitions and `Makefile` for AI tools
+
 ## [0.4.0] - 2026-05-01
 
 ### Added
