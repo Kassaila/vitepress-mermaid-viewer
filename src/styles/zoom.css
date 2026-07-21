@@ -110,8 +110,8 @@ dialog.mermaid-view-overlay::backdrop {
 
 .mermaid-view-btn--copied {
   color: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
-  background: var(--vp-c-brand-soft);
+  background: var(--vp-c-bg-mute);
+  border-color: var(--vp-c-brand-2);
 }
 
 .mermaid-view-btn:focus {
