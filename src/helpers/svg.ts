@@ -55,5 +55,17 @@ export const getSvgSource = (container: HTMLElement | null): string => {
 
   const svgEl = container.querySelector('svg');
 
-  return svgEl ? svgEl.outerHTML : '';
+  if (!svgEl) {
+    return '';
+  }
+
+  /**
+   * If mermaid content contains `\n`, it may be rendered as `<br>`.
+   * However, plain SVG must be in XML format, so it must be rendered using self-closing tags like `<br />`.
+   * Use `XMLSerializer` to obtain a string that is safe for SVG.
+   */
+  const serializer = new XMLSerializer();
+  const cleanSvg = serializer.serializeToString(svgEl);
+
+  return cleanSvg;
 };
