@@ -36,7 +36,8 @@ dialog.mermaid-view-overlay::backdrop {
 .mermaid-view-content svg {
   max-width: 90vw;
   max-height: 90vh;
-  width: auto;
+  /* An explicit width prevents Safari from collapsing the SVG flex item to 0 × 0. */
+  width: 100%;
   height: auto;
 }
 
