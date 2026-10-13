@@ -1,12 +1,10 @@
-# CLAUDE.md
+# Agent manifest
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this
-repository.
+This file provides guidance to AI agent when working with code in this repository.
 
 ## Project
 
-Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing. Peer
-dependencies: `mermaid >=10`, `vitepress >=1.0.0`.
+Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing.
 
 ## Commands
 
