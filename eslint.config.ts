@@ -28,11 +28,11 @@ export default [
    * type-aware rules (no project service)
    */
   {
-    files: ['scripts/**'],
+    files: ['scripts/**', 'examples/*/ssr.mjs'],
     ...tseslint.configs.disableTypeChecked,
   },
   {
-    files: ['scripts/**'],
+    files: ['scripts/**', 'examples/*/ssr.mjs'],
     languageOptions: {
       globals: {
         process: 'readonly',

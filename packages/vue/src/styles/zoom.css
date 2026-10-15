@@ -1,4 +1,7 @@
 dialog.mermaid-view-overlay {
+  box-sizing: border-box;
+  color: var(--mv-text, var(--mv-default-text, #3c3c43));
+  font-family: var(--mv-font-family, inherit);
   max-width: none;
   max-height: none;
   width: 100%;
@@ -6,7 +9,7 @@ dialog.mermaid-view-overlay {
   padding: 0;
   border: none;
   margin: 0;
-  background: var(--vp-c-bg);
+  background: var(--mv-bg, var(--mv-default-bg, #ffffff));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -18,6 +21,8 @@ dialog.mermaid-view-overlay::backdrop {
 }
 
 .mermaid-view-content {
+  box-sizing: border-box;
+  margin: 0;
   width: 100%;
   height: 100%;
   display: flex;
@@ -25,7 +30,7 @@ dialog.mermaid-view-overlay::backdrop {
   justify-content: center;
   cursor: grab;
   touch-action: none;
-  border: 3px solid var(--vp-c-brand-3);
+  border: 3px solid var(--mv-accent-muted, var(--mv-default-accent-muted, #5672cd));
   border-radius: 0.5rem;
 }
 
@@ -52,17 +57,21 @@ dialog.mermaid-view-overlay::backdrop {
   z-index: 1000;
   padding: 0.5rem;
   border-radius: 0.75rem;
-  background: color-mix(in srgb, var(--vp-c-bg-soft) 80%, transparent);
-  border: 1px solid var(--vp-c-divider);
+  background: color-mix(
+    in srgb,
+    var(--mv-surface, var(--mv-default-surface, #f6f6f7)) 80%,
+    transparent
+  );
+  border: 1px solid var(--mv-border, var(--mv-default-border, #e2e2e3));
 }
 
 .mermaid-view-scale,
 .mermaid-view-btn {
   height: 2.5rem;
   border-radius: 0.5rem;
-  border: 1px solid var(--vp-c-divider);
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-1);
+  border: 1px solid var(--mv-border, var(--mv-default-border, #e2e2e3));
+  background: var(--mv-surface, var(--mv-default-surface, #f6f6f7));
+  color: var(--mv-text, var(--mv-default-text, #3c3c43));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,19 +109,19 @@ dialog.mermaid-view-overlay::backdrop {
 }
 
 .mermaid-view-btn:hover {
-  background: var(--vp-c-bg-alt);
-  border-color: var(--vp-c-brand-1);
+  background: var(--mv-surface-hover, var(--mv-default-surface-hover, #eeeeef));
+  border-color: var(--mv-accent, var(--mv-default-accent, #3451b2));
 }
 
 .mermaid-view-btn:active {
-  background: var(--vp-c-bg-mute);
-  border-color: var(--vp-c-brand-2);
+  background: var(--mv-surface-active, var(--mv-default-surface-active, #e4e4e7));
+  border-color: var(--mv-accent-hover, var(--mv-default-accent-hover, #3a5ccc));
 }
 
 .mermaid-view-btn--copied {
-  color: var(--vp-c-brand-1);
-  background: var(--vp-c-bg-mute);
-  border-color: var(--vp-c-brand-2);
+  color: var(--mv-accent, var(--mv-default-accent, #3451b2));
+  background: var(--mv-surface-active, var(--mv-default-surface-active, #e4e4e7));
+  border-color: var(--mv-accent-hover, var(--mv-default-accent-hover, #3a5ccc));
 }
 
 .mermaid-view-btn:focus {
@@ -120,9 +129,9 @@ dialog.mermaid-view-overlay::backdrop {
 }
 
 .mermaid-view-btn:focus-visible {
-  outline: 2px solid var(--vp-c-brand-1);
+  outline: 2px solid var(--mv-accent, var(--mv-default-accent, #3451b2));
   outline-offset: 2px;
-  border-color: var(--vp-c-brand-1);
+  border-color: var(--mv-accent, var(--mv-default-accent, #3451b2));
 }
 
 .mermaid-view-btn_text {

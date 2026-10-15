@@ -5,6 +5,10 @@ import { useZoomPan } from './useZoomPan';
 import { cloneMermaidSvg, getSvgSource } from './helpers/svg';
 import { downloadFileSvg, downloadFilePng } from './helpers/export';
 import { logError } from './helpers/logger';
+import { lockBodyScroll } from './helpers/scroll-lock';
+import { defaultViewerLabels } from './customization';
+import type { ViewerCustomization } from './customization';
+import type { ViewerError } from './types';
 
 /**
  * Props & Emits
@@ -17,30 +21,26 @@ const props = withDefaults(
     code?: string;
     download?: boolean;
     downloadPng?: boolean;
+    copySource?: boolean;
+    appearance?: 'light' | 'dark';
+    customization?: ViewerCustomization;
   }>(),
   {
     code: '',
     download: true,
     downloadPng: true,
+    copySource: true,
+    appearance: 'light',
+    customization: () => ({}),
   },
 );
 
 const emit = defineEmits<{
   (e: 'close'): void;
+  (e: 'error', error: ViewerError): void;
 }>();
 
-const LABELS = {
-  dialog: 'Diagram viewer',
-  zoomLevel: 'Zoom level',
-  zoomIn: 'Zoom in',
-  zoomOut: 'Zoom out',
-  reset: 'Reset zoom',
-  close: 'Close',
-  download: 'Download SVG',
-  downloadPng: 'Download PNG',
-  copyCode: 'Copy diagram source',
-  copied: 'Copied!',
-} as const;
+const LABELS = computed(() => ({ ...defaultViewerLabels, ...props.customization?.labels }));
 
 const ICONS = {
   close: '\u2715',
@@ -77,7 +77,7 @@ const {
  * Computed & handlers
  */
 
-const clonedSvgHtml = computed(() => cloneMermaidSvg(props.svgHtml));
+const clonedSvgHtml = computed(() => cloneMermaidSvg(props.svgHtml, LABELS.value.diagram));
 
 const onDownload = () => {
   const source = getSvgSource(contentRef.value);
@@ -88,6 +88,7 @@ const onDownload = () => {
 };
 
 let pngExporting = false;
+let cancelPng = () => {};
 
 const onDownloadPng = () => {
   if (pngExporting) {
@@ -99,7 +100,7 @@ const onDownloadPng = () => {
   if (source) {
     pngExporting = true;
 
-    downloadFilePng(source, props.diagramId, () => {
+    cancelPng = downloadFilePng(source, props.diagramId, () => {
       pngExporting = false;
     });
   }
@@ -107,6 +108,7 @@ const onDownloadPng = () => {
 
 const isCopied = ref(false);
 let copyTimeout: ReturnType<typeof setTimeout> | null = null;
+let disposed = false;
 
 const onCopyCode = async () => {
   if (!props.code) {
@@ -115,6 +117,10 @@ const onCopyCode = async () => {
 
   try {
     await navigator.clipboard.writeText(props.code);
+
+    if (disposed) {
+      return;
+    }
 
     isCopied.value = true;
 
@@ -126,7 +132,10 @@ const onCopyCode = async () => {
       isCopied.value = false;
     }, 2000);
   } catch (e) {
-    logError('Failed to copy diagram source code:', e);
+    if (!disposed) {
+      logError('Failed to copy diagram source code:', e);
+      emit('error', { stage: 'clipboard', cause: e, retainedSvg: true });
+    }
   }
 };
 
@@ -142,24 +151,32 @@ const onDialogClose = () => {
   emit('close');
 };
 
+let unlockScroll = () => {};
+
+defineExpose({ reset: resetView });
+
 onMounted(() => {
   const dialog = dialogRef.value;
 
   if (dialog) {
     dialog.showModal();
 
-    document.body.style.overflow = 'hidden';
+    unlockScroll = lockBodyScroll(document.body);
 
     closeBtnRef.value?.focus({ preventScroll: true });
   }
 });
 
 onBeforeUnmount(() => {
+  disposed = true;
+
+  cancelPng();
+
   if (copyTimeout) {
     clearTimeout(copyTimeout);
   }
 
-  document.body.style.overflow = '';
+  unlockScroll();
 });
 </script>
 
@@ -169,6 +186,8 @@ onBeforeUnmount(() => {
     <dialog
       ref="dialogRef"
       class="mermaid-view-overlay"
+      :data-mv-appearance="appearance"
+      :style="customization?.css"
       :aria-label="LABELS.dialog"
       @close="onDialogClose"
       @keydown="handleKeydown"
@@ -212,7 +231,7 @@ onBeforeUnmount(() => {
           {{ ICONS.reset }}
         </button>
         <button
-          v-if="code"
+          v-if="code && copySource"
           class="mermaid-view-btn mermaid-view-btn_download"
           :class="{ 'mermaid-view-btn--copied': isCopied }"
           :title="isCopied ? LABELS.copied : LABELS.copyCode"

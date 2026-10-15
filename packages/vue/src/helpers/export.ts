@@ -62,7 +62,11 @@ const parseSvgDimensions = (svgEl: SVGElement): { width: number; height: number 
  * Uses 2x scale for HiDPI sharpness, clamped to MAX_CANVAS_SIDE.
  * Calls onDone() when finished (success or failure).
  */
-export const downloadFilePng = (svgSource: string, id: string, onDone: () => void): void => {
+export const downloadFilePng = (
+  svgSource: string,
+  id: string,
+  onDone: () => void,
+): (() => void) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgSource, 'image/svg+xml');
   const svgEl = doc.querySelector('svg');
@@ -70,7 +74,7 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
   if (!svgEl) {
     onDone();
 
-    return;
+    return () => {};
   }
 
   const dims = parseSvgDimensions(svgEl);
@@ -78,7 +82,7 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
   if (!dims) {
     onDone();
 
-    return;
+    return () => {};
   }
 
   const scale = Math.min(PNG_SCALE, MAX_CANVAS_SIDE / Math.max(dims.width, dims.height));
@@ -144,4 +148,11 @@ export const downloadFilePng = (svgSource: string, id: string, onDone: () => voi
   };
 
   img.src = svgDataUri;
+
+  return () => {
+    img.onload = null;
+    img.onerror = null;
+
+    img.removeAttribute('src');
+  };
 };

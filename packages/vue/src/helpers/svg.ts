@@ -9,7 +9,7 @@ const DIAGRAM_LABEL = 'Mermaid diagram';
 /**
  * Clone SVG HTML with updated ID suffix and accessibility attributes.
  */
-export const cloneMermaidSvg = (svgHtml: string): string => {
+export const cloneMermaidSvg = (svgHtml: string, label: string = DIAGRAM_LABEL): string => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgHtml, 'text/html');
   const svgEl = doc.querySelector('svg');
@@ -25,7 +25,7 @@ export const cloneMermaidSvg = (svgHtml: string): string => {
   }
 
   if (!svgEl.hasAttribute('aria-label') && !svgEl.hasAttribute('aria-labelledby')) {
-    svgEl.setAttribute('aria-label', DIAGRAM_LABEL);
+    svgEl.setAttribute('aria-label', label);
   }
 
   if (!origId) {

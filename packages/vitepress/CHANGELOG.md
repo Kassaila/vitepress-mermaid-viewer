@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Typed `mermaid.viewer` customization object with component CSS tokens and JS labels. Overrides
+  apply to both inline diagrams and the fullscreen dialog.
+- Standalone Vue workspace package and Vue/Vite example with SSR checks.
+
+### Changed
+
+- VitePress now wraps the shared Vue viewer; frontmatter/theme/configuration remain in the plugin.
+  The published VitePress package still bundles its viewer implementation.
+- Component styles use `--mv-*` tokens, mapped to VitePress variables by the integration stylesheet.
+  Inline diagrams have stable `mv-diagram` classes, including loading/error modifiers. Existing
+  fullscreen control classes and the configurable diagram class are preserved.
+
+### Fixed
+
+- Source/config replacements rerender the diagram; stale asynchronous results cannot overwrite a
+  newer diagram or update an unmounted component.
+- Mermaid configuration/render calls are serialized, rendering artifacts are cleaned on failure, and
+  a failed update preserves the matching SVG/source pair.
+
 ## [0.5.1] - 2026-10-06
 
 ### Fixed

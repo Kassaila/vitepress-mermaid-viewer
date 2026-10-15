@@ -1,4 +1,4 @@
-const PREFIX = '[vitepress-mermaid-viewer]';
+const PREFIX = '[mermaid-viewer]';
 
 export const logWarn = (message: string, ...args: unknown[]): void => {
   console.warn(`${PREFIX} ${message}`, ...args);

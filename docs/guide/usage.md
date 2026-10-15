@@ -85,6 +85,48 @@ export default defineConfig({
 });
 ```
 
+## Customization
+
+Keep CSS overrides and JS labels in a separate configuration file:
+
+```ts
+// docs/.vitepress/mermaid-viewer.ts
+import type { ViewerCustomization } from 'vitepress-mermaid-viewer';
+
+export const viewerCustomization = {
+  css: {
+    '--mv-radius': '1rem',
+    '--mv-accent': 'var(--vp-c-brand-1)',
+  },
+  labels: { trigger: 'Open diagram', close: 'Close viewer' },
+} satisfies ViewerCustomization;
+```
+
+Pass the object as `mermaid.viewer` in the VitePress configuration:
+
+```ts
+import { defineConfig } from 'vitepress';
+import { withMermaid } from 'vitepress-mermaid-viewer';
+import { viewerCustomization } from './mermaid-viewer';
+
+export default withMermaid(
+  defineConfig({
+    mermaid: { viewer: viewerCustomization },
+  }),
+);
+```
+
+The integration maps `--mv-*` tokens to the VitePress theme automatically. Object overrides apply to
+both the inline diagram and its fullscreen viewer. The mapping lives in the plugin's
+`src/styles/vitepress.css`; the standalone Vue package contains no VitePress variables.
+
+Available tokens: `--mv-bg`, `--mv-surface`, `--mv-surface-hover`, `--mv-surface-active`, `--mv-text`,
+`--mv-border`, `--mv-accent`, `--mv-accent-hover`, `--mv-accent-muted`, `--mv-danger`, `--mv-radius`,
+`--mv-padding`, `--mv-min-height`, `--mv-font-family`. Set global overrides on `:root` in a theme CSS
+file imported after the plugin styles, or use the object above. `viewer.labels` customizes the
+loading/error messages and control titles/ARIA labels. Mermaid diagram colors/fonts are configured
+separately through `mermaid.theme`, `mermaid.themeVariables` and `mermaid.fontFamily`.
+
 ## Viewer Controls
 
 | Action       | Input                                                |

@@ -1,0 +1,117 @@
+/* Defaults stay local so hosts can override public --mv-* tokens in CSS or via props. */
+[data-mv-appearance='dark'] {
+  --mv-default-bg: #1b1b1f;
+  --mv-default-surface: #202127;
+  --mv-default-surface-hover: #2b2d35;
+  --mv-default-surface-active: #31333b;
+  --mv-default-text: #dfdfd6;
+  --mv-default-border: #3c3f44;
+  --mv-default-accent: #a8b1ff;
+  --mv-default-accent-hover: #c2c8ff;
+  --mv-default-accent-muted: #5672cd;
+}
+
+.mv-diagram {
+  margin: 1rem 0;
+  font-family: var(--mv-font-family, inherit);
+  color: var(--mv-text, var(--mv-default-text, #3c3c43));
+  cursor: zoom-in;
+  display: flex;
+  justify-content: center;
+  background: var(--mv-surface, var(--mv-default-surface, #f6f6f7));
+  border-radius: var(--mv-radius, 0.75rem);
+  padding: var(--mv-padding, 1rem);
+  border: 1px solid var(--mv-border, var(--mv-default-border, #e2e2e3));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition:
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.mv-diagram:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--mv-accent, var(--mv-default-accent, #3451b2));
+}
+
+.mv-diagram:focus {
+  outline: none;
+}
+
+.mv-diagram:focus-visible {
+  outline: 2px solid var(--mv-accent, var(--mv-default-accent, #3451b2));
+  outline-offset: 2px;
+  border-color: var(--mv-accent, var(--mv-default-accent, #3451b2));
+}
+
+.mv-diagram--loading,
+.mv-diagram--error {
+  cursor: default;
+}
+
+.mv-diagram--loading:hover,
+.mv-diagram--error:hover {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-color: var(--mv-border, var(--mv-default-border, #e2e2e3));
+}
+
+.mv-diagram--loading {
+  position: relative;
+  overflow: hidden;
+  min-height: var(--mv-min-height, 200px);
+  align-items: center;
+}
+
+.mv-diagram--loading::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--mv-border, var(--mv-default-border, #e2e2e3)) 50%,
+    transparent 100%
+  );
+  animation: mv-shimmer 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mv-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mv-diagram--loading::before {
+    animation: none;
+    opacity: 0.4;
+  }
+}
+
+.mv-diagram--error {
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  border-color: var(--mv-danger, #b8272c);
+  color: var(--mv-text, var(--mv-default-text, #3c3c43));
+}
+
+.mv-diagram--error p {
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+  color: var(--mv-danger, #b8272c);
+}
+
+.mv-diagram--error pre {
+  margin: 0.5rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.mv-diagram > svg {
+  max-width: 100%;
+  height: auto;
+}

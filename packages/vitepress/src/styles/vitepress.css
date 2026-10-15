@@ -1,0 +1,21 @@
+/* VitePress integration only. User customization.css overrides these inherited tokens. */
+:root {
+  --mv-bg: var(--vp-c-bg);
+  --mv-surface: var(--vp-c-bg-soft);
+  --mv-surface-hover: var(--vp-c-bg-alt);
+  --mv-surface-active: var(--vp-c-bg-mute);
+  --mv-text: var(--vp-c-text-1);
+  --mv-border: var(--vp-c-divider);
+  --mv-accent: var(--vp-c-brand-1);
+  --mv-accent-hover: var(--vp-c-brand-2);
+  --mv-accent-muted: var(--vp-c-brand-3);
+  --mv-danger: var(--vp-c-danger-1);
+  --mv-font-family: var(--vp-font-family-base);
+}
+
+/* Legacy Suspense fallback emitted by the Markdown plugin before the component is ready. */
+.vp-doc .mermaid--loading {
+  min-height: var(--mv-min-height, 200px);
+  background: var(--mv-surface);
+  border-radius: var(--mv-radius, 0.75rem);
+}

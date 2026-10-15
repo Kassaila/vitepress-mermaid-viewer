@@ -3,3 +3,5 @@ export { MermaidMarkdown } from './markdown-plugin';
 export { MermaidPlugin } from './vite-plugin';
 
 export type { MermaidPluginConfig } from './markdown-plugin';
+export type { MermaidPluginOptions } from './vite-plugin';
+export type { ViewerCustomization, ViewerCssVariables, ViewerLabels } from 'vue-mermaid-viewer';

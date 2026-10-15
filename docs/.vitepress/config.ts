@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path';
 
 import { defineConfig, type SiteConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-mermaid-viewer';
+import { viewerCustomization } from './mermaid-viewer';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../packages/vitepress/package.json') as { version: string };
@@ -108,6 +109,7 @@ const renderLlmsTxt = (siteConfig: SiteConfig): string => {
 
 export default withMermaid(
   defineConfig({
+    mermaid: { viewer: viewerCustomization },
     vite: {
       build: {
         chunkSizeWarningLimit: 600,

@@ -1,9 +1,11 @@
 import type { Plugin } from 'vitepress';
 import type { MermaidConfig } from 'mermaid';
+import type { ViewerCustomization } from 'vue-mermaid-viewer';
 
 export interface MermaidPluginOptions extends MermaidConfig {
   download?: boolean;
   downloadPng?: boolean;
+  viewer?: ViewerCustomization;
 }
 
 const DEFAULT_CONFIG: MermaidConfig = {
@@ -12,13 +14,14 @@ const DEFAULT_CONFIG: MermaidConfig = {
 };
 
 export const MermaidPlugin = (inlineConfig?: MermaidPluginOptions): Plugin => {
-  const { download, downloadPng, ...mermaidConfig } = inlineConfig ?? {};
+  const { download, downloadPng, viewer, ...mermaidConfig } = inlineConfig ?? {};
 
   const config = {
     ...DEFAULT_CONFIG,
     ...mermaidConfig,
     download: download ?? true,
     downloadPng: downloadPng ?? true,
+    ...(viewer ? { viewer } : {}),
   };
 
   const virtualModuleId = 'virtual:mermaid-config';

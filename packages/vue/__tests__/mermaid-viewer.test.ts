@@ -1,55 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { defineComponent, h, ref, Suspense } from 'vue';
 import { flushPromises } from './helpers/setup';
-import mermaidConfig from './helpers/__mocks__/virtual-mermaid-config';
-
-type ObserverCallback = (mutations: unknown[], observer: unknown) => void;
-
-let _observerCallback: ObserverCallback;
-const observeSpy = vi.fn();
-const disconnectSpy = vi.fn();
-
-class MockMutationObserver {
-  constructor(cb: ObserverCallback) {
-    _observerCallback = cb;
-  }
-  observe = observeSpy;
-  disconnect = disconnectSpy;
-}
-
-vi.stubGlobal('MutationObserver', MockMutationObserver);
-
-const mockRender = vi.fn().mockResolvedValue('<svg id="test-1">rendered</svg>');
-const mockInit = vi.fn().mockResolvedValue(undefined);
+import Mermaid from '../src/MermaidViewer.vue';
 
 vi.mock('../src/mermaid', () => ({
-  render: (...args: unknown[]) => mockRender(...args),
-  init: (...args: unknown[]) => mockInit(...args),
+  render: vi.fn().mockResolvedValue({ svg: '<svg id="test-1">rendered</svg>' }),
 }));
 
-vi.mock('vitepress', () => ({
-  useData: () => ({
-    page: ref({ frontmatter: {} }),
-  }),
-}));
-
-/**
- * Stub dialog methods not implemented in happy-dom
- */
-// eslint-disable-next-line @typescript-eslint/unbound-method -- polyfill for happy-dom
-HTMLDialogElement.prototype.showModal ??= vi.fn(function (this: HTMLDialogElement) {
-  this.setAttribute('open', '');
-});
-// eslint-disable-next-line @typescript-eslint/unbound-method -- polyfill for happy-dom
-HTMLDialogElement.prototype.close ??= vi.fn(function (this: HTMLDialogElement) {
-  this.removeAttribute('open');
-  this.dispatchEvent(new Event('close'));
-});
-
-import Mermaid from '../src/Mermaid.vue';
-
-const DEFAULT_CLASS = 'mermaid';
+const DEFAULT_CLASS = 'mv-diagram';
 
 const SELECTORS = {
   container: `.${DEFAULT_CLASS}`,
@@ -63,28 +21,16 @@ const SELECTORS = {
 
 const getViewerDialog = () => document.querySelector<HTMLDialogElement>(SELECTORS.overlay)!;
 
-const GRAPH = encodeURIComponent('graph TD; A-->B');
+const controls: { svg?: boolean; png?: boolean } = {};
 
 const mountMermaid = async (
   props?: Record<string, unknown>,
   options?: { attachTo?: HTMLElement },
 ) => {
-  const mermaidProps = {
-    graph: GRAPH,
-    id: 'test-1',
-    ...props,
-  };
-
-  const Wrapper = defineComponent({
-    setup() {
-      return () =>
-        h(Suspense, null, {
-          default: () => h(Mermaid, mermaidProps),
-        });
-    },
+  const wrapper = mount(Mermaid, {
+    props: { source: 'graph TD; A-->B', id: 'test-1', controls: { ...controls }, ...props },
+    ...options,
   });
-
-  const wrapper = mount(Wrapper, options);
 
   await flushPromises();
 
@@ -94,7 +40,6 @@ const mountMermaid = async (
 describe('MermaidViewer.vue', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    document.documentElement.classList.remove('dark');
   });
 
   it('opens zoom dialog on click', async () => {
@@ -298,7 +243,6 @@ describe('MermaidViewer.vue', () => {
     afterEach(() => {
       vi.unstubAllGlobals();
       vi.restoreAllMocks();
-      vi.stubGlobal('MutationObserver', MockMutationObserver);
     });
 
     it('creates Blob with MIME type image/svg+xml on download', async () => {
@@ -376,8 +320,8 @@ describe('MermaidViewer.vue', () => {
 
   describe('Controls panel and options', () => {
     afterEach(() => {
-      delete (mermaidConfig as Record<string, unknown>).download;
-      delete (mermaidConfig as Record<string, unknown>).downloadPng;
+      delete controls.svg;
+      delete controls.png;
     });
 
     it('both action buttons appear in controls panel by default', async () => {
@@ -443,7 +387,7 @@ describe('MermaidViewer.vue', () => {
     });
 
     it('download: false hides Download SVG button', async () => {
-      (mermaidConfig as Record<string, unknown>).download = false;
+      controls.svg = false;
 
       const wrapper = await mountMermaid();
 
@@ -461,7 +405,7 @@ describe('MermaidViewer.vue', () => {
     });
 
     it('downloadPng: false hides Download PNG button', async () => {
-      (mermaidConfig as Record<string, unknown>).downloadPng = false;
+      controls.png = false;
 
       const wrapper = await mountMermaid();
 

@@ -25,3 +25,5 @@ jobs:
       - run: pnpm run release:check
 
       - run: pnpm run docs:build
+
+      - run: pnpm run check:examples

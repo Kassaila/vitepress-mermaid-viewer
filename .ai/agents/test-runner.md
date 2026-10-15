@@ -12,8 +12,8 @@ diagrams with interactive zoom/pan viewer.
 ## Project Context
 
 - Test framework: vitest with happy-dom
-- Test files: `packages/vitepress/__tests__/*.test.ts`
-- Test helpers: `packages/vitepress/__tests__/helpers/setup.ts`
+- Test files: `packages/*/__tests__/*.test.ts`
+- Test helpers: `packages/*/__tests__/helpers/setup.ts`
 - Vue component testing: @vue/test-utils
 
 ## When Invoked

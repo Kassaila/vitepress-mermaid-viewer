@@ -95,6 +95,32 @@ export default defineConfig({
 });
 ```
 
+## Customization
+
+Keep component overrides in a separate file typed as `ViewerCustomization` (exported by
+`vitepress-mermaid-viewer`), then pass the object as `mermaid.viewer`:
+
+```ts
+// docs/.vitepress/mermaid-viewer.ts
+import type { ViewerCustomization } from 'vitepress-mermaid-viewer';
+
+export const viewerCustomization = {
+  css: { '--mv-radius': '1rem', '--mv-accent': 'var(--vp-c-brand-1)' },
+  labels: { trigger: 'Open diagram', close: 'Close viewer' },
+} satisfies ViewerCustomization;
+```
+
+```ts
+mermaid: {
+  viewer: viewerCustomization;
+}
+```
+
+The integration maps component tokens to the VitePress theme. Overrides apply to the diagram and
+fullscreen dialog. See the
+[customization guide](https://kassaila.github.io/vitepress-mermaid-viewer/guide/usage#customization)
+for all CSS tokens and the complete configuration example.
+
 ## Viewer Controls
 
 | Action       | Input                                                |

@@ -233,6 +233,37 @@ importers:
         specifier: 3.5.40
         version: 3.5.40(typescript@5.9.3)
 
+  examples/vue:
+    dependencies:
+      mermaid:
+        specifier: 11.16.0
+        version: 11.16.0
+      vue:
+        specifier: 3.5.40
+        version: 3.5.40(typescript@5.9.3)
+      vue-mermaid-viewer:
+        specifier: workspace:*
+        version: link:../../packages/vue
+    devDependencies:
+      '@types/node':
+        specifier: 26.1.1
+        version: 26.1.1
+      '@vue/server-renderer':
+        specifier: 3.5.40
+        version: 3.5.40
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      unplugin-vue:
+        specifier: ^7.1.1
+        version: 7.2.0(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(rolldown@1.1.5)(rollup@4.62.2)(vue@3.5.40(typescript@5.9.3))(yaml@2.9.0)
+      vite:
+        specifier: 8.1.5
+        version: 8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)
+      vue-tsc:
+        specifier: ^3.2.6
+        version: 3.2.9(typescript@5.9.3)
+
   packages/vitepress:
     devDependencies:
       '@tsdown/css':
@@ -265,6 +296,48 @@ importers:
       vitepress:
         specifier: 2.0.0-alpha.17
         version: 2.0.0-alpha.17(@types/node@26.1.1)(jiti@2.6.1)(lightningcss@1.33.0)(postcss@8.5.21)(typescript@5.9.3)(yaml@2.9.0)
+      vitest:
+        specifier: ^4.1.2
+        version: 4.1.10(@types/node@26.1.1)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.0)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0))
+      vue:
+        specifier: 3.5.40
+        version: 3.5.40(typescript@5.9.3)
+      vue-mermaid-viewer:
+        specifier: workspace:^
+        version: link:../vue
+      vue-tsc:
+        specifier: ^3.2.6
+        version: 3.2.9(typescript@5.9.3)
+
+  packages/vue:
+    devDependencies:
+      '@tsdown/css':
+        specifier: ^0.21.6
+        version: 0.21.10(jiti@2.6.1)(postcss@8.5.21)(tsdown@0.21.10)(yaml@2.9.0)
+      '@types/node':
+        specifier: 26.1.1
+        version: 26.1.1
+      '@vitest/coverage-v8':
+        specifier: ^4.1.2
+        version: 4.1.10(vitest@4.1.10)
+      '@vue/test-utils':
+        specifier: ^2.4.6
+        version: 2.4.11(@vue/compiler-dom@3.5.40)(@vue/server-renderer@3.5.40)(vue@3.5.40(typescript@5.9.3))
+      happy-dom:
+        specifier: ^20.8.9
+        version: 20.11.0
+      mermaid:
+        specifier: 11.16.0
+        version: 11.16.0
+      tsdown:
+        specifier: ^0.21.6
+        version: 0.21.10(@tsdown/css@0.21.10)(synckit@0.11.13)(typescript@5.9.3)(vue-tsc@3.2.9(typescript@5.9.3))
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      unplugin-vue:
+        specifier: ^7.1.1
+        version: 7.2.0(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(rolldown@1.1.5)(rollup@4.62.2)(vue@3.5.40(typescript@5.9.3))(yaml@2.9.0)
       vitest:
         specifier: ^4.1.2
         version: 4.1.10(@types/node@26.1.1)(@vitest/coverage-v8@4.1.10)(happy-dom@20.11.0)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0))
@@ -6312,6 +6385,36 @@ snapshots:
       - webpack
       - yaml
 
+  unplugin-vue@7.2.0(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(rolldown@1.1.5)(rollup@4.62.2)(vue@3.5.40(typescript@5.9.3))(yaml@2.9.0):
+    dependencies:
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.31
+      '@vue/reactivity': 3.5.40
+      obug: 2.1.4
+      unplugin: 3.3.0(esbuild@0.28.1)(rolldown@1.1.5)(rollup@4.62.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0))
+      vite: 8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)
+      vue: 3.5.40(typescript@5.9.3)
+    transitivePeerDependencies:
+      - '@farmfe/core'
+      - '@rspack/core'
+      - '@types/node'
+      - '@vitejs/devtools'
+      - bun-types-no-globals
+      - esbuild
+      - jiti
+      - less
+      - rolldown
+      - rollup
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - unloader
+      - webpack
+      - yaml
+
   unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.0.0-rc.17)(rollup@4.62.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)):
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -6320,6 +6423,17 @@ snapshots:
     optionalDependencies:
       esbuild: 0.28.1
       rolldown: 1.0.0-rc.17
+      rollup: 4.62.2
+      vite: 8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)
+
+  unplugin@3.3.0(esbuild@0.28.1)(rolldown@1.1.5)(rollup@4.62.2)(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)):
+    dependencies:
+      '@jridgewell/remapping': 2.3.5
+      picomatch: 4.0.5
+      webpack-virtual-modules: 0.6.2
+    optionalDependencies:
+      esbuild: 0.28.1
+      rolldown: 1.1.5
       rollup: 4.62.2
       vite: 8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.6.1)(yaml@2.9.0)
 
