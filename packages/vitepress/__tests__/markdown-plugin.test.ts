@@ -52,15 +52,17 @@ describe('MermaidMarkdown', () => {
     expect(result).toContain(`graph="${encodeURIComponent(content)}"`);
   });
 
-  it('mutates mmd token info to mermaid and delegates to default renderer', () => {
+  it('renders mmd through the Mermaid path without mutating the token', () => {
     const { md, defaultFence } = applyPlugin();
     const token = createToken('mmd', 'graph TD');
     const tokens = [token];
 
-    md.renderer.rules.fence(tokens, 0, 'opts', 'env', 'self');
+    const result = md.renderer.rules.fence(tokens, 0, 'opts', 'env', 'self');
 
-    expect(token.info).toBe('mermaid');
-    expect(defaultFence).toHaveBeenCalledWith(tokens, 0, 'opts', 'env', 'self');
+    expect(token.info).toBe('mmd');
+    expect(result).toContain('<Mermaid');
+    expect(result).toContain(`graph="${encodeURIComponent('graph TD')}"`);
+    expect(defaultFence).not.toHaveBeenCalled();
   });
 
   it('passes non-mermaid fences to default renderer', () => {
@@ -87,5 +89,26 @@ describe('MermaidMarkdown', () => {
     const result = md.renderer.rules.fence(tokens, 0, {}, {}, {});
 
     expect(result).toContain('class="my-diagram another-class"');
+  });
+
+  it('renders both fence names through the real VitePress Markdown parser, preserving encoded source', async () => {
+    const { createMarkdownRenderer, disposeMdItInstance } = await import('vitepress');
+    const md = await createMarkdownRenderer(process.cwd());
+    const source = 'flowchart LR; A["</Mermaid><script>alert(1)</script>"]-->B';
+
+    try {
+      MermaidMarkdown(md);
+      const html = await md.renderAsync(
+        `\`\`\`mermaid\n${source}\n\`\`\`\n\n\`\`\`mmd\n${source}\n\`\`\`\n\n\`\`\`js\nconst x = 1\n\`\`\``,
+      );
+
+      expect(html.match(/<Mermaid /g)).toHaveLength(2);
+      expect(html).toContain(`graph="${encodeURIComponent(source + '\n')}"`);
+      expect(html).not.toContain('<script>alert(1)</script>');
+      expect(html).toContain('<pre');
+      expect(html).not.toContain('language-mmd');
+    } finally {
+      disposeMdItInstance();
+    }
   });
 });

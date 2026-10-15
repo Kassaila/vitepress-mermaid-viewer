@@ -65,7 +65,7 @@ const parseSvgDimensions = (svgEl: SVGElement): { width: number; height: number 
 export const downloadFilePng = (
   svgSource: string,
   id: string,
-  onDone: () => void,
+  onDone: (cause?: unknown) => void,
 ): (() => void) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(svgSource, 'image/svg+xml');
@@ -104,6 +104,7 @@ export const downloadFilePng = (
 
   img.onload = () => {
     let canvas: HTMLCanvasElement | null = null;
+    let cause: unknown;
 
     try {
       canvas = document.createElement('canvas');
@@ -114,7 +115,7 @@ export const downloadFilePng = (
       const ctx = canvas.getContext('2d');
 
       if (!ctx) {
-        return;
+        throw new Error('Canvas 2D context is unavailable');
       }
 
       ctx.fillStyle = '#ffffff';
@@ -133,18 +134,26 @@ export const downloadFilePng = (
       a.click();
     } catch (e) {
       logWarn('PNG export failed:', e);
+
+      cause = e;
     } finally {
       if (canvas) {
         canvas.width = 0;
         canvas.height = 0;
       }
 
-      onDone();
+      img.onload = null;
+      img.onerror = null;
+
+      onDone(cause);
     }
   };
 
   img.onerror = () => {
-    onDone();
+    img.onload = null;
+    img.onerror = null;
+
+    onDone(new Error('Unable to load SVG for PNG export'));
   };
 
   img.src = svgDataUri;

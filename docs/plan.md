@@ -17,22 +17,22 @@ and follows that first cohort.
 - [x] Typed customization file/object for component CSS tokens and JS labels; separate VitePress mapping
 - [x] Ordinary Vue/Vite consumer with SSR and public types
 - [x] Consistent library layout, manifests and script names based on `packages/vitepress`
-- [ ] Extract the framework-independent DOM viewer to `packages/viewer`; turn Vue into a thin adapter
+- [x] Extract the framework-independent DOM viewer to `packages/viewer`; turn Vue into a thin adapter
+- [x] Plain TypeScript consumer, existing-SVG enhancement and package-local lifecycle/viewport tests
 - [ ] Add Changesets and independent package releases
 - [ ] Add other integrations and the VS Code extension in stages
 
 ### Replace temporary Vue bundling before independent releases
 
-VitePress currently bundles the Vue implementation using `alwaysBundle`; `vue-mermaid-viewer` is
+VitePress currently bundles Vue and the shared viewer using `alwaysBundle`; `vue-mermaid-viewer` is
 therefore a build-time `devDependency`. This is temporary. The final package graph must use a
 runtime dependency. Complete the following changes together before releasing independent packages:
 
 - [ ] Move `"vue-mermaid-viewer": "workspace:^"` from `devDependencies` to `dependencies` in
       `packages/vitepress/package.json` and regenerate the pnpm lockfile.
-- [ ] Remove `vue-mermaid-viewer` from `alwaysBundle` in `packages/vitepress/tsdown.config.ts`;
-      keep the Vue runtime external in the published VitePress build.
-- [ ] Configure dependency-order publishing: Vue before VitePress; after extracting the shared
-      viewer, viewer before Vue before VitePress. Publish consumers only after their required
+- [ ] Remove `vue-mermaid-viewer` and `@kassaila/mermaid-viewer` from `alwaysBundle` in
+      `packages/vitepress/tsdown.config.ts`; keep package runtimes external in the published build.
+- [ ] Configure dependency-order publishing: viewer before Vue before VitePress. Publish consumers only after their required
       dependency versions are available.
 - [ ] Verify packed consumers outside the workspace: runtime dependencies, public types, CSS, SSR
       and existing VitePress ESM/CJS exports. Explicitly check CJS interoperability with the ESM Vue
@@ -64,10 +64,12 @@ runtime dependency. Complete the following changes together before releasing ind
 - [x] `packages/vitepress/src/markdown-plugin.ts` — markdown-it fence override for ` ```mermaid ` and ` ```mmd `
 - [x] `packages/vitepress/src/vite-plugin.ts` — client-app entry transform + `virtual:mermaid-config`
 - [x] `packages/vitepress/src/Mermaid.vue` — wrapper for encoded graph, config, frontmatter and theme
-- [x] `packages/vue/src/MermaidViewer.vue` — renderer and loading/error states; `ViewerDialog.vue` owns the fullscreen UI
-- [x] `packages/vue/src/mermaid.ts` — lazy Mermaid loading and serialized initialization/rendering
+- [x] `packages/vue/src/MermaidViewer.vue` — thin lifecycle/props/events adapter with an SSR placeholder
+- [x] `packages/viewer/src/viewer.ts` — source rendering and loading/error states; `dialog.ts` owns fullscreen UI
+- [x] `packages/viewer/src/enhance-svg.ts` — trusted platform-SVG enhancement without loading Mermaid
+- [x] `packages/viewer/src/mermaid.ts` — lazy Mermaid loading and serialized initialization/rendering
 - [x] `packages/vitepress/src/with-mermaid.ts` — one-call config wrapper (markdown + vite + optimizeDeps + aliases)
-- [x] `packages/vue/src/styles/` — component styles using `--mv-*` tokens
+- [x] `packages/viewer/src/styles/` — component styles using `--mv-*` tokens
 - [x] `packages/vitepress/src/styles/vitepress.css` — mapping from component tokens to VitePress variables
 
 ### Features
@@ -137,9 +139,8 @@ runtime dependency. Complete the following changes together before releasing ind
 
 ### Internal
 
-- [x] `MermaidViewer` extracted as a separate component
-- [x] `useZoomPan` composable — owns pointer/wheel/pinch logic and listener lifecycle, returns a
-      reactive `transform` ref consumed via `:style`
+- [x] Framework-independent viewer with explicit update/open/close/reset/destroy lifecycle
+- [x] DOM viewport module owns pointer/wheel/pinch/keyboard behavior and disposable listeners
 
 ### Documentation
 
@@ -172,11 +173,11 @@ Let consumers override the controls panel without forking the component.
 
 ### Priority 2 — Testing
 
-#### `useZoomPan` interaction tests
+#### Viewport interaction tests
 
-Pointer/wheel-path math has no coverage:
+Covered in `packages/viewer/__tests__/viewport.test.ts`:
 
-- Mouse wheel zoom — cursor-centered math (`panX` / `panY` offset by `cx * (factor - 1)`)
-- Pinch gesture — scale clamped to `[0.25, 5]` via two-pointer distance ratio
-- Pointer drag pan — `panX` / `panY` update on `pointermove` while `isDragging`, cleanup on
-  `pointerup` / `pointercancel`
+- [x] Mouse wheel zoom — cursor-centered math (`panX` / `panY` offset by `cx * (factor - 1)`)
+- [x] Pinch gesture — scale clamped to `[0.25, 5]` via two-pointer distance ratio
+- [x] Pointer drag pan — `panX` / `panY` update on `pointermove`, cleanup on
+      `pointerup` / `pointercancel`

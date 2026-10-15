@@ -12,15 +12,17 @@ This repository uses pnpm workspaces with one `pnpm-lock.yaml`. The root is priv
 lint/format/Git tooling. Pin pnpm through the root `packageManager` field; install with
 `pnpm install --frozen-lockfile`.
 
-- `packages/vue` (`vue-mermaid-viewer`) — standalone Vue viewer, Mermaid engine, dialog/viewport,
-  SVG/export and typed customization (`css` tokens and JS labels); no VitePress imports or CSS
-  variables.
+- `packages/viewer` (`@kassaila/mermaid-viewer`) — framework-independent DOM viewer, Mermaid queue,
+  SVG enhancement, dialog/viewport, export and typed customization; no Vue/VitePress imports.
+- `packages/vue` (`vue-mermaid-viewer`) — thin Vue lifecycle/props/events adapter with an SSR
+  placeholder; depends on the viewer through `dependencies: workspace:^`.
 - `packages/vitepress` — published `vitepress-mermaid-viewer` package: Markdown/Vite plugins and a
   thin Vue wrapper for VitePress configuration, frontmatter and theme.
 - `docs` — a private workspace that consumes the package through `workspace:*` and its public
   exports.
 - `examples/vue` — private ordinary Vue/Vite consumer, including SSR and public-type checks.
-- Next, extract the framework-independent viewer from the Vue implementation.
+- `examples/vanilla` — private plain TypeScript/Vite consumer for source and existing-SVG modes.
+- Next, configure independent releases, then add integrations in stages.
 
 Use `workspace:^` for future library-to-library dependencies. pnpm pack converts the protocol into
 regular semver ranges. Keep build and test dependencies in the package that uses them. Until
@@ -29,8 +31,9 @@ independent releases are configured, VitePress bundles the Vue workspace impleme
 
 Before independent releases, move `vue-mermaid-viewer` to VitePress `dependencies`, remove its
 `alwaysBundle` rule and publish Vue before VitePress (viewer → Vue → VitePress after core
-extraction). These changes must land together, with packed-consumer checks for types/CSS/SSR and
-ESM/CJS compatibility. The release transition checklist is in `docs/plan.md`.
+extraction); remove temporary bundling of the core too. These changes must land together, with
+packed-consumer checks for types/CSS/SSR and ESM/CJS compatibility. The release transition checklist
+is in `docs/plan.md`.
 
 ## Commands
 
@@ -51,7 +54,8 @@ pnpm run docs:dev       # VitePress dev server
 pnpm run docs:build     # Build documentation site
 pnpm run docs:preview   # Preview built docs
 pnpm run example:vue    # Standalone Vue/Vite example (build packages first)
-pnpm run check:examples # Consumer types + SSR + production build
+pnpm run example:vanilla # Plain TypeScript example (build packages first)
+pnpm run check:examples # Both consumers: types + SSR + production build
 ```
 
 Pre-commit hook runs `lint-staged` (eslint --fix + prettier on staged files). Commit messages are
@@ -73,20 +77,26 @@ The workspace separates these responsibilities:
    `useData()` frontmatter/dark mode and virtual settings, then passes source/config/customization
    to `packages/vue`. Page `mermaidTheme` overrides dark mode and site theme.
 
-4. **Standalone Vue viewer** (`packages/vue/src/MermaidViewer.vue`) — raw source and explicit props,
-   reactive rendering, loading/error states, revision guards and fullscreen dialog.
-   `ViewerDialog.vue` and `useZoomPan.ts` own controls and viewport. Mermaid configuration/render
-   operations are serialized in `packages/vue/src/mermaid.ts` and clean their temporary rendering
-   containers.
+4. **Vue adapter** (`packages/vue/src/MermaidViewer.vue`) — SSR placeholder and a stable outer
+   `.mv-host`, props forwarding, DOM-event to Vue-event translation, mount/update/destroy lifecycle.
+   Attributes and custom classes belong to that outer host; the runtime owns the child figure.
+
+5. **DOM viewer** (`packages/viewer/src/viewer.ts`) — raw source, render states and revision guards.
+   `enhance-svg.ts` accepts trusted platform-owned SVG without loading Mermaid. `dialog.ts` and
+   `viewport.ts` own fullscreen UI and interactions. `mermaid.ts` serializes setup/rendering, skips
+   stale queued jobs and cleans its staging subtree after settlement. `destroy()` disconnects
+   listeners and callbacks synchronously; late render results cannot commit. One dialog per
+   Document.
 
 **`withMermaid`** (`packages/vitepress/src/with-mermaid.ts`) is a convenience wrapper that composes
 the Markdown/Vite plugins plus the required `optimizeDeps` and module aliases into a single
 VitePress config call.
 
-**Customization:** `packages/vue/src/customization.ts` defines `ViewerCustomization`, component
+**Customization:** `packages/viewer/src/customization.ts` defines `ViewerCustomization`, component
 `--mv-*` CSS tokens and default JS labels. VitePress mapping lives in
 `packages/vitepress/src/styles/vitepress.css`. Application overrides live in
-`docs/.vitepress/mermaid-viewer.ts`; instance overrides reach the teleported dialog too.
+`docs/.vitepress/mermaid-viewer.ts`; allowed inherited CSS tokens and instance overrides are copied
+to the body-mounted dialog on open/update. Vue reexports the same customization types.
 
 Entry point: `packages/vitepress/src/index.ts` — exports `withMermaid`, `MermaidMarkdown`,
 `MermaidPlugin`.

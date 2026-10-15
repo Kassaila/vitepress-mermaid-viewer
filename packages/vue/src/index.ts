@@ -1,6 +1,10 @@
 export { default as MermaidViewer } from './MermaidViewer.vue';
-export { defaultViewerLabels } from './customization';
-export type { ViewerCssVariables, ViewerCustomization, ViewerLabels } from './customization';
+export { defaultViewerLabels } from '@kassaila/mermaid-viewer';
+export type {
+  ViewerCssVariables,
+  ViewerCustomization,
+  ViewerLabels,
+} from '@kassaila/mermaid-viewer';
 export type {
   MermaidViewerProps,
   ViewerControls,

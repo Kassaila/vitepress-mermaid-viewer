@@ -1,0 +1,61 @@
+{
+  "name": "@kassaila/mermaid-viewer",
+  "version": "0.1.0",
+  "description": "Framework-independent interactive Mermaid diagram viewer",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./mermaid": {
+      "types": "./dist/mermaid.d.ts",
+      "import": "./dist/mermaid.js"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "author": "Kassaila",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kassaila/vitepress-mermaid-viewer.git",
+    "directory": "packages/viewer"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "peerDependencies": {
+    "mermaid": "^11.16.0"
+  },
+  "peerDependenciesMeta": {
+    "mermaid": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "build:dev": "NODE_ENV=development tsdown",
+    "dev": "tsdown --watch",
+    "check:types": "tsc --noEmit --declaration false --declarationMap false",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@tsdown/css": "^0.21.6",
+    "@types/node": "26.1.1",
+    "@vitest/coverage-v8": "^4.1.2",
+    "happy-dom": "^20.8.9",
+    "mermaid": "11.16.0",
+    "tsdown": "^0.21.6",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  }
+}

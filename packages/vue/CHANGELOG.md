@@ -7,6 +7,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Delegate rendering, dialog, viewport, export and customization to the DOM viewer runtime
+  dependency.
+- Keep a stable outer `.mv-host` for forwarded attributes and the SSR placeholder.
+- Reexport customization/events types and Mermaid setup from the shared package.
+
 ### Added
 
 - Standalone `vue-mermaid-viewer` package extracted from the VitePress integration, with fullscreen,

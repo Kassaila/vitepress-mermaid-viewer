@@ -17,8 +17,9 @@ pnpm install --frozen-lockfile
 
 ## Workspace layout
 
-The root is private and contains shared lint, format and Git tooling. `packages/vue` owns the
-standalone Vue viewer and customization contract; `examples/vue` verifies an ordinary Vue/Vite app.
+The root is private and contains shared lint, format and Git tooling. `packages/viewer` owns the
+framework-independent DOM implementation and customization contract; `packages/vue` adapts its
+lifecycle, props and events. `examples/vanilla` and `examples/vue` verify ordinary Vite consumers.
 The VitePress plugin lives in `packages/vitepress` with its own manifest, source, tests, build
 config, README, changelog and license. Its npm name and public exports remain
 `vitepress-mermaid-viewer`.
@@ -94,17 +95,25 @@ pnpm run docs:build     # Build documentation site
 pnpm run docs:preview   # Preview built docs
 ```
 
-The standalone Vue package is extracted first. Next, extract its framework-independent viewer, then
-add the other integrations.
+The standalone Vue package and framework-independent viewer are extracted. Independent releases come
+next, followed by the other integrations.
 
-## Vue-first extraction
+## Viewer and framework adapters
 
 Run `pnpm run build` before cross-package type checks or consumers. Build order follows the
-workspace Vue dependency. VitePress currently bundles that implementation and CSS; the dependency is
-in `devDependencies`, so the existing published package stays self-contained. Independent package
-publishing/Changesets will replace this temporary arrangement later.
+workspace graph: viewer → Vue → VitePress. Vue declares its viewer runtime dependency in
+`dependencies` through `workspace:^` and does not bundle its JavaScript. VitePress currently bundles
+both implementations and CSS; its Vue dependency is in `devDependencies`, so the existing published
+package stays self-contained. Independent package publishing/Changesets will replace this temporary
+arrangement later.
 
-Use `pnpm run example:vue` for the standalone example and `pnpm run check:examples` for its types,
-SSR and production build. Component customization lives in an application-owned `mermaid-viewer.ts`
-object; the contract is in `packages/vue/src/customization.ts`, and VitePress CSS mapping is
-isolated in `packages/vitepress/src/styles/vitepress.css`.
+Use `pnpm run example:vanilla` or `pnpm run example:vue` and `pnpm run check:examples` for both
+consumers' types, SSR and production builds. Component customization lives in an application-owned
+`mermaid-viewer.ts` object; the contract is in `packages/viewer/src/customization.ts`, and VitePress
+CSS mapping is isolated in `packages/vitepress/src/styles/vitepress.css`.
+
+The caller owns a dedicated host, and the runtime owns its child DOM. Frameworks must not reconcile
+runtime-owned children. Subscribe to DOM events before mounting, replace the complete options on
+update, and call `destroy` during framework teardown. Existing-SVG enhancement owns only its trigger
+listeners/attributes and dialog; the platform retains its original SVG. Imports must remain
+SSR-safe.

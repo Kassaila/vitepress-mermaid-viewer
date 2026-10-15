@@ -19,12 +19,12 @@
     "check:lint": "eslint",
     "check:format": "pnpm run format:check",
     "check:ssr": "node scripts/check-package-imports.mjs",
-    "check:examples": "pnpm --filter vue-mermaid-viewer-example run check:types && pnpm --filter vue-mermaid-viewer-example run check:ssr && pnpm --filter vue-mermaid-viewer-example run build",
+    "check:examples": "pnpm -r --filter \"./examples/*\" run check:types && pnpm -r --filter \"./examples/*\" run check:ssr && pnpm -r --filter \"./examples/*\" run build",
     "check:all": "pnpm run check:format && pnpm run build && pnpm run check:lint && pnpm run check:types && pnpm run test:run",
     "test": "pnpm -r --parallel --filter \"./packages/*\" run test",
     "test:run": "pnpm -r --filter \"./packages/*\" run test:run",
     "test:coverage": "pnpm -r --filter \"./packages/*\" run test:coverage",
-    "release:check": "pnpm run check:all && pnpm run check:ssr && pnpm --dir packages/vue pack --dry-run && pnpm --dir packages/vitepress pack --dry-run",
+    "release:check": "pnpm run check:all && pnpm run check:ssr && pnpm --dir packages/viewer pack --dry-run && pnpm --dir packages/vue pack --dry-run && pnpm --dir packages/vitepress pack --dry-run",
     "release:publish": "pnpm run release:check && pnpm --dir packages/vitepress exec npm publish",
     "release:publish:beta": "pnpm run release:check && pnpm --dir packages/vitepress exec npm publish --tag beta",
     "docs:dev": "pnpm --filter mermaid-viewer-docs run dev",
@@ -32,6 +32,7 @@
     "docs:preview": "pnpm --filter mermaid-viewer-docs run preview",
     "docs:indexnow": "node scripts/indexnow.mjs",
     "example:vue": "pnpm --filter vue-mermaid-viewer-example run dev",
+    "example:vanilla": "pnpm --filter mermaid-viewer-vanilla-example run dev",
     "prepare": "husky"
   },
   "lint-staged": {

@@ -1,5 +1,5 @@
 /* Defaults stay local so hosts can override public --mv-* tokens in CSS or via props. */
-[data-mv-appearance='dark'] {
+.mv-root[data-mv-appearance='dark'] {
   --mv-default-bg: #1b1b1f;
   --mv-default-surface: #202127;
   --mv-default-surface-hover: #2b2d35;
@@ -73,6 +73,10 @@
   );
   animation: mv-shimmer 1.4s ease-in-out infinite;
   pointer-events: none;
+}
+
+.mv-diagram--loading > svg {
+  visibility: hidden;
 }
 
 @keyframes mv-shimmer {

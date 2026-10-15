@@ -35,6 +35,9 @@
     "mermaid": "^11.16.0",
     "vue": "^3.5.0"
   },
+  "dependencies": {
+    "@kassaila/mermaid-viewer": "workspace:^"
+  },
   "scripts": {
     "build": "tsdown",
     "build:dev": "NODE_ENV=development tsdown",

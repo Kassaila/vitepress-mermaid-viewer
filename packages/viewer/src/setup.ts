@@ -1,0 +1,1 @@
+export { registerExternalDiagrams } from './mermaid';

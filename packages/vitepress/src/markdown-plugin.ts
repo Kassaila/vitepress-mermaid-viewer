@@ -18,7 +18,7 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
     const token = tokens[idx] as { info: string; content: string };
     const info = token.info.trim();
 
-    if (info === 'mermaid') {
+    if (info === 'mermaid' || info === 'mmd') {
       try {
         const rawClass = pluginOptions?.class;
         const className =
@@ -38,10 +38,6 @@ export const MermaidMarkdown = (md: MarkdownIt, pluginOptions?: MermaidPluginCon
       } catch (e) {
         return `<pre>${String(e)}</pre>`;
       }
-    }
-
-    if (info === 'mmd') {
-      token.info = 'mermaid';
     }
 
     return defaultFenceRenderer(tokens, idx, options, env, self);

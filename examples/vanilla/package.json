@@ -1,0 +1,20 @@
+{
+  "name": "mermaid-viewer-vanilla-example",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@kassaila/mermaid-viewer": "workspace:*",
+    "mermaid": "11.16.0"
+  },
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1",
+    "check:types": "tsc --noEmit",
+    "check:ssr": "node ssr.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.1",
+    "typescript": "^5.9.3",
+    "vite": "8.1.5"
+  }
+}

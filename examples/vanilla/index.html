@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mermaid viewer — vanilla TypeScript</title>
+  </head>
+  <body>
+    <main>
+      <h1>Mermaid viewer</h1>
+      <label for="source">Mermaid source</label>
+      <textarea id="source" rows="6">
+flowchart LR
+  A[Edit the source] --> B[Open the diagram]
+  B --> C[Zoom, pan and export]</textarea>
+      <label>
+        <input id="dark" type="checkbox" />
+        Dark theme
+      </label>
+      <button id="lifecycle" type="button">Destroy viewer</button>
+      <p id="status" role="status"></p>
+      <div id="viewer"></div>
+      <h2>Existing SVG</h2>
+      <p>The same controls can enhance a diagram rendered by another platform.</p>
+      <div id="existing" class="existing-diagram">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          id="platform-svg"
+          viewBox="0 0 320 100"
+          aria-labelledby="platform-title"
+        >
+          <title id="platform-title">Existing platform diagram</title>
+          <style>
+            #platform-svg .box {
+              fill: #e8eaff;
+              stroke: #3451b2;
+            }
+            #platform-svg text {
+              fill: #202127;
+              font: 14px sans-serif;
+            }
+          </style>
+          <defs>
+            <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L9,3 z" fill="#3451b2" />
+            </marker>
+          </defs>
+          <rect class="box" x="10" y="20" width="110" height="60" rx="8" />
+          <rect class="box" x="200" y="20" width="110" height="60" rx="8" />
+          <path d="M120 50 L195 50" stroke="#3451b2" marker-end="url(#arrow)" />
+          <text x="30" y="55">Platform SVG</text>
+          <text x="220" y="55">Our viewer</text>
+        </svg>
+      </div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

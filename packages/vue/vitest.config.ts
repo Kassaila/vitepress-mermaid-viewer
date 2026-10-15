@@ -6,7 +6,6 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     include: ['__tests__/**/*.test.ts'],
-    setupFiles: ['__tests__/helpers/dialog.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/**/*.{ts,vue}'],

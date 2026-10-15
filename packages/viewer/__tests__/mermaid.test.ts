@@ -82,4 +82,11 @@ describe('Mermaid engine', () => {
     );
     expect(mock.default.render.mock.calls[0][0]).not.toBe(mock.default.render.mock.calls[1][0]);
   });
+
+  it('skips invalidated jobs before loading Mermaid or creating staging DOM', async () => {
+    await expect(engine.render('old source', {}, () => false)).resolves.toBeNull();
+    expect(mock.default.initialize).not.toHaveBeenCalled();
+    expect(mock.default.render).not.toHaveBeenCalled();
+    expect(document.querySelector('[data-mermaid-viewer-staging]')).toBeNull();
+  });
 });

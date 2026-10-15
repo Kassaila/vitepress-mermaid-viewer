@@ -77,6 +77,10 @@ dialog.mermaid-view-overlay::backdrop {
   justify-content: center;
 }
 
+.mermaid-view-btn[hidden] {
+  display: none;
+}
+
 .mermaid-view-scale {
   grid-row: 1;
   grid-column: 1 / 3;

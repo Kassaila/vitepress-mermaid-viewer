@@ -39,20 +39,31 @@ export const registerExternalDiagrams = (diagrams: ExternalDiagramDefinition[]):
 /**
  * @internal Serialized because Mermaid configuration is shared by all instances.
  */
-export const render = (source: string, config: Readonly<MermaidConfig>): Promise<RenderResult> =>
+export const render = (
+  source: string,
+  config: Readonly<MermaidConfig>,
+  isCurrent: () => boolean = () => true,
+  doc: Document = document,
+): Promise<RenderResult | null> =>
   enqueue(async () => {
+    if (!isCurrent()) return null;
+
     const mermaid = await loadMermaid();
-    const container = document.createElement('div');
+
+    if (!isCurrent()) return null;
+
+    const container = doc.createElement('div');
 
     container.dataset.mermaidViewerStaging = '';
     container.style.cssText =
       'position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none;width:100%;';
 
-    document.body.appendChild(container);
+    doc.body.appendChild(container);
 
     try {
       mermaid.initialize({
         securityLevel: 'strict',
+        theme: 'default',
         ...config,
         startOnLoad: false,
         suppressErrorRendering: true,
@@ -62,7 +73,7 @@ export const render = (source: string, config: Readonly<MermaidConfig>): Promise
 
       do {
         id = `mv-${++nextRenderId}`;
-      } while (document.getElementById(id));
+      } while (doc.getElementById(id) || doc.getElementById(`d${id}`));
 
       return await mermaid.render(id, source, container);
     } finally {

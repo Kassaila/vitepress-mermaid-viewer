@@ -4,8 +4,9 @@ Interactive Mermaid diagrams with fullscreen, zoom, pan, keyboard controls, sour
 export. This package uses Vue and Mermaid without VitePress or a virtual configuration module. The
 initial supported peer ranges are Vue `^3.5.0` and Mermaid `^11.16.0`.
 
-The package is currently consumed inside this workspace. Independent releases follow the extraction
-of the framework-independent viewer.
+This is a thin adapter over `@kassaila/mermaid-viewer`: the DOM package owns rendering, fullscreen,
+viewport and export; Vue forwards props/events and manages lifecycle. The package is currently
+consumed inside this workspace. Independent package releases are the next milestone.
 
 ```vue
 <script setup lang="ts">
@@ -50,8 +51,8 @@ Changing customization or `appearance` updates the UI without rendering Mermaid 
 Removing an override restores its default. Each instance can have its own customization.
 
 You can also set tokens on `:root` in application CSS. Object overrides take precedence. Use the
-customization object for instance-specific tokens so the same values reach the teleported dialog;
-ancestor-scoped CSS variables and a `style` attribute stay on the inline diagram.
+customization object for instance-specific tokens. Allowed inherited tokens, including those from
+ancestor CSS or a `style` attribute, are copied to the body-mounted dialog on open and update.
 
 | CSS token                                               | Purpose                                 |
 | ------------------------------------------------------- | --------------------------------------- |
@@ -80,6 +81,8 @@ replacement. `controls` selects actions: `{ copySource: false, svg: true, png: f
 - `appearance?: 'light' | 'dark'` — UI appearance, default `light`.
 - `customization?: ViewerCustomization` — CSS tokens and JS labels.
 - `controls?: ViewerControls` — action visibility; all enabled by default.
+- `openOnDiagramClick?: boolean` — click/Enter/Space trigger, default `true`; disable when supplying
+  an external control through the component ref.
 - Events: `ready({ source, svg })`, `error({ stage, cause, retainedSvg })`, `open`, `close`.
 - Component ref: `open()`, `close()`, `reset()`. Unmount disposes the viewer.
 
@@ -87,6 +90,10 @@ A rendering update closes an open dialog. If it fails, the previous successful S
 remain available for viewing/copy/export. Late results are ignored after replacement or unmount.
 Mermaid initialization and rendering are serialized across components because the engine shares
 configuration. Temporary rendering DOM is removed after success or failure.
+
+Attributes and custom classes are forwarded to a stable outer `.mv-host`. The DOM runtime owns its
+child `.mv-diagram` figure. CSS selectors that previously assumed custom classes were on the figure
+should target `.custom-class .mv-diagram` instead. Vue never reconciles the runtime-owned subtree.
 
 To register external diagram definitions, complete browser setup before mounting the application:
 

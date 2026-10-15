@@ -1,25 +1,24 @@
 /**
  * CSS overrides apply to both the diagram and the dialog teleported to body.
  */
-export type ViewerCssVariables = Partial<
-  Record<
-    | '--mv-bg'
-    | '--mv-surface'
-    | '--mv-surface-hover'
-    | '--mv-surface-active'
-    | '--mv-text'
-    | '--mv-border'
-    | '--mv-accent'
-    | '--mv-accent-hover'
-    | '--mv-accent-muted'
-    | '--mv-danger'
-    | '--mv-radius'
-    | '--mv-padding'
-    | '--mv-min-height'
-    | '--mv-font-family',
-    string
-  >
->;
+export const viewerCssProperties = [
+  '--mv-bg',
+  '--mv-surface',
+  '--mv-surface-hover',
+  '--mv-surface-active',
+  '--mv-text',
+  '--mv-border',
+  '--mv-accent',
+  '--mv-accent-hover',
+  '--mv-accent-muted',
+  '--mv-danger',
+  '--mv-radius',
+  '--mv-padding',
+  '--mv-min-height',
+  '--mv-font-family',
+] as const;
+
+export type ViewerCssVariables = Partial<Record<(typeof viewerCssProperties)[number], string>>;
 
 export const defaultViewerLabels = {
   trigger: 'Open diagram in fullscreen viewer',

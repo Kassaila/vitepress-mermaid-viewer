@@ -15,6 +15,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Shared viewer behavior now lives in the framework-independent DOM package behind the Vue adapter.
+  Configurable classes are forwarded to a stable `.mv-host` around the diagram figure.
+- Fullscreen copies remap local SVG IDs/references and receive container-scoped CSS tokens.
+- Opening another diagram closes the previous viewer in the same document.
 - VitePress now wraps the shared Vue viewer; frontmatter/theme/configuration remain in the plugin.
   The published VitePress package still bundles its viewer implementation.
 - Component styles use `--mv-*` tokens, mapped to VitePress variables by the integration stylesheet.
@@ -23,6 +27,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- `mmd` fences now render the same Mermaid component as `mermaid`, instead of a code block.
 - Source/config replacements rerender the diagram; stale asynchronous results cannot overwrite a
   newer diagram or update an unmounted component.
 - Mermaid configuration/render calls are serialized, rendering artifacts are cleaned on failure, and
