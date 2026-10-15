@@ -2,19 +2,19 @@ import type { DefaultTheme } from 'vitepress/theme';
 
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { defineConfig, type SiteConfig } from 'vitepress';
 import { withMermaid } from 'vitepress-mermaid-viewer';
 
 const require = createRequire(import.meta.url);
-const pkg = require('../../package.json') as { version: string };
+const pkg = require('../../packages/vitepress/package.json') as { version: string };
 
 const HOSTNAME = 'https://kassaila.github.io';
 const BASE = '/vitepress-mermaid-viewer/';
 const SITE_URL = `${HOSTNAME}${BASE}`;
 const REPO_URL = 'https://github.com/Kassaila/vitepress-mermaid-viewer';
-const CHANGELOG_URL = `${REPO_URL}/blob/main/CHANGELOG.md`;
+const CHANGELOG_URL = `${REPO_URL}/blob/main/packages/vitepress/CHANGELOG.md`;
 const CONTRIBUTING_URL = `${REPO_URL}/blob/main/CONTRIBUTING.md`;
 const OG_IMAGE_URL = `${SITE_URL}og_image.png`;
 const OG_IMAGE_ALT = 'VitePress Mermaid Viewer — Interactive mermaid diagrams for VitePress';
@@ -111,12 +111,6 @@ export default withMermaid(
     vite: {
       build: {
         chunkSizeWarningLimit: 600,
-      },
-      resolve: {
-        alias: {
-          'vitepress-mermaid-viewer/Mermaid': resolve(__dirname, '../../dist/Mermaid.js'),
-          'vitepress-mermaid-viewer/style.css': resolve(__dirname, '../../dist/style.css'),
-        },
       },
     },
     title: 'VitePress Mermaid Viewer',

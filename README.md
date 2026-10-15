@@ -75,7 +75,12 @@ export default defineConfig({
     ],
 
     optimizeDeps: {
-      include: ['@braintree/sanitize-url', 'dayjs', 'debug', 'cytoscape-cose-bilkent', 'cytoscape'],
+      include: [
+        'mermaid > @braintree/sanitize-url',
+        'mermaid > dayjs',
+        'mermaid > cytoscape-cose-bilkent',
+        'mermaid > cytoscape',
+      ],
     },
 
     resolve: {
@@ -141,7 +146,8 @@ Accepts [mermaid configuration](https://mermaid.js.org/config/schema-docs/config
 
 ## Contributing
 
-Contributions are welcome! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines.
+Development uses pnpm workspaces; the plugin lives in `packages/vitepress`. Contributions are
+welcome! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines.
 
 ## License
 

@@ -46,11 +46,10 @@ export const withMermaid = <T>(config: UserConfig<T>): UserConfig<T> => {
 
   config.vite.optimizeDeps.include = [
     ...config.vite.optimizeDeps.include,
-    '@braintree/sanitize-url',
-    'dayjs',
-    'debug',
-    'cytoscape-cose-bilkent',
-    'cytoscape',
+    'mermaid > @braintree/sanitize-url',
+    'mermaid > dayjs',
+    'mermaid > cytoscape-cose-bilkent',
+    'mermaid > cytoscape',
   ];
 
   if (!config.vite.resolve) {

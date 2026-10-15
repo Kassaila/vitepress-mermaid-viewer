@@ -43,11 +43,10 @@ describe('withMermaid', () => {
     const config = withMermaid({});
     const includes = config.vite?.optimizeDeps?.include ?? [];
 
-    expect(includes).toContain('@braintree/sanitize-url');
-    expect(includes).toContain('dayjs');
-    expect(includes).toContain('debug');
-    expect(includes).toContain('cytoscape-cose-bilkent');
-    expect(includes).toContain('cytoscape');
+    expect(includes).toContain('mermaid > @braintree/sanitize-url');
+    expect(includes).toContain('mermaid > dayjs');
+    expect(includes).toContain('mermaid > cytoscape-cose-bilkent');
+    expect(includes).toContain('mermaid > cytoscape');
   });
 
   it('preserves existing optimizeDeps includes', () => {
@@ -57,7 +56,7 @@ describe('withMermaid', () => {
     const includes = config.vite?.optimizeDeps?.include ?? [];
 
     expect(includes).toContain('existing-dep');
-    expect(includes).toContain('dayjs');
+    expect(includes).toContain('mermaid > dayjs');
   });
 
   it('sets resolve aliases as object', () => {

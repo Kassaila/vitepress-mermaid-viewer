@@ -1,8 +1,9 @@
-/node_modules/
-/dist/
+node_modules/
+dist/
 *.log
 .DS_Store
-/coverage/
+coverage/
+*.tgz
 
 # Development
 /.tmp/
@@ -13,4 +14,5 @@
 # VitePress
 /docs/.vitepress/cache/
 /docs/.vitepress/dist/
+/docs/.vitepress/.temp/
 

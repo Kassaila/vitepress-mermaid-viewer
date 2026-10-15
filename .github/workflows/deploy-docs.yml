@@ -22,18 +22,20 @@ jobs:
         with:
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       - name: Build library
-        run: npm run build
+        run: pnpm run build
 
       - name: Build docs
-        run: npx vitepress build docs
+        run: pnpm run docs:build
 
       - uses: actions/upload-pages-artifact@v5
         with:

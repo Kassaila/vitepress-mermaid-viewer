@@ -12,13 +12,13 @@ diagrams with interactive zoom/pan viewer.
 ## Project Context
 
 - Test framework: vitest with happy-dom
-- Test files: `__tests__/*.test.ts`
-- Test helpers: `__tests__/helpers/setup.ts`
+- Test files: `packages/vitepress/__tests__/*.test.ts`
+- Test helpers: `packages/vitepress/__tests__/helpers/setup.ts`
 - Vue component testing: @vue/test-utils
 
 ## When Invoked
 
-1. Run tests: `npm run test:run`
+1. Run tests: `pnpm run test:run`
 2. Analyze results thoroughly
 3. If all pass: report summary (X tests in Y files)
 4. If failures:

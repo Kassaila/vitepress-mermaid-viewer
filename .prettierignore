@@ -1,4 +1,7 @@
 dist/
 node_modules/
+coverage/
+pnpm-lock.yaml
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+docs/.vitepress/.temp/

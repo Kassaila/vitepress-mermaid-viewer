@@ -2,14 +2,30 @@
 
 ---
 
+## Package decomposition
+
+The repository will evolve into a pnpm monorepo. This migration takes priority over the feature
+wishlist below. Release the shared viewer, Vue adapter and VitePress integration first, then the
+other framework/documentation integrations. The VS Code extension targets ordinary Markdown Preview
+and follows that first cohort.
+
+- [x] Private workspace root, pnpm 12.9.1 and a single `pnpm-lock.yaml`
+- [x] Move the existing plugin and tests to `packages/vitepress`, preserving its npm name and exports
+- [x] Private docs workspace consuming the built package through public exports
+- [x] Update local commands, Git hooks and CI/release paths for pnpm
+- [ ] Extract the framework-independent DOM viewer to `packages/viewer`
+- [ ] Add the Vue adapter in `packages/vue` and connect the VitePress wrapper
+- [ ] Add Changesets and independent package releases
+- [ ] Add other integrations and the VS Code extension in stages
+
 ## Done
 
 ### Infrastructure
 
-- [x] Project structure (`src/`, `__tests__/`, `docs/`)
-- [x] `tsconfig.json` (strict, ES2022, bundler resolution)
-- [x] `package.json` — dual ESM + CJS exports, `./Mermaid`, `./style.css`, peer deps (`mermaid >=10`,
-      `vitepress ^1.0.0`, `vue ^3.0.0`, optional `vite >=5.0.0`)
+- [x] Project structure (`packages/vitepress/src/`, `packages/vitepress/__tests__/`, `docs/`)
+- [x] `tsconfig.base.json` + package `tsconfig.json` (strict, ES2022, bundler resolution)
+- [x] `packages/vitepress/package.json` — dual ESM + CJS exports, `./Mermaid`, `./style.css`, peer deps (`mermaid >=10`,
+      `vitepress >=1.0.0`, `vue ^3.0.0`)
 - [x] Build system — tsdown (ESM + CJS + `.d.ts`/`.d.cts`, sourcemaps in dev, minified in prod,
       tree-shaking on)
 - [x] `.vue` files loaded via `unplugin-vue`, `.css` via `@tsdown/css`
@@ -18,19 +34,19 @@
 - [x] Husky pre-commit hook with lint-staged (eslint --fix + prettier)
 - [x] commitlint with `@commitlint/config-conventional` (`commit-msg` hook)
 - [x] LICENSE (MIT)
-- [x] CI — GitHub Actions `check:all` on push/PR
+- [x] CI — GitHub Actions `release:check` + `docs:build` on push/PR to main/release
 - [x] Release — GitHub Actions npm publish with provenance on `v*` tags
 - [x] Docs deploy — library built before VitePress site
 
 ### Source Code
 
-- [x] `src/index.ts` — public exports (`withMermaid`, `MermaidMarkdown`, `MermaidPlugin`)
-- [x] `src/markdown-plugin.ts` — markdown-it fence override for ` ```mermaid ` and ` ```mmd `
-- [x] `src/vite-plugin.ts` — client-app entry transform + `virtual:mermaid-config`
-- [x] `src/Mermaid.vue` — client-side renderer with fullscreen dialog viewer
-- [x] `src/mermaid.ts` — dynamic `init(externalDiagrams)` and `render()`
-- [x] `src/with-mermaid.ts` — one-call config wrapper (markdown + vite + optimizeDeps + aliases)
-- [x] `src/styles/` — scoped CSS using VitePress CSS custom properties (`--vp-c-*`)
+- [x] `packages/vitepress/src/index.ts` — public exports (`withMermaid`, `MermaidMarkdown`, `MermaidPlugin`)
+- [x] `packages/vitepress/src/markdown-plugin.ts` — markdown-it fence override for ` ```mermaid ` and ` ```mmd `
+- [x] `packages/vitepress/src/vite-plugin.ts` — client-app entry transform + `virtual:mermaid-config`
+- [x] `packages/vitepress/src/Mermaid.vue` — client-side renderer with fullscreen dialog viewer
+- [x] `packages/vitepress/src/mermaid.ts` — dynamic `init(externalDiagrams)` and `render()`
+- [x] `packages/vitepress/src/with-mermaid.ts` — one-call config wrapper (markdown + vite + optimizeDeps + aliases)
+- [x] `packages/vitepress/src/styles/` — scoped CSS using VitePress CSS custom properties (`--vp-c-*`)
 
 ### Features
 
@@ -80,7 +96,7 @@
 - [x] Focus moves to the Close button on open; returns to the triggering diagram on close
 - [x] Visible `:focus-visible` rings (VitePress `--vp-c-brand-1`) on trigger and zoom controls
 
-### NPM Scripts
+### Workspace Scripts
 
 - [x] `build`, `build:dev`, `dev` (watch)
 - [x] `lint`, `lint:fix`, `check:lint`
@@ -94,7 +110,7 @@
 
 - [x] Vitest + happy-dom
 - [x] Tests for `mermaid.ts`, `markdown-plugin.ts`, `vite-plugin.ts`, `with-mermaid.ts`, `Mermaid.vue`, and `MermaidViewer.vue`
-- [x] `__tests__/helpers/` shared test utilities
+- [x] `packages/vitepress/__tests__/helpers/` shared test utilities
 - [x] `@vitest/coverage-v8` configured
 - [x] Keyboard interaction tests — trigger open, zoom/pan handlers, aria-live updates, focus
       restoration
@@ -111,7 +127,7 @@
 - [x] VitePress docs site published at
       [kassaila.github.io/vitepress-mermaid-viewer](https://kassaila.github.io/vitepress-mermaid-viewer/)
 - [x] `docs/guide/usage.md`, `docs/guide/examples.md` with live diagrams
-- [x] `CHANGELOG.md` — Keep a Changelog format, SemVer
+- [x] `packages/vitepress/CHANGELOG.md` — Keep a Changelog format, SemVer
 - [x] `CONTRIBUTING.md` — contributor guide
 - [x] `CLAUDE.md` — architecture notes for AI-assisted work
 - [x] LLM-friendly content delivery — `/llms.txt` index, `.md` route variants of every page,

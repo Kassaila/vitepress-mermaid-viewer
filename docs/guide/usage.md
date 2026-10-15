@@ -65,7 +65,12 @@ export default defineConfig({
     ],
 
     optimizeDeps: {
-      include: ['@braintree/sanitize-url', 'dayjs', 'debug', 'cytoscape-cose-bilkent', 'cytoscape'],
+      include: [
+        'mermaid > @braintree/sanitize-url',
+        'mermaid > dayjs',
+        'mermaid > cytoscape-cose-bilkent',
+        'mermaid > cytoscape',
+      ],
     },
 
     resolve: {

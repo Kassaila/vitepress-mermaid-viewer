@@ -4,7 +4,7 @@ import tseslint from 'typescript-eslint';
 
 export default [
   {
-    ignores: ['dist/**', 'coverage/**', 'docs/**', '*.config.*'],
+    ignores: ['**/dist/**', '**/coverage/**', '.tmp/**', 'docs/**', '**/*.config.*'],
   },
 
   ...vueConfig,
@@ -17,7 +17,9 @@ export default [
       },
     },
     settings: {
-      'import-x/resolver-next': [createTypeScriptImportResolver()],
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver({ project: 'packages/*/tsconfig.json' }),
+      ],
     },
   },
 
@@ -47,7 +49,7 @@ export default [
   },
 
   {
-    files: ['__tests__/**/*.ts'],
+    files: ['packages/*/__tests__/**/*.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
@@ -62,7 +64,7 @@ export default [
    * markdown-it has no public types
    */
   {
-    files: ['src/markdown-plugin.ts', 'src/with-mermaid.ts'],
+    files: ['packages/vitepress/src/markdown-plugin.ts', 'packages/vitepress/src/with-mermaid.ts'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',

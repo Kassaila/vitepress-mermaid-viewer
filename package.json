@@ -1,118 +1,57 @@
 {
-  "name": "vitepress-mermaid-viewer",
-  "version": "0.5.1",
-  "description": "Mermaid diagrams for VitePress with interactive zoom, pan, and fullscreen viewing",
+  "name": "mermaid-viewer-workspace",
+  "private": true,
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
-      }
-    },
-    "./Mermaid": {
-      "import": "./dist/Mermaid.js",
-      "require": "./dist/Mermaid.cjs"
-    },
-    "./style.css": "./dist/style.css"
+  "packageManager": "pnpm@12.9.1",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24.0.0"
   },
-  "files": [
-    "dist",
-    "CHANGELOG.md"
-  ],
   "scripts": {
-    "build": "tsdown",
-    "build:dev": "NODE_ENV=development tsdown",
-    "dev": "tsdown --watch",
+    "build": "pnpm -r --filter \"./packages/*\" run build",
+    "build:dev": "pnpm -r --filter \"./packages/*\" run build:dev",
+    "dev": "pnpm -r --parallel --filter \"./packages/*\" run dev",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:lint": "eslint",
-    "check:types": "tsc --noEmit",
-    "check:format": "npm run format:check",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "check:all": "npm run check:format && npm run check:lint && npm run check:types && npm run test:run && npm run build",
-    "release:check": "npm run check:all && npm pack --dry-run",
-    "release:publish": "npm run release:check && npm publish",
-    "release:publish:beta": "npm run release:check && npm publish --tag beta",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
+    "check:types": "pnpm -r --filter \"./packages/*\" run check:types",
+    "check:format": "pnpm run format:check",
+    "test": "pnpm -r --parallel --filter \"./packages/*\" run test",
+    "test:run": "pnpm -r --filter \"./packages/*\" run test:run",
+    "test:coverage": "pnpm -r --filter \"./packages/*\" run test:coverage",
+    "check:all": "pnpm run check:format && pnpm run check:lint && pnpm run check:types && pnpm run test:run && pnpm run build",
+    "release:check": "pnpm run check:all && pnpm --dir packages/vitepress pack --dry-run",
+    "release:publish": "pnpm run release:check && pnpm --dir packages/vitepress exec npm publish",
+    "release:publish:beta": "pnpm run release:check && pnpm --dir packages/vitepress exec npm publish --tag beta",
+    "docs:dev": "pnpm --filter mermaid-viewer-docs run dev",
+    "docs:build": "pnpm --filter mermaid-viewer-docs run build",
+    "docs:preview": "pnpm --filter mermaid-viewer-docs run preview",
     "docs:indexnow": "node scripts/indexnow.mjs",
-    "prepare": "husky",
-    "prepublishOnly": "npm run check:types"
+    "prepare": "husky"
   },
   "lint-staged": {
     "*.{ts,js,vue}": "eslint --fix",
     "*.{ts,js,json,md,vue,css}": "prettier --write"
-  },
-  "keywords": [
-    "vitepress",
-    "mermaid",
-    "zoom",
-    "pan",
-    "fullscreen",
-    "diagram",
-    "vitepress-plugin",
-    "markdown"
-  ],
-  "author": "Kassaila",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Kassaila/vitepress-mermaid-viewer.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Kassaila/vitepress-mermaid-viewer/issues"
-  },
-  "engines": {
-    "node": ">=24.0.0"
-  },
-  "homepage": "https://kassaila.github.io/vitepress-mermaid-viewer/",
-  "peerDependencies": {
-    "mermaid": ">=10",
-    "vitepress": ">=1.0.0",
-    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@tsdown/css": "^0.21.6",
-    "@vitest/coverage-v8": "^4.1.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.7.0",
-    "@vue/test-utils": "^2.4.6",
     "eslint": "^10.1.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import-x": "^4.16.2",
     "eslint-plugin-kassaila": "^0.2.0",
     "eslint-plugin-vue": "^10.8.0",
-    "happy-dom": "^20.8.9",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
-    "tsdown": "^0.21.6",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.2",
-    "unplugin-vue": "^7.1.1",
-    "vitepress": "2.0.0-alpha.17",
-    "vitest": "^4.1.2",
-    "vue-tsc": "^3.2.6"
+    "typescript-eslint": "^8.57.2"
   }
 }

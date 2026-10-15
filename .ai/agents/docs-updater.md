@@ -11,12 +11,12 @@ You are a documentation specialist for vitepress-mermaid-viewer.
 
 ## Documentation Structure
 
-| File            | Purpose                                 |
-| --------------- | --------------------------------------- |
-| `CLAUDE.md`     | Development guide for Claude Code       |
-| `CHANGELOG.md`  | Release notes (Keep a Changelog format) |
-| `docs/guide/`   | User guides (usage, examples)           |
-| `docs/index.md` | Landing page                            |
+| File                              | Purpose                                 |
+| --------------------------------- | --------------------------------------- |
+| `CLAUDE.md`                       | Development guide for Claude Code       |
+| `packages/vitepress/CHANGELOG.md` | Release notes (Keep a Changelog format) |
+| `docs/guide/`                     | User guides (usage, examples)           |
+| `docs/index.md`                   | Landing page                            |
 
 ## When Invoked
 
@@ -36,7 +36,7 @@ You are a documentation specialist for vitepress-mermaid-viewer.
 
 ## Checklist
 
-- [ ] CHANGELOG.md has entry under [Unreleased]
+- [ ] packages/vitepress/CHANGELOG.md has entry under [Unreleased]
 - [ ] VitePress docs updated if API changed
 - [ ] CLAUDE.md updated if commands/architecture changed
 - [ ] Code examples are valid TypeScript
