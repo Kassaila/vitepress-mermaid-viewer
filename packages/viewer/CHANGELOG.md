@@ -7,6 +7,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- Use the unscoped `mermaid-viewer` npm name consistently across packages and consumers.
+
 ### Added
 
 - Framework-independent DOM viewer extracted from `vue-mermaid-viewer`.

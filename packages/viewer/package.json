@@ -1,5 +1,5 @@
 {
-  "name": "@kassaila/mermaid-viewer",
+  "name": "mermaid-viewer",
   "version": "0.1.0",
   "description": "Framework-independent interactive Mermaid diagram viewer",
   "type": "module",

@@ -12,5 +12,5 @@ const html = await renderToString(
   }),
 );
 
-assert.match(html, /aria-busy="true"/);
+assert.equal(html, '<div class="mv-host"></div>');
 assert.doesNotMatch(html, /<svg/);

@@ -12,10 +12,10 @@ This repository uses pnpm workspaces with one `pnpm-lock.yaml`. The root is priv
 lint/format/Git tooling. Pin pnpm through the root `packageManager` field; install with
 `pnpm install --frozen-lockfile`.
 
-- `packages/viewer` (`@kassaila/mermaid-viewer`) — framework-independent DOM viewer, Mermaid queue,
-  SVG enhancement, dialog/viewport, export and typed customization; no Vue/VitePress imports.
-- `packages/vue` (`vue-mermaid-viewer`) — thin Vue lifecycle/props/events adapter with an SSR
-  placeholder; depends on the viewer through `dependencies: workspace:^`.
+- `packages/viewer` (`mermaid-viewer`) — framework-independent DOM viewer, Mermaid queue, SVG
+  enhancement, dialog/viewport, export and typed customization; no Vue/VitePress imports.
+- `packages/vue` (`vue-mermaid-viewer`) — thin Vue lifecycle/props/events adapter with an empty
+  host; depends on the viewer through `dependencies: workspace:^`.
 - `packages/vitepress` — published `vitepress-mermaid-viewer` package: Markdown/Vite plugins and a
   thin Vue wrapper for VitePress configuration, frontmatter and theme.
 - `docs` — a private workspace that consumes the package through `workspace:*` and its public
@@ -77,9 +77,11 @@ The workspace separates these responsibilities:
    `useData()` frontmatter/dark mode and virtual settings, then passes source/config/customization
    to `packages/vue`. Page `mermaidTheme` overrides dark mode and site theme.
 
-4. **Vue adapter** (`packages/vue/src/MermaidViewer.vue`) — SSR placeholder and a stable outer
-   `.mv-host`, props forwarding, DOM-event to Vue-event translation, mount/update/destroy lifecycle.
-   Attributes and custom classes belong to that outer host; the runtime owns the child figure.
+4. **Vue adapter** (`packages/vue/src/MermaidViewer.vue`) — stable empty `.mv-host`, props
+   forwarding, DOM-event to Vue-event translation, mount/update/destroy lifecycle. Mount the runtime
+   directly in `onMounted`; loading/error/ready states belong to the core, with no duplicated Vue
+   placeholder. Attributes and custom classes belong to that outer host; the runtime owns the child
+   figure.
 
 5. **DOM viewer** (`packages/viewer/src/viewer.ts`) — raw source, render states and revision guards.
    `enhance-svg.ts` accepts trusted platform-owned SVG without loading Mermaid. `dialog.ts` and
@@ -103,6 +105,9 @@ Entry point: `packages/vitepress/src/index.ts` — exports `withMermaid`, `Merma
 
 ## Code Conventions
 
+- Public npm package names are unscoped: `mermaid-viewer`, `vue-mermaid-viewer` and
+  `vitepress-mermaid-viewer`. Do not introduce personal scopes in package names, dependencies,
+  imports or examples. Framework integrations follow `<framework>-mermaid-viewer`.
 - Use `packages/vitepress` as the structural reference for library packages. Follow the package
   layout, manifest field/script order and file naming rules in `CONTRIBUTING.md` (Package
   conventions).

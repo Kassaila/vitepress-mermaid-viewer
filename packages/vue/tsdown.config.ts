@@ -13,8 +13,8 @@ export default defineConfig({
   sourcemap: isDev,
   minify: !isDev,
   deps: {
-    neverBundle: ['vue', 'mermaid', /^@kassaila\/mermaid-viewer(?:\/mermaid)?$/],
-    alwaysBundle: ['@kassaila/mermaid-viewer/style.css'],
+    neverBundle: ['vue', 'mermaid', /^mermaid-viewer(?:\/mermaid)?$/],
+    alwaysBundle: ['mermaid-viewer/style.css'],
   },
   platform: 'neutral',
   plugins: [Vue({ isProduction: !isDev })],

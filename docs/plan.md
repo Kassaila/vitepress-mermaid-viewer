@@ -30,7 +30,7 @@ runtime dependency. Complete the following changes together before releasing ind
 
 - [ ] Move `"vue-mermaid-viewer": "workspace:^"` from `devDependencies` to `dependencies` in
       `packages/vitepress/package.json` and regenerate the pnpm lockfile.
-- [ ] Remove `vue-mermaid-viewer` and `@kassaila/mermaid-viewer` from `alwaysBundle` in
+- [ ] Remove `vue-mermaid-viewer` and `mermaid-viewer` from `alwaysBundle` in
       `packages/vitepress/tsdown.config.ts`; keep package runtimes external in the published build.
 - [ ] Configure dependency-order publishing: viewer before Vue before VitePress. Publish consumers only after their required
       dependency versions are available.
@@ -64,7 +64,7 @@ runtime dependency. Complete the following changes together before releasing ind
 - [x] `packages/vitepress/src/markdown-plugin.ts` — markdown-it fence override for ` ```mermaid ` and ` ```mmd `
 - [x] `packages/vitepress/src/vite-plugin.ts` — client-app entry transform + `virtual:mermaid-config`
 - [x] `packages/vitepress/src/Mermaid.vue` — wrapper for encoded graph, config, frontmatter and theme
-- [x] `packages/vue/src/MermaidViewer.vue` — thin lifecycle/props/events adapter with an SSR placeholder
+- [x] `packages/vue/src/MermaidViewer.vue` — thin lifecycle/props/events adapter with an empty host
 - [x] `packages/viewer/src/viewer.ts` — source rendering and loading/error states; `dialog.ts` owns fullscreen UI
 - [x] `packages/viewer/src/enhance-svg.ts` — trusted platform-SVG enhancement without loading Mermaid
 - [x] `packages/viewer/src/mermaid.ts` — lazy Mermaid loading and serialized initialization/rendering

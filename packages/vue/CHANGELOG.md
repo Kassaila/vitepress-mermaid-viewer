@@ -11,7 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Delegate rendering, dialog, viewport, export and customization to the DOM viewer runtime
   dependency.
-- Keep a stable outer `.mv-host` for forwarded attributes and the SSR placeholder.
+- Keep a stable empty `.mv-host` for forwarded attributes; mount the DOM viewer directly in
+  `onMounted`, with all loading/error/ready states owned by the shared package.
 - Reexport customization/events types and Mermaid setup from the shared package.
 
 ### Added

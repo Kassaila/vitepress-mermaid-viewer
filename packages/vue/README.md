@@ -4,9 +4,9 @@ Interactive Mermaid diagrams with fullscreen, zoom, pan, keyboard controls, sour
 export. This package uses Vue and Mermaid without VitePress or a virtual configuration module. The
 initial supported peer ranges are Vue `^3.5.0` and Mermaid `^11.16.0`.
 
-This is a thin adapter over `@kassaila/mermaid-viewer`: the DOM package owns rendering, fullscreen,
-viewport and export; Vue forwards props/events and manages lifecycle. The package is currently
-consumed inside this workspace. Independent package releases are the next milestone.
+This is a thin adapter over `mermaid-viewer`: the DOM package owns rendering, fullscreen, viewport
+and export; Vue forwards props/events and manages lifecycle. The package is currently consumed
+inside this workspace. Independent package releases are the next milestone.
 
 ```vue
 <script setup lang="ts">
@@ -103,8 +103,9 @@ import { registerExternalDiagrams } from 'vue-mermaid-viewer/mermaid';
 await registerExternalDiagrams(definitions);
 ```
 
-Package imports are safe during SSR. The component emits a loading placeholder on the server and
-loads Mermaid after mounting in the browser. Import `style.css` once in your application entry.
+Package imports are safe during SSR. The component emits an empty host; the DOM viewer creates its
+loading state and loads Mermaid after mounting in the browser. Vue does not duplicate rendering
+states or wait for an extra mount tick. Import `style.css` once in your application entry.
 
 ## Workspace example
 

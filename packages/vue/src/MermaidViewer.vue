@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { defaultViewerLabels, mountViewer } from '@kassaila/mermaid-viewer';
-import type { ViewerHandle as DOMViewerHandle } from '@kassaila/mermaid-viewer';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { mountViewer } from 'mermaid-viewer';
+import type { ViewerHandle as DOMViewerHandle } from 'mermaid-viewer';
 import type { MermaidViewerProps, ViewerError, ViewerReady } from './types';
 
-import '@kassaila/mermaid-viewer/style.css';
+import 'mermaid-viewer/style.css';
 
 const props = withDefaults(defineProps<MermaidViewerProps>(), {
   appearance: 'light',
@@ -17,12 +17,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 const host = ref<HTMLElement | null>(null);
-const active = ref(false);
-const loadingLabel = computed(
-  () => props.customization?.labels?.loading ?? defaultViewerLabels.loading,
-);
 let instance: DOMViewerHandle | undefined;
-let disposed = false;
 const controller = new AbortController();
 
 defineExpose({
@@ -40,14 +35,8 @@ const stopWatching = watch(
   { deep: true },
 );
 
-onMounted(async () => {
-  /**
-   * Let Vue remove its SSR/loading placeholder before handing the empty subtree to the runtime.
-   */
-  active.value = true;
-  await nextTick();
-
-  if (disposed || !host.value) return;
+onMounted(() => {
+  if (!host.value) return;
 
   const element = host.value;
   const options = { signal: controller.signal };
@@ -69,8 +58,6 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  disposed = true;
-
   stopWatching();
   controller.abort();
   instance?.destroy();
@@ -79,14 +66,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="host" class="mv-host">
-    <div
-      v-if="!active"
-      class="mv-root mv-diagram mv-diagram--loading"
-      :data-mv-appearance="appearance"
-      :style="customization?.css"
-      aria-busy="true"
-      :aria-label="loadingLabel"
-    />
-  </div>
+  <div ref="host" class="mv-host" />
 </template>

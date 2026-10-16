@@ -235,12 +235,12 @@ importers:
 
   examples/vanilla:
     dependencies:
-      '@kassaila/mermaid-viewer':
-        specifier: workspace:*
-        version: link:../../packages/viewer
       mermaid:
         specifier: 11.16.0
         version: 11.16.0
+      mermaid-viewer:
+        specifier: workspace:*
+        version: link:../../packages/viewer
     devDependencies:
       '@types/node':
         specifier: 26.1.1
@@ -357,7 +357,7 @@ importers:
 
   packages/vue:
     dependencies:
-      '@kassaila/mermaid-viewer':
+      mermaid-viewer:
         specifier: workspace:^
         version: link:../viewer
     devDependencies:

@@ -1,8 +1,8 @@
-import { enhanceSvg, mountViewer } from '@kassaila/mermaid-viewer';
-import type { ViewerError, ViewerHandle, ViewerOptions } from '@kassaila/mermaid-viewer';
+import { enhanceSvg, mountViewer } from 'mermaid-viewer';
+import type { ViewerError, ViewerHandle, ViewerOptions } from 'mermaid-viewer';
 import { customization } from './mermaid-viewer';
 
-import '@kassaila/mermaid-viewer/style.css';
+import 'mermaid-viewer/style.css';
 import './style.css';
 
 const host = document.querySelector<HTMLElement>('#viewer');

@@ -1,4 +1,4 @@
-# @kassaila/mermaid-viewer
+# mermaid-viewer
 
 Interactive Mermaid diagrams with zoom, pan, fullscreen, SVG/PNG export and source copying. Written
 in TypeScript and browser DOM, with no framework dependency. This package is under development in
@@ -7,8 +7,8 @@ the workspace; independent npm releases are the next milestone.
 ## Source rendering
 
 ```ts
-import { mountViewer } from '@kassaila/mermaid-viewer';
-import '@kassaila/mermaid-viewer/style.css';
+import { mountViewer } from 'mermaid-viewer';
+import 'mermaid-viewer/style.css';
 
 const host = document.querySelector<HTMLElement>('#diagram')!;
 const viewer = mountViewer(host, {
@@ -24,8 +24,8 @@ viewer.destroy();
 ```
 
 Use a dedicated empty host. The caller owns the host; the viewer owns its child figure and a
-body-mounted native `<dialog>`. Framework comment anchors are allowed. `destroy()` removes only
-owned DOM and listeners. A destroyed instance cannot be reused; mount a fresh instance instead.
+body-mounted native `<dialog>`. `destroy()` removes only owned DOM and listeners. A destroyed
+instance cannot be reused; mount a fresh instance instead.
 
 Imports are SSR-safe and do not load Mermaid or access the DOM. Call `mountViewer` only in the
 browser. Install Mermaid for source rendering; it is loaded lazily. Mermaid is an optional peer
@@ -34,8 +34,8 @@ because SVG enhancement does not need it.
 ## Existing SVG
 
 ```ts
-import { enhanceSvg } from '@kassaila/mermaid-viewer';
-import '@kassaila/mermaid-viewer/style.css';
+import { enhanceSvg } from 'mermaid-viewer';
+import 'mermaid-viewer/style.css';
 
 const trigger = document.querySelector<HTMLElement>('#platform-diagram')!;
 const svg = trigger.querySelector('svg')!;
@@ -86,7 +86,7 @@ not choose a diagram theme. Sandbox/iframe output is unsupported and produces a 
 ## Customization
 
 ```ts
-import type { ViewerCustomization } from '@kassaila/mermaid-viewer';
+import type { ViewerCustomization } from 'mermaid-viewer';
 
 export const customization = {
   css: { '--mv-accent': '#a03592', '--mv-radius': '1rem' },
@@ -99,7 +99,7 @@ copied to the body dialog on open and update, including tokens inherited from a 
 component never reads VitePress variables. CSS must be imported once by the application.
 
 Register external diagram definitions before mounting through `registerExternalDiagrams` from
-`@kassaila/mermaid-viewer/mermaid`. Registration and rendering share the same queue. No Web
-Component registration happens automatically; a custom-element facade is a separate future step.
+`mermaid-viewer/mermaid`. Registration and rendering share the same queue. No Web Component
+registration happens automatically; a custom-element facade is a separate future step.
 
 Run the ordinary TypeScript consumer with `pnpm run build` followed by `pnpm run example:vanilla`.

@@ -8,9 +8,8 @@ const { mountViewer, handle } = vi.hoisted(() => ({
   handle: { update: vi.fn(), open: vi.fn(), close: vi.fn(), reset: vi.fn(), destroy: vi.fn() },
 }));
 
-vi.mock('@kassaila/mermaid-viewer', () => ({
+vi.mock('mermaid-viewer', () => ({
   mountViewer,
-  defaultViewerLabels: { loading: 'Loading diagram' },
 }));
 enableAutoUnmount(afterEach);
 beforeEach(() => {
@@ -19,15 +18,13 @@ beforeEach(() => {
 });
 
 describe('Vue lifecycle adapter', () => {
-  it('hands an empty host and raw props to the DOM viewer while forwarding attributes', async () => {
+  it('hands an empty host and raw props to the DOM viewer while forwarding attributes', () => {
     const config = { theme: 'forest' as const };
     const wrapper = mount(MermaidViewer, {
       props: { source: 'graph TD; A-->B', config },
       attrs: { 'class': 'custom', 'data-test': 'diagram' },
     });
 
-    expect(wrapper.find('[aria-busy="true"]').exists()).toBe(true);
-    await flushPromises();
     expect(mountViewer).toHaveBeenCalledTimes(1);
     expect(mountViewer.mock.calls[0][0]).toBe(wrapper.element);
     expect(wrapper.element.children).toHaveLength(0);
@@ -87,11 +84,18 @@ describe('Vue lifecycle adapter', () => {
     expect(handle.destroy).toHaveBeenCalledTimes(1);
   });
 
-  it('does not create a runtime if removed before the first mount tick', async () => {
+  it('destroys the runtime synchronously and ignores exposed commands after unmount', () => {
     const wrapper = mount(MermaidViewer, { props: { source: 'A' } });
+    const { open, close, reset } = wrapper.vm;
 
+    expect(mountViewer).toHaveBeenCalledTimes(1);
     wrapper.unmount();
-    await flushPromises();
-    expect(mountViewer).not.toHaveBeenCalled();
+    open();
+    close();
+    reset();
+    expect(handle.destroy).toHaveBeenCalledTimes(1);
+    expect(handle.open).not.toHaveBeenCalled();
+    expect(handle.close).not.toHaveBeenCalled();
+    expect(handle.reset).not.toHaveBeenCalled();
   });
 });

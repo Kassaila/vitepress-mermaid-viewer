@@ -43,6 +43,11 @@ versioning is scheduled for the independent release step in `docs/plan.md`.
 
 ## Package conventions
 
+Public npm names are unscoped: `mermaid-viewer` for the shared component and
+`<framework>-mermaid-viewer` for framework integrations, including `vue-mermaid-viewer` and
+`vitepress-mermaid-viewer`. Keep manifests, imports, build rules and examples consistent with these
+names; do not add a personal scope.
+
 Use `packages/vitepress` as the structural reference for library packages, including `packages/vue`
 and future integrations. Package directories use their role (`packages/vue`, `packages/vitepress`,
 `packages/viewer`); npm names live in their manifests.

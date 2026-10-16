@@ -1,1 +1,1 @@
-export { registerExternalDiagrams } from '@kassaila/mermaid-viewer/mermaid';
+export { registerExternalDiagrams } from 'mermaid-viewer/mermaid';
