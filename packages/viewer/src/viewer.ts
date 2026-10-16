@@ -11,10 +11,7 @@ const EMPTY_CONFIG = Object.freeze({});
  * The caller owns the empty host; this instance owns only its child figure and dialog.
  */
 export const mountViewer = (host: HTMLElement, initialOptions: ViewerOptions): ViewerHandle => {
-  /**
-   * Frameworks may keep their own comment anchor inside an otherwise empty host.
-   */
-  if ([...host.childNodes].some((node) => node.nodeType !== 8)) {
+  if (host.childNodes.length) {
     throw new Error('mountViewer requires an empty, dedicated host');
   }
 
@@ -82,7 +79,7 @@ export const mountViewer = (host: HTMLElement, initialOptions: ViewerOptions): V
     const current = () => !disposed && revision === currentRevision;
     const { source } = options;
     const config = options.config ?? EMPTY_CONFIG;
-    const height = chart.offsetHeight;
+    const height = committed ? chart.offsetHeight : 0;
 
     imageCleanup();
     trigger.close();

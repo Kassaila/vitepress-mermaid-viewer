@@ -63,21 +63,59 @@ describe('DOM viewer rendering', () => {
   it('shows loading and ignores open until ready', async () => {
     let finish!: (value: { svg: string }) => void;
 
+    /**
+     * The empty figure already has padding/borders, before the loading class is applied.
+     */
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockReturnValue(34);
     mockRender.mockImplementationOnce(
       () =>
         new Promise((resolve) => {
           finish = resolve;
         }),
     );
-    const { host, handle } = await createViewer();
+    const { host, handle, figure } = await createViewer();
 
     expect(host.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(figure.style.minHeight).toBe('');
     handle.open();
     expect(dialog()).toBeNull();
     finish({ svg: '<svg>ready</svg>' });
     await flushPromises();
     expect(host.querySelector('[aria-busy="true"]')).toBeNull();
   });
+
+  it.each(['success', 'failure'])(
+    'keeps the rendered height until replacement settles (%s)',
+    async (outcome) => {
+      const { host, handle, figure } = await createViewer();
+      let finish!: (value: { svg: string }) => void;
+      let fail!: (error: Error) => void;
+
+      vi.spyOn(figure, 'offsetHeight', 'get').mockReturnValue(450);
+      mockRender.mockImplementationOnce(
+        () =>
+          new Promise((resolve, reject) => {
+            finish = resolve;
+            fail = reject;
+          }),
+      );
+      handle.update({ source: B });
+
+      expect(figure.style.minHeight).toBe('450px');
+      expect(figure.getAttribute('aria-busy')).toBe('true');
+      expect(host.querySelector('svg')?.textContent).toBe('rendered');
+
+      if (outcome === 'success') finish({ svg: '<svg>replacement</svg>' });
+      else fail(new Error('invalid replacement'));
+
+      await flushPromises();
+      expect(figure.style.minHeight).toBe('');
+      expect(figure.hasAttribute('aria-busy')).toBe(false);
+      expect(host.querySelector('svg')?.textContent).toBe(
+        outcome === 'success' ? 'replacement' : 'rendered',
+      );
+    },
+  );
 
   it('reports an initial error and displays source as text', async () => {
     mockRender.mockRejectedValueOnce(new Error('bad syntax'));
