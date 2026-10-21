@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'virtual:mermaid-config': resolve(
-        __dirname,
+        import.meta.dirname,
         '__tests__/helpers/__mocks__/virtual-mermaid-config.ts',
       ),
     },
