@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { resolveConfig } from 'vite';
 import { MermaidPlugin } from '../src/vite-plugin';
 
 const createPlugin = (config?: Parameters<typeof MermaidPlugin>[0]) => {
@@ -28,6 +29,66 @@ describe('MermaidPlugin', () => {
 
     expect(plugin.name).toBe('vitepress-mermaid-viewer');
     expect(plugin.enforce).toBe('post');
+  });
+
+  it('prebundles Mermaid for development while preserving existing dependency includes', async () => {
+    const config = await resolveConfig(
+      {
+        configFile: false,
+        plugins: [MermaidPlugin()],
+        optimizeDeps: { include: ['existing-dep'] },
+      },
+      'serve',
+    );
+
+    expect(config.optimizeDeps.include).toContain('mermaid');
+    expect(config.optimizeDeps.include).toContain('existing-dep');
+  });
+
+  describe('SSR configuration', () => {
+    it('keeps the component in the SSR bundle so VitePress can resolve client imports', async () => {
+      const config = await resolveConfig(
+        { configFile: false, plugins: [MermaidPlugin()] },
+        'build',
+      );
+
+      expect(config.ssr.noExternal).toContain('vitepress-mermaid-viewer');
+    });
+
+    it.each([
+      {
+        noExternal: 'existing-dep',
+        expected: ['existing-dep', 'vitepress-mermaid-viewer'],
+      },
+      {
+        noExternal: /^existing-/,
+        expected: [/^existing-/, 'vitepress-mermaid-viewer'],
+      },
+      {
+        noExternal: ['existing-dep', /^other-/],
+        expected: ['existing-dep', /^other-/, 'vitepress-mermaid-viewer'],
+      },
+      {
+        noExternal: true as const,
+        expected: true,
+      },
+    ])(
+      'preserves the existing ssr.noExternal value: $noExternal',
+      async ({ noExternal, expected }) => {
+        const config = await resolveConfig(
+          {
+            configFile: false,
+            plugins: [MermaidPlugin()],
+            ssr: { noExternal, external: ['other-external-dep'], target: 'node' },
+          },
+          'build',
+        );
+
+        expect(config.ssr.noExternal).toEqual(expected);
+        expect(config.ssr.external).toContain('other-external-dep');
+        expect(config.ssr.target).toBe('node');
+      },
+    );
   });
 
   describe('transform', () => {

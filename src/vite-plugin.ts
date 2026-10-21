@@ -28,6 +28,17 @@ export const MermaidPlugin = (inlineConfig?: MermaidPluginOptions): Plugin => {
     name: 'vitepress-mermaid-viewer',
     enforce: 'post',
 
+    config() {
+      return {
+        optimizeDeps: {
+          include: ['mermaid'],
+        },
+        ssr: {
+          noExternal: ['vitepress-mermaid-viewer'],
+        },
+      };
+    },
+
     transform(code: string, id: string) {
       if (id.includes('vitepress/dist/client/app/index.js')) {
         code =
