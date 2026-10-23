@@ -9,6 +9,14 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        consumer-node: ['22.12.0', '24']
+        stack:
+          - { mermaid: '11.16.1', vue: '3.5.40', vitepress: '1.6.4' }
+          - { mermaid: '12.0.0', vue: '3.5.40', vitepress: '1.6.4' }
+          - { mermaid: '12.2.0', vue: '3.5.44', vitepress: '2.0.0-alpha.17' }
 
     steps:
       - uses: actions/checkout@v4
@@ -17,13 +25,29 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
+          node-version: ${{ matrix.consumer-node }}
+
+      - id: consumer
+        run: echo "node=$(command -v node)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
           node-version: 24
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm exec playwright install --with-deps chromium
+
       - run: pnpm run release:check
+        env:
+          CONSUMER_NODE: ${{ steps.consumer.outputs.node }}
+          CONSUMER_MERMAID: ${{ matrix.stack.mermaid }}
+          CONSUMER_VUE: ${{ matrix.stack.vue }}
+          CONSUMER_VITEPRESS: ${{ matrix.stack.vitepress }}
 
       - run: pnpm run docs:build
+        if: matrix.consumer-node == '24' && matrix.stack.mermaid == '11.16.1'
 
       - run: pnpm run check:examples
+        if: matrix.consumer-node == '24' && matrix.stack.mermaid == '11.16.1'

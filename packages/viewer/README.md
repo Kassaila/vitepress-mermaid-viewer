@@ -1,8 +1,12 @@
 # mermaid-viewer
 
 Interactive Mermaid diagrams with zoom, pan, fullscreen, SVG/PNG export and source copying. Written
-in TypeScript and browser DOM, with no framework dependency. This package is under development in
-the workspace; independent npm releases are the next milestone.
+in TypeScript and browser DOM, with no framework dependency. This is the shared runtime behind
+`vue-mermaid-viewer` and `vitepress-mermaid-viewer`, with independent package versioning.
+
+Consumers require Node 22.12+. Source rendering supports Mermaid `^11.16.1 || ^12`; existing-SVG
+enhancement does not require Mermaid. The package ships ESM and self-contained CSS. See the
+[release and support guide](https://github.com/Kassaila/vitepress-mermaid-viewer/blob/main/RELEASING.md).
 
 ## Source rendering
 

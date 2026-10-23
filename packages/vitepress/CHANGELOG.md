@@ -1,37 +1,36 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+## 0.6.0
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+### Minor Changes
 
-## [Unreleased]
+- Split the implementation into independently versioned runtime packages: `vitepress-mermaid-viewer`
+  → `vue-mermaid-viewer` → `mermaid-viewer`. Neighboring JavaScript stays external; each public CSS
+  entry remains self-contained.
+- Support Mermaid `^11.16.1 || ^12`, Vue `^3.5.0`, VitePress `^1.6.4 || ^2.0.0-alpha.17` and
+  consumer Node 22.12+. Preserve existing VitePress ESM/CJS exports. Mermaid 10, Mermaid 11 before
+  11.16.1, Vue before 3.5 and VitePress before 1.6.4 are outside the new declared contract.
+- Add typed `mermaid.viewer` customization for component CSS tokens and JS labels. Map `--mv-*`
+  tokens to the VitePress theme and apply overrides to inline diagrams and the body-mounted dialog.
+- Use a stable Vue host around the runtime-owned figure; preserve custom diagram classes,
+  frontmatter/theme configuration, loading/error states and a failed update's last valid SVG/source.
+- Serialize Mermaid setup/rendering, reject stale results, clean staging DOM and remap fullscreen
+  SVG references. Opening a diagram closes the previous viewer in that document.
+- Render `mmd` fences through the same component as `mermaid`. Add isolated consumer and browser
+  hydration checks for the extracted packages.
 
-### Added
+### Patch Changes
 
-- Typed `mermaid.viewer` customization object with component CSS tokens and JS labels. Overrides
-  apply to both inline diagrams and the fullscreen dialog.
-- Standalone Vue workspace package and Vue/Vite example with SSR checks.
+- Carry forward the Mermaid development prebundling and Vue 3.5.44 SSR fixes from VitePress 0.5.2;
+  keep all three viewer packages in VitePress's SSR bundle.
 
-### Changed
-
-- Shared viewer behavior now lives in the framework-independent DOM package behind the Vue adapter.
-  Configurable classes are forwarded to a stable `.mv-host` around the diagram figure.
-- Fullscreen copies remap local SVG IDs/references and receive container-scoped CSS tokens.
-- Opening another diagram closes the previous viewer in the same document.
-- VitePress now wraps the shared Vue viewer; frontmatter/theme/configuration remain in the plugin.
-  The published VitePress package still bundles its viewer implementation.
-- Component styles use `--mv-*` tokens, mapped to VitePress variables by the integration stylesheet.
-  Inline diagrams have stable `mv-diagram` classes, including loading/error modifiers. Existing
-  fullscreen control classes and the configurable diagram class are preserved.
+## [0.5.2] - 2026-10-21
 
 ### Fixed
 
-- `mmd` fences now render the same Mermaid component as `mermaid`, instead of a code block.
-- Source/config replacements rerender the diagram; stale asynchronous results cannot overwrite a
-  newer diagram or update an unmounted component.
-- Mermaid configuration/render calls are serialized, rendering artifacts are cleaned on failure, and
-  a failed update preserves the matching SVG/source pair.
+- Diagrams not rendering in development with Mermaid 12.
+- `b is not a function` error during VitePress builds with Vue 3.5.44
+  ([#18](https://github.com/Kassaila/vitepress-mermaid-viewer/issues/18)).
 
 ## [0.5.1] - 2026-10-06
 

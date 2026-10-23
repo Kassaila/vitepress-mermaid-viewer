@@ -4,7 +4,7 @@ Thanks for your interest in contributing to vitepress-mermaid-viewer!
 
 ## Requirements
 
-- Node.js >= 24.0.0
+- Node.js >= 24.0.0 for repository tooling (published consumers support Node 22.12+)
 - pnpm 12.9.1 (pinned in the root `packageManager` field)
 
 ## Setup
@@ -33,13 +33,19 @@ pnpm --filter vitepress-mermaid-viewer run test:run
 pnpm --dir packages/vitepress pack --dry-run
 ```
 
-Declare dependencies in the workspace that uses them. Use `workspace:^` for dependencies between
-future published packages and `workspace:*` for private consumers; pnpm pack rewrites these to
-regular versions/ranges. There is one `pnpm-lock.yaml`, and CI installs with `--frozen-lockfile`.
+Declare dependencies in the workspace that uses them. Use `workspace:^` in `dependencies` for
+library-to-library runtime imports and `workspace:*` for private consumers; pnpm pack rewrites these
+to regular versions/ranges. There is one `pnpm-lock.yaml`, and CI installs with `--frozen-lockfile`.
+These dependencies link directly to local packages; no npm publication or version bump is needed for
+local development. After the initial build, use `pnpm dev` for watch builds and `pnpm docs:dev` or
+an example command in a second terminal. Public exports read `dist`, so watch builds are needed to
+reflect source changes.
 
-Only `packages/vitepress` is currently published. The tag-triggered release workflow publishes from
-that directory with the existing npm CLI authentication and provenance settings. Independent package
-versioning is scheduled for the independent release step in `docs/plan.md`.
+Changesets manages independent package versions. Run `pnpm changeset` for a package change and
+`pnpm release:status` to inspect pending releases. `pnpm release:version` prepares versions,
+changelogs and the lockfile without publishing. The release workflow runs manually on `main` and
+publishes viewer → Vue → VitePress after validation. See [RELEASING.md](./RELEASING.md) for support,
+first-publication account checks and retry behavior. Commit/tag pushes do not publish packages.
 
 ## Package conventions
 
@@ -95,22 +101,24 @@ pnpm run lint           # ESLint check
 pnpm run lint:fix       # ESLint auto-fix
 pnpm run format         # Format code with Prettier
 pnpm run check:all      # Full validation (format + build + lint + types + tests)
+pnpm exec playwright install chromium # Install the release gate's browser once
+pnpm run release:check  # Full validation + SSR + actual tarball/browser consumers
 pnpm run docs:dev       # VitePress dev server
 pnpm run docs:build     # Build documentation site
 pnpm run docs:preview   # Preview built docs
 ```
 
-The standalone Vue package and framework-independent viewer are extracted. Independent releases come
-next, followed by the other integrations.
+The standalone Vue package and framework-independent viewer are extracted, and independent release
+tooling is configured. Other integrations follow in stages.
 
 ## Viewer and framework adapters
 
 Run `pnpm run build` before cross-package type checks or consumers. Build order follows the
 workspace graph: viewer → Vue → VitePress. Vue declares its viewer runtime dependency in
-`dependencies` through `workspace:^` and does not bundle its JavaScript. VitePress currently bundles
-both implementations and CSS; its Vue dependency is in `devDependencies`, so the existing published
-package stays self-contained. Independent package publishing/Changesets will replace this temporary
-arrangement later.
+`dependencies` through `workspace:^`. VitePress similarly depends on Vue at runtime. Each package
+keeps neighboring JavaScript external and incorporates only their CSS into its public stylesheet. Do
+not restore temporary runtime bundling. The consumer Node requirement is separate from the
+repository toolchain; core/Vue remain ESM and VitePress keeps its ESM/CJS compatibility contract.
 
 Use `pnpm run example:vanilla` or `pnpm run example:vue` and `pnpm run check:examples` for both
 consumers' types, SSR and production builds. Component customization lives in an application-owned

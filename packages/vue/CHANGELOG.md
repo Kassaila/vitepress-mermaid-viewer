@@ -1,14 +1,11 @@
 # Changelog
 
-All notable changes to this package will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this package
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+## 0.1.0
 
 ### Changed
 
+- Support Mermaid `^11.16.1 || ^12`, Vue 3.5+ and consumer Node 22.12+, with independent versioning
+  and a real `workspace:^` runtime dependency on `mermaid-viewer`.
 - Delegate rendering, dialog, viewport, export and customization to the DOM viewer runtime
   dependency.
 - Keep a stable empty `.mv-host` for forwarded attributes; mount the DOM viewer directly in

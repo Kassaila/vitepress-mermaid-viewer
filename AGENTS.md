@@ -22,18 +22,27 @@ lint/format/Git tooling. Pin pnpm through the root `packageManager` field; insta
   exports.
 - `examples/vue` — private ordinary Vue/Vite consumer, including SSR and public-type checks.
 - `examples/vanilla` — private plain TypeScript/Vite consumer for source and existing-SVG modes.
-- Next, configure independent releases, then add integrations in stages.
+- Independent versions are managed by Changesets; add other integrations in stages.
 
-Use `workspace:^` for future library-to-library dependencies. pnpm pack converts the protocol into
-regular semver ranges. Keep build and test dependencies in the package that uses them. Until
-independent releases are configured, VitePress bundles the Vue workspace implementation; its
-`workspace:^` dependency is build-time only. Build packages before cross-package type checks.
+Use `workspace:^` for library-to-library runtime dependencies in `dependencies`. pnpm links local
+packages during development and converts the protocol into normal semver ranges when packing; local
+changes never require a release. Keep build and test dependencies in the package that uses them.
+Build packages before cross-package type checks; `pnpm dev` watches all library builds.
 
-Before independent releases, move `vue-mermaid-viewer` to VitePress `dependencies`, remove its
-`alwaysBundle` rule and publish Vue before VitePress (viewer → Vue → VitePress after core
-extraction); remove temporary bundling of the core too. These changes must land together, with
-packed-consumer checks for types/CSS/SSR and ESM/CJS compatibility. The release transition checklist
-is in `docs/plan.md`.
+Keep the Mermaid peer range `^11.16.1 || ^12` identical in all three public packages. Exact
+development pins and CI snapshots are separate from this support contract; CI checks the minimum
+version of each supported major. Mermaid is optional only in the DOM viewer package.
+
+The runtime graph is viewer → Vue → VitePress. Keep neighboring package JavaScript external;
+`alwaysBundle` is used only for public CSS so each adapter retains a self-contained stylesheet.
+Core/Vue ship ESM with default-condition resolution for modern Node; retain the existing VitePress
+ESM/CJS exports and validate them on consumer Node 22.12+.
+
+Use `pnpm changeset` for package release notes. `release:version` prepares manifests/changelogs and
+the lockfile without publication. `release:check` validates actual tarballs outside the workspace,
+including browser hydration and a core consumer without Mermaid. Release publishing is manual, waits
+for dependency availability and runs viewer → Vue → VitePress. Preparing or checking a release does
+not authorize publication. See `RELEASING.md` and the checklist in `docs/plan.md`.
 
 ## Commands
 
@@ -49,7 +58,11 @@ pnpm run check:types    # tsc --noEmit
 pnpm run test           # Vitest watch mode
 pnpm run test:run       # Vitest single run
 pnpm run test:coverage  # Vitest with coverage report
-pnpm run release:check  # check:all + SSR imports + package dry runs (pre-publish gate)
+pnpm run changeset      # Record a package change
+pnpm run release:status # Review pending version changes
+pnpm run release:version # Apply versions/changelogs/lockfile; no publication
+pnpm run release:check  # check:all + SSR + isolated tarball/browser consumers; no publication
+pnpm run check:packed   # Tarball consumers; requires Playwright Chromium
 pnpm run docs:dev       # VitePress dev server
 pnpm run docs:build     # Build documentation site
 pnpm run docs:preview   # Preview built docs

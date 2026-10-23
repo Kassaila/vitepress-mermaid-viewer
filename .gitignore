@@ -4,6 +4,7 @@ dist/
 .DS_Store
 coverage/
 *.tgz
+pnpm-publish-summary.json
 
 # Development
 /.tmp/

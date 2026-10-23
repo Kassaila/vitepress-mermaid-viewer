@@ -1,12 +1,23 @@
 name: Release
 
 on:
-  push:
-    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: npm dist-tag
+        type: choice
+        options: [latest, beta]
+        default: latest
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
 
 jobs:
   publish:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     permissions:
       contents: read
@@ -14,6 +25,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v6
 
@@ -25,10 +38,22 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm run release:check
+      - run: pnpm exec playwright install --with-deps chromium
 
-      - name: Publish to npm
-        working-directory: packages/vitepress
-        run: npm publish --provenance --access public
+      - name: Validate and publish in dependency order
+        run: |
+          if [ "$RELEASE_CHANNEL" = beta ]; then
+            pnpm run release:publish:beta
+          else
+            pnpm run release:publish
+          fi
         env:
+          RELEASE_CHANNEL: ${{ inputs.channel }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: npm-publish-summary
+          path: pnpm-publish-summary.json
+          if-no-files-found: ignore

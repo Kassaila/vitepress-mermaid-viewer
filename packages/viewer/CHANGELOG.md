@@ -1,14 +1,11 @@
 # Changelog
 
-All notable changes to this package will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this package
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
+## 0.1.0
 
 ### Changed
 
+- Support Mermaid `^11.16.1 || ^12` and consumer Node 22.12+, with SSR-safe ESM imports and modern
+  Node CJS resolution of the same ESM runtime.
 - Use the unscoped `mermaid-viewer` npm name consistently across packages and consumers.
 
 ### Added

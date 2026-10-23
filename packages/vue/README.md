@@ -2,11 +2,13 @@
 
 Interactive Mermaid diagrams with fullscreen, zoom, pan, keyboard controls, source copy and SVG/PNG
 export. This package uses Vue and Mermaid without VitePress or a virtual configuration module. The
-initial supported peer ranges are Vue `^3.5.0` and Mermaid `^11.16.0`.
+supported peer ranges are Vue `^3.5.0` and Mermaid `^11.16.1 || ^12`. Consumers require Node 22.12+.
+The package ships ESM and self-contained CSS.
 
 This is a thin adapter over `mermaid-viewer`: the DOM package owns rendering, fullscreen, viewport
-and export; Vue forwards props/events and manages lifecycle. The package is currently consumed
-inside this workspace. Independent package releases are the next milestone.
+and export; Vue forwards props/events and manages lifecycle. Packages use independent versions and
+runtime dependencies. See the
+[release and support guide](https://github.com/Kassaila/vitepress-mermaid-viewer/blob/main/RELEASING.md).
 
 ```vue
 <script setup lang="ts">

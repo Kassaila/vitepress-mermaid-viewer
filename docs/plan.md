@@ -4,10 +4,10 @@
 
 ## Package decomposition
 
-The repository will evolve into a pnpm monorepo. This migration takes priority over the feature
-wishlist below. First extract a standalone Vue package and keep VitePress as its wrapper. Then extract the
-framework-independent viewer from Vue, followed by the other framework/documentation integrations. The VS Code extension targets ordinary Markdown Preview
-and follows that first cohort.
+The repository is a pnpm monorepo with a framework-independent viewer, a thin Vue adapter and the
+VitePress integration. Independent release preparation takes priority over the feature wishlist
+below. Other framework/documentation integrations follow in stages. The VS Code extension targets
+ordinary Markdown Preview.
 
 - [x] Private workspace root, pnpm 12.9.1 and a single `pnpm-lock.yaml`
 - [x] Move the existing plugin and tests to `packages/vitepress`, preserving its npm name and exports
@@ -19,24 +19,26 @@ and follows that first cohort.
 - [x] Consistent library layout, manifests and script names based on `packages/vitepress`
 - [x] Extract the framework-independent DOM viewer to `packages/viewer`; turn Vue into a thin adapter
 - [x] Plain TypeScript consumer, existing-SVG enhancement and package-local lifecycle/viewport tests
-- [ ] Add Changesets and independent package releases
+- [x] Configure Changesets and independent package release tooling
+- [ ] Publish the first independent versions when explicitly authorized
 - [ ] Add other integrations and the VS Code extension in stages
 
-### Replace temporary Vue bundling before independent releases
+### Independent release transition
 
-VitePress currently bundles Vue and the shared viewer using `alwaysBundle`; `vue-mermaid-viewer` is
-therefore a build-time `devDependency`. This is temporary. The final package graph must use a
-runtime dependency. Complete the following changes together before releasing independent packages:
+Package JavaScript follows runtime dependencies; only CSS is incorporated into adapter stylesheets.
+See [the release guide](../RELEASING.md) for versioning, support and manual publishing.
 
-- [ ] Move `"vue-mermaid-viewer": "workspace:^"` from `devDependencies` to `dependencies` in
+- [x] Move `"vue-mermaid-viewer": "workspace:^"` from `devDependencies` to `dependencies` in
       `packages/vitepress/package.json` and regenerate the pnpm lockfile.
-- [ ] Remove `vue-mermaid-viewer` and `mermaid-viewer` from `alwaysBundle` in
+- [x] Remove `vue-mermaid-viewer` and `mermaid-viewer` from `alwaysBundle` in
       `packages/vitepress/tsdown.config.ts`; keep package runtimes external in the published build.
-- [ ] Configure dependency-order publishing: viewer before Vue before VitePress. Publish consumers only after their required
+- [x] Configure dependency-order publishing: viewer before Vue before VitePress. Publish consumers only after their required
       dependency versions are available.
-- [ ] Verify packed consumers outside the workspace: runtime dependencies, public types, CSS, SSR
+- [x] Verify packed consumers outside the workspace: runtime dependencies, public types, CSS, SSR
       and existing VitePress ESM/CJS exports. Explicitly check CJS interoperability with the ESM Vue
       package and align framework/Mermaid peer ranges with the supported dependency versions.
+- [x] Carry the published VitePress 0.5.2 fixes into the monorepo; prepare the 0.6.0 transition
+- [x] Automate packed production browser checks, including actual Vue SSR hydration
 
 ## Done
 
@@ -44,8 +46,8 @@ runtime dependency. Complete the following changes together before releasing ind
 
 - [x] Project structure (`packages/vitepress/src/`, `packages/vitepress/__tests__/`, `docs/`)
 - [x] `tsconfig.base.json` + package `tsconfig.json` (strict, ES2022, bundler resolution)
-- [x] `packages/vitepress/package.json` — dual ESM + CJS exports, `./Mermaid`, `./style.css`, peer deps (`mermaid >=10`,
-      `vitepress >=1.0.0`, `vue ^3.0.0`)
+- [x] `packages/vitepress/package.json` — dual ESM + CJS exports, `./Mermaid`, `./style.css`, peer deps
+      (`mermaid ^11.16.1 || ^12`, `vitepress ^1.6.4 || ^2.0.0-alpha.17`, `vue ^3.5.0`)
 - [x] Build system — tsdown (ESM + CJS + `.d.ts`/`.d.cts`, sourcemaps in dev, minified in prod,
       tree-shaking on)
 - [x] `.vue` files loaded via `unplugin-vue`, `.css` via `@tsdown/css`
@@ -55,7 +57,7 @@ runtime dependency. Complete the following changes together before releasing ind
 - [x] commitlint with `@commitlint/config-conventional` (`commit-msg` hook)
 - [x] LICENSE (MIT)
 - [x] CI — GitHub Actions `release:check` + `docs:build` on push/PR to main/release
-- [x] Release — GitHub Actions npm publish with provenance on `v*` tags
+- [x] Release — manual GitHub Actions npm publish with provenance, ordered dependencies and retry support
 - [x] Docs deploy — library built before VitePress site
 
 ### Source Code
@@ -148,7 +150,7 @@ runtime dependency. Complete the following changes together before releasing ind
 - [x] VitePress docs site published at
       [kassaila.github.io/vitepress-mermaid-viewer](https://kassaila.github.io/vitepress-mermaid-viewer/)
 - [x] `docs/guide/usage.md`, `docs/guide/examples.md` with live diagrams
-- [x] `packages/*/CHANGELOG.md` — package-local release notes in Keep a Changelog format
+- [x] `packages/*/CHANGELOG.md` — package-local release notes managed by Changesets; historical notes retained
 - [x] `CONTRIBUTING.md` — contributor guide
 - [x] `CLAUDE.md` — architecture notes for AI-assisted work
 - [x] LLM-friendly content delivery — `/llms.txt` index, `.md` route variants of every page,

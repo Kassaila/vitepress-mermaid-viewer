@@ -13,7 +13,7 @@ export default defineConfig([
     sourcemap: isDev,
     minify: !isDev,
     deps: {
-      neverBundle: ['vue', 'vitepress', 'mermaid'],
+      neverBundle: ['vue', 'vitepress', 'mermaid', 'vue-mermaid-viewer'],
     },
     platform: 'neutral',
   },
@@ -25,9 +25,14 @@ export default defineConfig([
     sourcemap: isDev,
     minify: !isDev,
     deps: {
-      neverBundle: ['vue', 'vitepress', 'mermaid', 'virtual:mermaid-config'],
-      // Keep the existing npm package self-contained until independent releases are introduced.
-      alwaysBundle: ['vue-mermaid-viewer', 'mermaid-viewer'],
+      neverBundle: [
+        'vue',
+        'vitepress',
+        'mermaid',
+        'virtual:mermaid-config',
+        /^vue-mermaid-viewer$/,
+      ],
+      alwaysBundle: ['vue-mermaid-viewer/style.css'],
     },
     platform: 'neutral',
     plugins: [Vue({ isProduction: !isDev })],

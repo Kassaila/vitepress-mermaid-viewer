@@ -22,6 +22,10 @@
 
 ## Installation
 
+Requires Node 22.12+, Vue `^3.5.0`, Mermaid `^11.16.1 || ^12` and VitePress
+`^1.6.4 || ^2.0.0-alpha.17`. The plugin installs `vue-mermaid-viewer` and `mermaid-viewer` as
+runtime dependencies. See the [release and support guide](./RELEASING.md).
+
 ```bash
 npm install vitepress-mermaid-viewer mermaid
 ```
