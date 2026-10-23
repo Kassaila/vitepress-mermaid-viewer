@@ -20,14 +20,20 @@ lint/format/Git tooling. Pin pnpm through the root `packageManager` field; insta
   thin Vue wrapper for VitePress configuration, frontmatter and theme.
 - `docs` — a private workspace that consumes the package through `workspace:*` and its public
   exports.
-- `examples/vue` — private ordinary Vue/Vite consumer, including SSR and public-type checks.
-- `examples/vanilla` — private plain TypeScript/Vite consumer for source and existing-SVG modes.
+- `packages/vue/examples` — private ordinary Vue/Vite consumer, including SSR and public-type
+  checks.
+- `packages/viewer/examples` — private plain TypeScript/Vite consumer for source and existing-SVG
+  modes.
 - Independent versions are managed by Changesets; add other integrations in stages.
 
 Use `workspace:^` for library-to-library runtime dependencies in `dependencies`. pnpm links local
 packages during development and converts the protocol into normal semver ranges when packing; local
 changes never require a release. Keep build and test dependencies in the package that uses them.
 Build packages before cross-package type checks; `pnpm dev` watches all library builds.
+
+Keep standalone examples in their owning package's `examples/` directory as separate private
+workspaces. Library `files` allowlists exclude them from npm tarballs; packed-consumer checks
+enforce this. Root library commands and example commands must select their respective workspaces.
 
 Keep the Mermaid peer range `^11.16.1 || ^12` identical in all three public packages. Exact
 development pins and CI snapshots are separate from this support contract; CI checks the minimum

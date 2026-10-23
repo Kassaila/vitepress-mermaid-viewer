@@ -106,4 +106,9 @@ Register external diagram definitions before mounting through `registerExternalD
 `mermaid-viewer/mermaid`. Registration and rendering share the same queue. No Web Component
 registration happens automatically; a custom-element facade is a separate future step.
 
-Run the ordinary TypeScript consumer with `pnpm run build` followed by `pnpm run example:vanilla`.
+## Workspace example
+
+The private workspace at `packages/viewer/examples` demonstrates source rendering and existing-SVG
+enhancement. From the repository root, run `pnpm run build`, then `pnpm run example:vanilla`. Run
+`pnpm run check:examples` for consumer type checks, SSR imports and a production build. The example
+is excluded from the published package.

@@ -1,7 +1,7 @@
 packages:
   - packages/*
   - docs
-  - examples/*
+  - packages/*/examples
 
 allowBuilds:
   esbuild@0.28.1: true

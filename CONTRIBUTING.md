@@ -19,10 +19,10 @@ pnpm install --frozen-lockfile
 
 The root is private and contains shared lint, format and Git tooling. `packages/viewer` owns the
 framework-independent DOM implementation and customization contract; `packages/vue` adapts its
-lifecycle, props and events. `examples/vanilla` and `examples/vue` verify ordinary Vite consumers.
-The VitePress plugin lives in `packages/vitepress` with its own manifest, source, tests, build
-config, README, changelog and license. Its npm name and public exports remain
-`vitepress-mermaid-viewer`.
+lifecycle, props and events. `packages/viewer/examples` and `packages/vue/examples` verify ordinary
+Vite consumers as separate private workspaces inside their owning packages. The VitePress plugin
+lives in `packages/vitepress` with its own manifest, source, tests, build config, README, changelog
+and license. Its npm name and public exports remain `vitepress-mermaid-viewer`.
 
 `docs` is a private workspace and consumes the built plugin through its public exports. Run
 `pnpm run build` before starting or building the docs. Use `pnpm --filter vitepress-mermaid-viewer`
@@ -73,11 +73,19 @@ packages/<role>/
     styles/
   __tests__/
     helpers/
+  examples/
+    package.json
+    src/
 ```
 
 Create subdirectories when they contain code. Vue components use PascalCase filenames, Vue
 composables use `useXxx.ts`, other modules use kebab-case, and tests use `*.test.ts`. Keep package
 sources, tests and tooling together; shared repository tooling stays at the root.
+
+Standalone examples live in the owning package's `examples/` directory when needed. Keep their
+manifests `private: true` and register them as separate workspaces. They consume public exports
+through `workspace:*`; do not include them in the library's `files` allowlist. Packed-consumer
+checks verify that examples are absent from every npm tarball.
 
 Keep the same relative manifest field order across workspaces, using the existing VitePress manifest
 as the reference: identity (`name`, `version`, `private`, `description`), module/package settings

@@ -94,6 +94,7 @@ try {
     assert.match(contents, /package\/README.md/);
     assert.match(contents, /package\/LICENSE/);
     assert.match(contents, /package\/CHANGELOG.md/);
+    assert.doesNotMatch(contents, /^package\/examples(?:\/|$)/m);
 
     for (const entry of Object.values(packed.exports)) {
       const files =
@@ -156,7 +157,7 @@ try {
   for (const role of ['vanilla', 'vue']) {
     const cwd = join(base, role);
 
-    await cp(join(root, 'examples', role), cwd, {
+    await cp(join(root, 'packages', role === 'vanilla' ? 'viewer' : 'vue', 'examples'), cwd, {
       recursive: true,
       filter: (path) => !['node_modules', 'dist'].includes(path.split(/[\\/]/).at(-1)),
     });

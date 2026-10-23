@@ -111,6 +111,7 @@ states or wait for an extra mount tick. Import `style.css` once in your applicat
 
 ## Workspace example
 
-From the repository root, run `pnpm run build`, then `pnpm run example:vue`. The example has
-editable source, theme switching and its own `src/mermaid-viewer.ts` customization file. Run
-`pnpm run check:examples` for consumer type checks, SSR rendering and a production build.
+The private workspace at `packages/vue/examples` has editable source, theme switching and its own
+`src/mermaid-viewer.ts` customization file. From the repository root, run `pnpm run build`, then
+`pnpm run example:vue`. Run `pnpm run check:examples` for consumer type checks, SSR rendering and a
+production build. The example is excluded from the published package.

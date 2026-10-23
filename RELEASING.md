@@ -7,9 +7,11 @@ pnpm packs and publishes packages in dependency order:
 mermaid-viewer → vue-mermaid-viewer → vitepress-mermaid-viewer
 ```
 
-The repository root, docs and examples are private. Library dependencies use `workspace:^` locally;
-pnpm replaces this with a normal caret range when packing. Local development never requires an npm
-release. Build once with `pnpm build`, then run `pnpm dev` and `pnpm docs:dev` in separate
+The repository root, docs and package-local `examples/` workspaces are private. Examples live in
+`packages/viewer/examples` and `packages/vue/examples`; library `files` allowlists exclude them from
+npm tarballs, and packed-consumer checks verify this. Library dependencies use `workspace:^`
+locally; pnpm replaces this with a normal caret range when packing. Local development never requires
+an npm release. Build once with `pnpm build`, then run `pnpm dev` and `pnpm docs:dev` in separate
 terminals.
 
 ## Support contract
